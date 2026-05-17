@@ -129,19 +129,19 @@ export function AlreadyDoneSection() {
             </div>
           </div>
 
-          {/* Main content area — Waldo explainer video */}
+          {/* Main content area — Waldo product demo video */}
           <div
-            className="border-[0.485px] border-[rgba(26,26,26,0.16)] border-solid bg-[#fafaf8] overflow-hidden"
+            className="border-[0.485px] border-[rgba(26,26,26,0.16)] border-solid bg-[#1a1a1a] overflow-hidden"
             style={{ height: "592.542px", width: "707.557px", borderRadius: "13.588px" }}
           >
             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <video
-              src="/waldo-explainer.mp4"
+              src="/waldo_demo.mp4"
               autoPlay
               loop
               muted
               playsInline
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
         </div>
