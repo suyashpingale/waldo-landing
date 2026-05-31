@@ -1,5 +1,5 @@
-import { WaldoWaitlist } from "@/components/waldo-waitlist";
+import { PageLayout } from "@/components/page-layout";
 
-export default function Page() {
-  return <WaldoWaitlist />;
+export default function Home() {
+  return <PageLayout />;
 }
