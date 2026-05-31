@@ -9,6 +9,21 @@
   --color-border:  rgba(26, 26, 26, 0.1);
 }
 
+/* ── Hero floating cards ───────────────────────────────────────── */
+
+@keyframes hero-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92) rotate(var(--card-rotation, 0deg));
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(var(--card-rotation, 0deg));
+    filter: blur(0);
+  }
+}
+
 /* ── Page state transitions ─────────────────────────────────── */
 
 @keyframes content-enter {
