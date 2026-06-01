@@ -30,7 +30,7 @@ export function PageLayout() {
       <ScrollAnimations />
       {/* Nav sits outside the dimmed wrapper so it stays sharp */}
       <div
-        className="sticky top-0 z-20 flex justify-center"
+        className="fixed inset-x-0 top-0 z-50 flex justify-center"
         style={{ paddingTop: "20px", paddingBottom: "16px" }}
       >
         {/* Blur layer — absolute so mask-image never clips tooltip children */}
@@ -58,7 +58,7 @@ export function PageLayout() {
       >
         {/* Marketing sections — centered column with 30px gaps, 200px side padding on desktop */}
         <div
-          className="flex flex-col gap-[30px] items-center px-4 lg:px-[200px] py-[20px] mx-auto"
+          className="flex flex-col gap-[30px] items-center px-4 lg:px-[200px] pb-[20px] mx-auto"
           style={{ maxWidth: "1440px" }}
         >
           <HeroSection />
