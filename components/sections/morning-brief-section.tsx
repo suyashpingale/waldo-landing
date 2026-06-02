@@ -229,14 +229,14 @@ export function MorningBriefSection() {
               aria-hidden={scenarioIndex !== 0}
               className="waldo-flow-scenario"
               data-reduced-default={scenarioIndex === 0 ? "true" : undefined}
-              style={{ "--scenario-delay": `${scenarioIndex * 6}s` } as CSSProperties}
+              style={{ "--scenario-delay": `${scenarioIndex * 12}s` } as CSSProperties}
             >
               <div className="waldo-flow-inputs absolute inset-0 z-[6]">
-                {scenario.sources.map((source, sourceIndex) => (
+                {scenario.sources.slice(0, 3).map((source, sourceIndex) => (
                   <div
                     key={`${scenario.name}-${sourceIndex}`}
                     className={`waldo-source-card absolute ${source.className}`}
-                    style={{ "--card-delay": `${sourceIndex * 0.9}s` } as CSSProperties}
+                    style={{ "--card-delay": `${sourceIndex * 2}s` } as CSSProperties}
                   >
                     <Image src={source.asset} alt="" className="h-auto w-full select-none" sizes="360px" />
                   </div>
@@ -248,12 +248,8 @@ export function MorningBriefSection() {
 
           {/* Phone rises from the bottom; its lower portion is clipped by the
               stage's overflow (which sits flush at the card's bottom edge), matching
-              the Figma crop. Anchored bottom with a negative offset so the cut bleeds
-              off the card rather than ending mid-stage. */}
-          <div
-            aria-hidden
-            className="absolute bottom-0 left-1/2 z-10 h-[min(440px,96vw)] w-[min(360px,34vw)] min-w-[260px] -translate-x-1/2 rounded-t-[42px] bg-[var(--surface-t1)] sm:left-[47%]"
-          />
+              the Figma crop. The section background is already white, so no backdrop
+              panel is needed behind it. */}
           <div className="absolute bottom-[-140px] left-1/2 z-30 w-[min(284px,26vw)] min-w-[216px] -translate-x-1/2 sm:left-[47%]">
             <WaldoFace />
             <Image src={phoneMockup} alt="" className="relative z-30 h-auto w-full select-none" sizes="340px" />
