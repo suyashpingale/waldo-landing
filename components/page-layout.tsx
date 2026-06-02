@@ -11,6 +11,7 @@ import { FiveThingsSection } from "./sections/five-things-section";
 import { WhereIsWaldoSection } from "./sections/where-is-waldo-section";
 import { SmarterSection } from "./sections/smarter-section";
 import { DownstreamBuildSections } from "./sections/downstream-build-sections";
+import { FaqSection } from "./sections/faq-section";
 import { FooterSection } from "./sections/footer-section";
 
 export function PageLayout() {
@@ -65,6 +66,7 @@ export function PageLayout() {
           <WhereIsWaldoSection />
           <SmarterSection />
           <DownstreamBuildSections />
+          <FaqSection />
         </div>
 
         <FooterSection />
