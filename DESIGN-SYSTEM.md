@@ -85,25 +85,25 @@ typefaces, **plus one extra state**: the italic aside (Waldo's voice).
 Smallest's DNA we adopt: **negative tracking** (`-0.01em` everywhere; headlines `-0.02em`),
 **400-weight headlines**, tight heading line-heights, **500-weight** compact UI labels.
 
-**Corben 400** — headline tier (`display`/`h1`/`h2`), *never bold*. **DM Sans** — everything else.
+**Corben 400** — headline tier (`display`/`h1`/`h2`), *never bold*. **SF Pro Rounded** — everything else.
 
 | Token | Font | Size | Wt | LH | Tracking | Use |
 |---|---|---|---|---|---|---|
 | `display` | Corben | `clamp(2.25rem,1rem+5vw,3.875rem)` (36→62) | 400 | 1.06 | -0.02em | hero h1 |
 | `h1` | Corben | `clamp(2rem,1.4rem+2.4vw,3rem)` (32→48) | 400 | 1.10 | -0.02em | section headline |
 | `h2` | Corben | `clamp(1.5rem,1.2rem+1.4vw,2rem)` (24→32) | 400 | 1.18 | -0.01em | sub-headline |
-| `h3` | DM Sans | `1.25rem` (20) | 500 | 1.30 | -0.01em | card title / subhead |
-| `body` | DM Sans | `1rem` (16) | 400 | 1.5 | -0.01em | paragraph; max ~58ch; Text-secondary |
-| `label` | DM Sans | `0.875rem` (14) | 500 | 1.2 | -0.01em | UI labels, buttons, chips |
-| `eyebrow` | DM Sans | `0.8125rem` (13) | 400 | 1.3 | -0.01em | section label (regular, per owner) |
-| `caption` | DM Sans | `0.75rem` (12) | 400 | 1.3 | -0.01em | fine print, meta |
-| `aside` ★ | DM Sans *italic* | `0.8125rem` (13) | 400 | 1.3 | -0.01em | **the +1 state — Waldo's closing sarcastic line; Text-tertiary** |
-| `data` | DM Sans | — | 500 | — | tabular-nums | all metrics/numerals |
+| `h3` | SF Pro Rounded | `1.25rem` (20) | 500 | 1.30 | -0.01em | card title / subhead |
+| `body` | SF Pro Rounded | `1rem` (16) | 400 | 1.5 | -0.01em | paragraph; max ~58ch; Text-secondary |
+| `label` | SF Pro Rounded | `0.875rem` (14) | 500 | 1.2 | -0.01em | UI labels, buttons, chips |
+| `eyebrow` | SF Pro Rounded | `0.8125rem` (13) | 400 | 1.3 | -0.01em | section label (regular, per owner) |
+| `caption` | SF Pro Rounded | `0.75rem` (12) | 400 | 1.3 | -0.01em | fine print, meta |
+| `aside` ★ | SF Pro Rounded *italic* | `0.8125rem` (13) | 400 | 1.3 | -0.01em | **the +1 state — Waldo's closing sarcastic line; Text-tertiary** |
+| `data` | SF Pro Rounded | — | 500 | — | tabular-nums | all metrics/numerals |
 
 - ★ `aside` is the single level **beyond** Smallest's set — italic, Text-tertiary, closes a copy block.
 - **Headlines:** manual `<br>` for the triangular/oval taper. **Never** `text-wrap:balance` or browser-decided breaks.
 - Eyebrow ≠ aside — eyebrow is the regular top label; aside is the italic closing voice line.
-- Mapping note: Smallest uses sans from H2 down; we keep `h2` in Corben for brand consistency. Flag if you'd rather `h2` be DM Sans.
+- Mapping note: Smallest uses sans from H2 down; we keep `h2` in Corben for brand consistency. Flag if you'd rather `h2` be SF Pro Rounded.
 
 ---
 

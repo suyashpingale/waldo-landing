@@ -264,15 +264,15 @@ how you feel and does
 something about it.
 ```
 
-**Sub-copy (DM Sans, three-line stack):**
+**Sub-copy (SF Pro Rounded, three-line stack):**
 
-Line 1 (16px, DM Sans regular, text-secondary):
+Line 1 (16px, SF Pro Rounded regular, text-secondary):
 "Waldo monitors your health wearable 24/7 and understands what your body is actually telling you."
 
-Line 2 (16px, DM Sans medium, text-primary):
+Line 2 (16px, SF Pro Rounded medium, text-primary):
 "Then it does something about it."
 
-Line 3 (14px, DM Sans italic, text-tertiary):
+Line 3 (14px, SF Pro Rounded italic, text-tertiary):
 "Your schedule. Your meals. Your sleep. Your stress. All of it."
 
 **CTA button:** "Let Waldo in →"
@@ -305,7 +305,7 @@ Weight state (pink wash):
 **Visual pattern:** Dark-container data ticker + app graveyard (interactive)
 **Background:** Contained card on warm white (#FAFAF8), dark container (#1A1A1A) inside
 
-**Pre-headline (DM Sans italic, text-tertiary, centred):**
+**Pre-headline (SF Pro Rounded italic, text-tertiary, centred):**
 *"You already have everything Waldo needs."*
 
 **Headline (Corben 400, centred):**
@@ -360,7 +360,7 @@ Already handled.
 
 **Visual concept:** Left side shows a stack of passive health app notifications (all informational, no action): "Your HRV dipped overnight", "You slept 5h 42m", "High stress detected", "Recovery: Low." Right side shows a single Waldo Brief card with the action taken and the italic aside. The visual contrast IS the argument — five passive notifications vs one proactive action.
 
-**Supporting line (DM Sans, centred):**
+**Supporting line (SF Pro Rounded, centred):**
 "Waldo reads everything your wearable collects, understands what your body is actually saying, and handles the rest — from rescheduling your calendar to planning your meals to coaching your sleep."
 
 **Transition to Section 4:**
@@ -410,7 +410,7 @@ The longer it runs,
 the smarter Waldo gets.
 ```
 
-**Body copy (DM Sans, centred, text-secondary):**
+**Body copy (SF Pro Rounded, centred, text-secondary):**
 "Six weeks of Tuesdays and Thursdays that looked ordinary — until they didn't. The fact that your worst sleep always follows your heaviest meeting days. The fact that your focus peaks in November and dips in March — every year, without fail. You were too close to see it. Waldo wasn't."
 
 **Visual:** The Constellation pattern map — nodes connected by lines, Dalmatian-spot style. Shows a named pattern: "The Tuesday Crash" with a one-line Waldo interpretation.
@@ -490,7 +490,7 @@ too late. Yet.
 
 **CTA button:** "Let Waldo in →"
 
-**Below-button aside (DM Sans italic, text-tertiary):**
+**Below-button aside (SF Pro Rounded italic, text-tertiary):**
 *"Your watch has been waiting for this."*
 
 **Visual:** Dalmatian mascot illustration in resting pose, positioned above the quicklink footer grid. Time-of-day gradient behind everything — colours shift based on when the user visits.
@@ -547,14 +547,14 @@ too late. Yet.
 
 ## Brand standards — non-negotiable for the landing page
 
-1. **Typography:** Corben 400 (regular only, never bold) for all headlines. DM Sans for all body copy, labels, and UI elements. No other typefaces.
+1. **Typography:** Corben 400 (regular only, never bold) for all headlines. SF Pro Rounded for all body copy, labels, and UI elements. No other typefaces.
 2. **Background white:** Always #FAFAF8 (warm off-white). Never #FFFFFF (pure white is cold).
 3. **Near-black:** Always #1A1A1A. Never pure #000000.
 4. **Orange accent:** Waldo Orange #F97316. Used once per viewport-worth of scroll. Never twice in the same visible area.
 5. **Headline text shape:** All Corben headlines must form a deliberate triangular or oval shape — each line shorter than the one above, tapering to a point. Never let the browser decide line breaks.
 6. **Mascot rules:** Always doing something, never static. Never given a speech bubble. Never sad, frustrated, or confused. Always in resting/lying portrait pose for landing page contexts.
 7. **Copy register:** Warm, dry, capable, restrained, slightly braggadocious. Human endings are temperature-based (a feeling or moment), never song references or cultural references.
-8. **Wit-aside rule:** Every copy block includes an italic closing aside — the emotional beat. Set in DM Sans italic, 13-14px, text-tertiary colour. Quiet enough to screenshot, not loud enough to be a tagline.
+8. **Wit-aside rule:** Every copy block includes an italic closing aside — the emotional beat. Set in SF Pro Rounded italic, 13-14px, text-tertiary colour. Quiet enough to screenshot, not loud enough to be a tagline.
 9. **Raw data rule:** No number is ever shown without Waldo's plain-language interpretation alongside it.
 10. **No dead links.** If a nav item or footer link doesn't have a destination, it doesn't appear on the page.
 11. **No feature duplication.** Each feature/action appears once on the page, ever. No repeating The Brief in two different sections.
