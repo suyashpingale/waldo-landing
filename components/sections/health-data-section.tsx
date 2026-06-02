@@ -1,113 +1,107 @@
-// "Months of health data sitting unused."
-// White card section with Apple Health screenshots at the bottom.
+import Image, { type StaticImageData } from "next/image";
 
-import { BalancedParagraph } from "@/components/balanced-paragraph";
+import appleHealthLogo from "@/components/assets/health-apple -watch.png";
+import whoopLogo from "@/components/assets/health-whoop.png";
+
+const logLines = [
+  ["6:12am", "REM cycle ended. Light sleep began."],
+  ["6:14am", "Resting HR: 62 bpm"],
+  ["6:15am", "HRV: 38ms — 12% below your baseline"],
+  ["6:41am", "First movement detected"],
+  ["7:02am", "Blood oxygen: 96%"],
+  ["7:15am", "Stand reminder sent. Ignored."],
+  ["7:34am", "Steps: 340. Circadian: misaligned."],
+  ["7:58am", "Stress: elevated. Cause: unknown."],
+  ["8:00am", "Calendar: 4 meetings. Body: not ready."],
+  ["8:01am", "No app acted on any of this."],
+] as const;
+
+type AppCard = {
+  name: string;
+  verdict: string;
+  logo?: StaticImageData;
+};
+
+// Owner needs to supply real Oura, Fitbit, and Sleep Cycle logos; use text-only placeholders until those assets exist in the repo.
+const appCards: AppCard[] = [
+  { name: "Apple Health", verdict: "Shows you a chart.", logo: appleHealthLogo },
+  { name: "WHOOP", verdict: "Gives you a score.", logo: whoopLogo },
+  { name: "Oura", verdict: "Sends a notification." },
+  { name: "Fitbit", verdict: "Suggests a walk." },
+  { name: "Sleep Cycle", verdict: "Rates your night." },
+];
 
 export function HealthDataSection() {
   return (
-    <section
-      className="bg-[#fafaf8] border-2 border-[rgba(26,26,26,0.08)] border-solid flex flex-col gap-[48px] items-center overflow-clip pt-[40px] lg:pt-[70px] w-full"
-      style={{ borderRadius: "30px" }}
-    >
-      {/* Header copy */}
-      <div className="flex flex-col gap-[24px] lg:gap-[40px] items-center text-center px-4 lg:px-0">
-        <p
-          className="font-normal italic text-[#6b6b68] text-[14px] min-w-full w-min"
-          style={{
-            fontFamily: "var(--font-body)",
-            fontVariationSettings: "'opsz' 14",
-            lineHeight: 1.3,
-          }}
-        >
-          You already have everything Waldo needs.
-        </p>
-        <h2
-          data-animate="headline"
-          className="text-[#1a1a1a] text-[32px] lg:text-[48px]"
-          style={{ fontFamily: "var(--font-headline)", lineHeight: 1.1, maxWidth: "458px" }}
-        >
-          Months of health data sitting unused.
+    <section id="problem" className="section-shell surface-card flex scroll-mt-28 flex-col gap-8 overflow-hidden rounded-[36px] p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto flex max-w-[720px] flex-col items-center gap-6 text-center">
+        <p className="type-aside text-[var(--text-tertiary)]">You already have everything Waldo needs.</p>
+        <h2 className="type-h1 text-[var(--ink)]" data-animate="headline">
+          Months of health data.
+          <br />
+          Zero health decisions.
         </h2>
-        <div data-animate="fade-up" style={{ paddingBottom: "24px" }}>
-        <BalancedParagraph
-          pretextify
-          className="font-normal text-[#6b6b68] text-[14px]"
-          style={{
-            fontFamily: "var(--font-body)",
-            fontVariationSettings: "'opsz' 14",
-            lineHeight: 1.3,
-            maxWidth: "538px",
-            width: "100%",
-          }}
-        >
-          {`Your watch has been collecting sleep, HRV, recovery, and stress data every single day. While you slept. While you worked. While you ignored it. That data has been sitting in an app you open twice a year. Waldo reads every day of it.`}
-        </BalancedParagraph>
+      </div>
+
+      <div className="rounded-[20px] bg-[var(--ink)] p-4 text-[var(--surface-t2)] shadow-[var(--shadow-elevated)] sm:p-6 lg:p-8">
+        <div className="mb-5 flex items-center gap-2 border-b border-[var(--border-dark)] pb-4">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--zone-peak)] opacity-40 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--zone-peak)]" />
+            </span>
+            <p className="type-caption uppercase text-[var(--surface-t2)]">LIVE — YOUR WATCH IS LOGGING</p>
+          </div>
+        </div>
+
+        <ol className="grid gap-2.5">
+          {logLines.map(([time, event], index) => (
+            <li
+              key={`${time}-${event}`}
+              className="grid gap-2 rounded-xl border border-[var(--border-dark)] bg-[var(--dark-t2)] px-3 py-2.5 motion-safe:animate-[content-enter_500ms_var(--ease-premium)_both] sm:grid-cols-[80px_1fr] sm:items-baseline sm:px-4"
+              style={{ animationDelay: `${index * 70}ms` }}
+            >
+              <span className="type-data type-caption text-[var(--text-tertiary)]">{time}</span>
+              <span className="type-data type-label text-[var(--surface-t2)]">{event}</span>
+            </li>
+          ))}
+        </ol>
+
+        <p className="type-aside mt-5 border-t border-[var(--border-dark)] pt-4 text-[var(--text-tertiary)]">
+          Your watch logged <span className="type-data">847</span> data points last week. Nothing acted on a single one.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <p className="type-label text-center text-[var(--ink)]">You've tried the apps.</p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {appCards.map((app) => (
+            <details key={app.name} className="group/app min-h-[148px] [perspective:900px]">
+              <summary className="focusable-ring h-full cursor-pointer list-none rounded-[16px] outline-none [&::-webkit-details-marker]:hidden">
+                <div className="relative h-full min-h-[148px] transition-transform duration-300 ease-[var(--ease-premium)] [transform-style:preserve-3d] group-open/app:[transform:rotateY(180deg)] motion-safe:group-hover/app:[transform:rotateY(180deg)]">
+                  <div className="surface-card-top absolute inset-0 flex flex-col items-center justify-center gap-4 p-4 text-center [backface-visibility:hidden]">
+                    {app.logo ? (
+                      <span className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-[var(--surface-t2)]">
+                        <Image src={app.logo} alt="" className="h-full w-full object-contain" sizes="56px" />
+                      </span>
+                    ) : (
+                      <span className="type-label flex h-14 min-w-14 items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--surface-t2)] px-3 text-[var(--ink)]">
+                        {app.name}
+                      </span>
+                    )}
+                    <span className="type-label text-[var(--ink)]">{app.name}</span>
+                  </div>
+                  <div className="surface-card-top absolute inset-0 flex rotate-y-180 items-center justify-center p-4 text-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                    <p className="type-aside text-[var(--text-tertiary)]">{app.verdict}</p>
+                  </div>
+                </div>
+              </summary>
+            </details>
+          ))}
         </div>
       </div>
 
-      {/* Device mockups — desktop only */}
-      <div
-        className="relative shrink-0 overflow-clip hidden lg:block"
-        style={{ height: "180px", width: "742px" }}
-      >
-        {/* AFib iPad — furthest back (DOM first = lowest z-order) */}
-        <div
-          data-parallax-y="-35"
-          className="absolute overflow-hidden pointer-events-none"
-          style={{ height: "204.705px", left: "498.66px", top: "111.69px", width: "242.954px" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt=""
-            className="absolute max-w-none"
-            src="/figma-assets/health-iphone-right.png"
-            style={{ height: "100.07%", left: "-21.57%", top: "-0.03%", width: "143.15%" }}
-          />
-        </div>
-
-        {/* iPad — center, in front of AFib */}
-        <div
-          data-parallax-y="-20"
-          className="absolute pointer-events-none"
-          style={{ height: "316.675px", left: "127.46px", top: 0, width: "521.415px" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt=""
-            className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
-            src="/figma-assets/health-ipad.png"
-          />
-        </div>
-
-        {/* iPhone left — Last Night's Sleep */}
-        <div
-          data-parallax-y="-28"
-          className="absolute pointer-events-none"
-          style={{ height: "225.132px", left: "42.64px", top: "74.74px", width: "136.012px" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt=""
-            className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
-            src="/figma-assets/health-iphone-left.png"
-          />
-        </div>
-
-        {/* Apple Watch — bottom left */}
-        <div
-          data-parallax-y="-16"
-          className="absolute overflow-hidden pointer-events-none"
-          style={{ height: "63.826px", left: "-0.19px", top: "148px", width: "59.627px" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt=""
-            className="absolute max-w-none"
-            src="/figma-assets/health-watch.png"
-            style={{ height: "203.6%", left: "-42.25%", top: "-51.45%", width: "178.87%" }}
-          />
-        </div>
-      </div>
+      <p className="type-aside text-center text-[var(--text-tertiary)]">Every app you own is a rearview mirror.</p>
     </section>
   );
 }
