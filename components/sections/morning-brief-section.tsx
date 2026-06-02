@@ -1,13 +1,12 @@
 import Image, { type StaticImageData } from "next/image";
 
+import { WaldoFace } from "./waldo-face";
+
 import notificationGmail from "@/components/assets/Frame 1000007147.png";
 import notificationGmailWork from "@/components/assets/Frame 1000007149.png";
 import notificationMessage from "@/components/assets/Frame 1000007145.png";
 import notificationSlack from "@/components/assets/Frame 1000007144.png";
 import notificationSlackWork from "@/components/assets/Frame 1000007138.png";
-import frameOne from "@/components/assets/frame-1.svg";
-import frameThree from "@/components/assets/frame-3.svg";
-import frameTwo from "@/components/assets/frame-2.svg";
 import phoneMockup from "@/components/assets/iphone-mockup.png";
 import recoveryCard from "@/components/assets/Frame 1000007158-1.png";
 import sleepChart from "@/components/assets/Frame 1000007156.png";
@@ -208,22 +207,6 @@ function InsightCard({ insight, index }: { insight: Insight; index: number }) {
   );
 }
 
-function WaldoPhoneLoop() {
-  // The three SVGs are loosely-cropped hand-drawn keyframes with different
-  // aspect ratios. Sizing them by a shared HEIGHT (not width) and centering both
-  // axes keeps the head at a constant scale + position so it no longer jumps;
-  // the eased crossfade (see globals.css) dissolves frame→frame.
-  const frameClass =
-    "waldo-phone-frame absolute left-1/2 top-1/2 h-[64px] w-auto max-w-none -translate-x-1/2 -translate-y-1/2";
-  return (
-    <div aria-hidden className="absolute left-1/2 top-[50%] z-40 h-[72px] w-[140px] -translate-x-1/2 -translate-y-1/2">
-      <Image src={frameOne} alt="" width={186} height={127} unoptimized className={`${frameClass} waldo-phone-frame-one`} />
-      <Image src={frameTwo} alt="" width={180} height={145} unoptimized className={`${frameClass} waldo-phone-frame-two`} />
-      <Image src={frameThree} alt="" width={194} height={111} unoptimized className={`${frameClass} waldo-phone-frame-three`} />
-    </div>
-  );
-}
-
 export function MorningBriefSection() {
   return (
     <section id="brief" className="section-shell scroll-mt-28 overflow-hidden rounded-[44px] bg-[var(--surface-t2)] p-3 shadow-[var(--shadow-card)]">
@@ -270,7 +253,7 @@ export function MorningBriefSection() {
             className="absolute left-1/2 top-[56px] z-10 h-[min(573px,118vw)] w-[min(360px,34vw)] min-w-[260px] -translate-x-1/2 rounded-[42px] bg-[var(--surface-t1)] sm:left-[47%]"
           />
           <div className="absolute left-1/2 top-[56px] z-30 w-[min(280px,26vw)] min-w-[210px] -translate-x-1/2 sm:left-[47%]">
-            <WaldoPhoneLoop />
+            <WaldoFace />
             <Image src={phoneMockup} alt="" className="relative z-30 h-auto w-full select-none" sizes="340px" />
           </div>
         </div>
