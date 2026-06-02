@@ -42,7 +42,7 @@ const type = {
 
 function SlackCard() {
   return (
-    <div className="absolute left-[6%] top-[18%] z-20 hidden w-[236px] -rotate-[9deg] rounded-[24px] border border-[rgba(26,26,26,0.08)] bg-[#FAFAF8] px-5 py-4 shadow-[0_22px_46px_rgba(26,26,26,0.16)] md:block">
+    <div className="absolute left-[6%] top-[18%] z-20 hidden w-[236px] -rotate-[9deg] rounded-[24px] border border-[rgba(26,26,26,0.08)] bg-[#FAFAF8] px-5 py-4 shadow-[0_22px_46px_rgba(26,26,26,0.16)] lg:block">
       <div className="flex items-center gap-2">
         <span className="h-2 w-2 rounded-full bg-[#1A1A1A]/25" />
         <span className="text-[#6B6B68]" style={type.label}>
@@ -165,7 +165,7 @@ function ActivityCard() {
   const bars = [12, 22, 15, 30, 36, 18, 42, 24, 38, 28, 44, 18, 32, 52, 24, 39, 20, 45, 36, 30, 48, 18];
 
   return (
-    <div className="absolute right-[6.5%] top-[25.5%] z-20 hidden w-[206px] rotate-[10deg] rounded-[24px] border border-[rgba(26,26,26,0.08)] bg-[#FAFAF8] px-4 py-3 shadow-[0_22px_46px_rgba(26,26,26,0.16)] sm:block lg:hidden xl:block">
+    <div className="absolute right-[6.5%] top-[25.5%] z-20 hidden w-[206px] rotate-[10deg] rounded-[24px] border border-[rgba(26,26,26,0.08)] bg-[#FAFAF8] px-4 py-3 shadow-[0_22px_46px_rgba(26,26,26,0.16)] xl:block">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-[#6B6B68]" style={type.label}>
           Motion
