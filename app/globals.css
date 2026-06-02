@@ -489,7 +489,7 @@ body {
 .waldo-face .waldo-face-eyes {
   transform-box: fill-box;
   transform-origin: 50% 50%;
-  animation: waldo-face-eyes 5.2s ease-in-out infinite;
+  animation: waldo-face-eyes 4.4s ease-in-out infinite;
   will-change: transform;
 }
 
@@ -509,23 +509,26 @@ body {
   }
 }
 
+/* Each card streams through its own ~2.3s window (staggered 0.9s in the TSX) so
+   only ~2 are on screen at once with breathing room — a clean conveyor toward the
+   phone, not a pile. */
 @keyframes waldo-source-card-flow {
   0% {
     opacity: 0;
     transform: translate3d(var(--card-start-x), var(--card-start-y), 0) rotate(var(--card-rotate-start)) scale(var(--card-scale-start));
   }
-  2.5% {
+  1% {
     opacity: var(--card-opacity);
   }
-  10.5% {
+  3.6% {
     opacity: var(--card-opacity);
     transform: translate3d(var(--card-mid-x), var(--card-mid-y), 0) rotate(var(--card-rotate-mid)) scale(var(--card-scale-mid));
   }
-  17% {
+  6% {
     opacity: 0.9;
     transform: translate3d(var(--card-end-x), var(--card-end-y), 0) rotate(var(--card-rotate-end)) scale(var(--card-scale-end));
   }
-  20% {
+  7.6% {
     opacity: 0;
     transform: translate3d(var(--card-exit-x), var(--card-end-y), 0) rotate(var(--card-rotate-end)) scale(0.965);
   }
@@ -569,17 +572,19 @@ body {
   50%      { transform: rotate(1.5deg) translateY(-1.5px); }
 }
 
-/* Eyes glance around, with two quick blinks (scaleY squash) per loop. */
+/* Eyes track the cards: spot one entering on the left, follow it across to the
+   right, then flick back left for the next. Two blinks per loop. */
 @keyframes waldo-face-eyes {
-  0%   { transform: translate(0, 0) scaleY(1); }
-  12%  { transform: translate(1.6px, -1px) scaleY(1); }
-  16%  { transform: translate(1.6px, -1px) scaleY(0.12); }
-  20%  { transform: translate(1.6px, -1px) scaleY(1); }
-  50%  { transform: translate(-1.6px, 0.6px) scaleY(1); }
-  76%  { transform: translate(0.6px, 0) scaleY(1); }
-  80%  { transform: translate(0.6px, 0) scaleY(0.12); }
-  84%  { transform: translate(0.6px, 0) scaleY(1); }
-  100% { transform: translate(0, 0) scaleY(1); }
+  0%   { transform: translate(-2.6px, 0) scaleY(1); }
+  8%   { transform: translate(-2.6px, -0.4px) scaleY(1); }
+  12%  { transform: translate(-2.6px, -0.4px) scaleY(0.12); }
+  16%  { transform: translate(-2.6px, -0.4px) scaleY(1); }
+  46%  { transform: translate(2.4px, 0.5px) scaleY(1); }
+  56%  { transform: translate(2.4px, 0.5px) scaleY(1); }
+  80%  { transform: translate(-2.6px, 0) scaleY(1); }
+  84%  { transform: translate(-2.6px, 0) scaleY(0.12); }
+  88%  { transform: translate(-2.6px, 0) scaleY(1); }
+  100% { transform: translate(-2.6px, 0) scaleY(1); }
 }
 
 /* Brows lift and settle, loosely out of phase with the eyes. */

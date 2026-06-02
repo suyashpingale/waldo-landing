@@ -12,7 +12,7 @@ export function WaldoFace() {
   return (
     <div
       aria-hidden
-      className="waldo-face absolute left-1/2 top-1/2 z-40 h-[68px] w-[100px] -translate-x-1/2 -translate-y-1/2"
+      className="waldo-face absolute left-1/2 top-1/2 z-40 h-[56px] w-[84px] -translate-x-1/2 -translate-y-1/2"
       dangerouslySetInnerHTML={{ __html: waldoFaceSvg }}
     />
   );

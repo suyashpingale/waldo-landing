@@ -210,7 +210,7 @@ function InsightCard({ insight }: { insight: Insight }) {
 export function MorningBriefSection() {
   return (
     <section id="brief" className="section-shell scroll-mt-28 overflow-hidden rounded-[44px] bg-[var(--surface-t2)] p-3 shadow-[var(--shadow-card)]">
-      <div className="overflow-hidden rounded-[32px] border border-[var(--border-default)] bg-[var(--surface-t1)] pt-20 text-center sm:pt-24 lg:pt-28">
+      <div className="overflow-hidden rounded-[32px] border border-[var(--border-default)] bg-[var(--surface-t1)] pt-16 text-center sm:pt-20 lg:pt-24">
         <div className="mx-auto flex max-w-[680px] flex-col items-center px-6">
           <h2 className="type-h3 text-[var(--ink)] sm:text-[1.8rem]">You are smart, but Waldo’s smarter</h2>
           <p className="type-body mt-5 max-w-[52ch] text-[var(--text-secondary)]">
@@ -222,7 +222,7 @@ export function MorningBriefSection() {
           </p>
         </div>
 
-        <div className="waldo-flow-stage relative mt-12 h-[560px] overflow-hidden sm:mt-16 lg:h-[640px]">
+        <div className="waldo-flow-stage relative mt-10 h-[440px] overflow-hidden sm:mt-12 lg:h-[520px]">
           {scenarios.map((scenario, scenarioIndex) => (
             <div
               key={scenario.name}
@@ -236,7 +236,7 @@ export function MorningBriefSection() {
                   <div
                     key={`${scenario.name}-${sourceIndex}`}
                     className={`waldo-source-card absolute ${source.className}`}
-                    style={{ "--card-delay": `${sourceIndex * 0.12}s` } as CSSProperties}
+                    style={{ "--card-delay": `${sourceIndex * 0.9}s` } as CSSProperties}
                   >
                     <Image src={source.asset} alt="" className="h-auto w-full select-none" sizes="360px" />
                   </div>
@@ -254,7 +254,7 @@ export function MorningBriefSection() {
             aria-hidden
             className="absolute bottom-0 left-1/2 z-10 h-[min(440px,96vw)] w-[min(360px,34vw)] min-w-[260px] -translate-x-1/2 rounded-t-[42px] bg-[var(--surface-t1)] sm:left-[47%]"
           />
-          <div className="absolute bottom-[-118px] left-1/2 z-30 w-[min(300px,27vw)] min-w-[224px] -translate-x-1/2 sm:left-[47%]">
+          <div className="absolute bottom-[-140px] left-1/2 z-30 w-[min(284px,26vw)] min-w-[216px] -translate-x-1/2 sm:left-[47%]">
             <WaldoFace />
             <Image src={phoneMockup} alt="" className="relative z-30 h-auto w-full select-none" sizes="340px" />
           </div>
