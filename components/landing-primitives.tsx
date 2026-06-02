@@ -4,7 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 export const typeStyles = {
   display: {
     fontFamily: "var(--font-headline)",
-    fontSize: "clamp(2.25rem,1rem + 5vw,3.875rem)",
+    fontSize: "clamp(1.65rem,1.05rem + 2.64vw,3.4rem)",
     fontWeight: 400,
     letterSpacing: "-0.02em",
     lineHeight: 1.06,

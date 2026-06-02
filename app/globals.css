@@ -49,7 +49,7 @@ body {
 
 .type-display {
   font-family: var(--font-headline);
-  font-size: clamp(1.875rem,1.2rem + 3vw,3.875rem);
+  font-size: clamp(1.65rem,1.05rem + 2.64vw,3.4rem);
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.06;

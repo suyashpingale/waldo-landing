@@ -54,7 +54,10 @@ Tools (Codex, Antigravity) must read this file before touching any section. Item
 
 **Color washes:** the **hero orange dome only**. Every other section uses neutral tier surfaces.
 The dome is the provided `public/assets/hero-bg.svg` asset — **never replaced or restyled**. Display
-it with `object-cover` at aspect **`1440 / 720`** (a shallow arc); never `object-fill` (it stretches/distorts the asset on narrow screens).
+it at its **native `1440 / 989`** proportions with `object-cover object-top` (owner override, June 2 —
+the deeper arc shows the concentric bands + white inner circle as designed); never `object-fill` (it
+stretches/distorts the asset). The mascot is centered on the **top edge of the white inner ellipse**
+(`≈28.1%` down the dome — the asset's inner `#F4F3F0` ellipse has its top edge at y≈278 of 989).
 
 ---
 
@@ -91,7 +94,7 @@ Smallest's DNA we adopt: **negative tracking** (`-0.01em` everywhere; headlines 
 
 | Token | Font | Size | Wt | LH | Tracking | Use |
 |---|---|---|---|---|---|---|
-| `display` | Corben | `clamp(1.875rem,1.2rem+3vw,3.875rem)` (30→62) | 400 | 1.06 | -0.02em | hero h1 |
+| `display` | Corben | `clamp(1.65rem,1.05rem+2.64vw,3.4rem)` (26→54) | 400 | 1.06 | -0.02em | hero h1 (−12%, owner call Jun 2) |
 | `h1` | Corben | `clamp(2rem,1.4rem+2.4vw,3rem)` (32→48) | 400 | 1.10 | -0.02em | section headline |
 | `h2` | Corben | `clamp(1.5rem,1.2rem+1.4vw,2rem)` (24→32) | 400 | 1.18 | -0.01em | sub-headline |
 | `h3` | SF Pro Rounded | `1.25rem` (20) | 500 | 1.30 | -0.01em | card title / subhead |
