@@ -1,6 +1,4 @@
-import Image from "next/image";
-
-import sectionTwoImage from "@/components/assets/section-2.png";
+import { ProblemVisual } from "@/components/problem-visual";
 
 export function HealthDataSection() {
   return (
@@ -8,7 +6,7 @@ export function HealthDataSection() {
       id="problem"
       className="section-shell scroll-mt-28 overflow-hidden rounded-[44px] bg-[var(--surface-t2)] p-3 shadow-[var(--shadow-card)]"
     >
-      <div className="flex min-h-[760px] flex-col items-center overflow-hidden rounded-[32px] border border-[var(--border-default)] bg-[var(--surface-t1)] px-6 pt-20 text-center sm:px-10 sm:pt-24 lg:px-16 lg:pt-28">
+      <div className="flex min-h-[760px] flex-col items-center overflow-hidden rounded-[32px] border border-[var(--border-default)] bg-[var(--surface-t1)] px-6 pt-20 pb-16 text-center sm:px-10 sm:pt-24 lg:px-16 lg:pt-28">
         <div className="mx-auto flex max-w-[760px] flex-col items-center">
           <p className="type-aside text-[var(--text-tertiary)]">You already have everything Waldo needs.</p>
 
@@ -27,15 +25,7 @@ export function HealthDataSection() {
           </p>
         </div>
 
-        <div className="mt-20 w-[min(1120px,118vw)] translate-y-8 sm:mt-24 lg:mt-28">
-          <Image
-            src={sectionTwoImage}
-            alt=""
-            priority={false}
-            sizes="(min-width: 1280px) 1120px, 118vw"
-            className="h-auto w-full select-none"
-          />
-        </div>
+        <ProblemVisual />
       </div>
     </section>
   );

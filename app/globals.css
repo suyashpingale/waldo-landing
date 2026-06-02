@@ -298,6 +298,12 @@ body {
   to   { width: 100%; }
 }
 
+/* ── Problem: live data ticker pulse dot ────────────────────── */
+@keyframes live-dot {
+  0%, 100% { transform: scale(1);   opacity: 1;   }
+  50%       { transform: scale(1.7); opacity: 0.35; }
+}
+
 @keyframes where-ticker {
   0%, 11% { transform: translateY(0); }
   14%, 25% { transform: translateY(-12.5%); }
