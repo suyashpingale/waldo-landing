@@ -209,8 +209,16 @@ All "selected / on" states use **Action `#2388FF`**. Focus = Border 8→16%. Dis
 
 ## 11. Responsive
 
-Mobile-first. Must hold at **375 / 768 / 1024 / 1280 / 1440**. The **1024–1280 seam** is the known
-failure zone — test it explicitly every section.
+Mobile-first (Tailwind min-width): **sm 640 · md 768 · lg 1024 · xl 1280 · 2xl 1536**.
+Must hold at **375 / 768 / 1024 / 1280 / 1440**. The **1024–1280 seam** is the known failure
+zone — test it explicitly every section.
+
+Calibrated from competitor breakpoint forensics (Bevel, Composio, et al. — `competitor-visuals/*` Block 7):
+- **Headline scales fluidly** with the viewport (our `display`/`h1` clamps). Competitors drop H1 ~35–40% desktop→mobile (Bevel 80→50, Composio 64→36), always staying centered.
+- **CTA geometry stays constant** across breakpoints — do NOT shrink the button on mobile (Bevel holds 174×46, Composio 116×43 at every width). Only the surrounding layout reflows.
+- **Cards: shrink-then-stack** — feature/floating cards scale down through tablet, then go near-full-width and stack vertically on mobile. Never keep many absolutely-positioned floating cards on small screens (that clips/overflows) — reduce to the key 1–2 or stack them.
+- **Nav collapses to a menu** below md (768): full links on desktop → hamburger/toggle on tablet & phone.
+- Honor `prefers-reduced-motion` and `prefers-color-scheme` (both present across competitors).
 
 ---
 
