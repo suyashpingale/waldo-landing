@@ -1,7 +1,3 @@
-import type { ReactNode } from "react";
-import Image from "next/image";
-
-import { CinematicVideo } from "@/components/cinematic-video";
 import { NotificationStack } from "@/components/notification-stack";
 import { Aside, Readout, SectionIntro, WaldoCTA } from "@/components/landing-primitives";
 
@@ -11,75 +7,15 @@ const handledReads = [
   { label: "Calendar", value: "4 meetings", read: "too dense; first block moved." },
 ];
 
-function PlusIcon() {
-  return (
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-      <path d="M5 1v8M1 5h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-      <circle cx="4" cy="4" r="2.8" stroke="currentColor" strokeWidth="1.2" fill="none" />
-      <path d="M6.5 6.5 9 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function SidebarItem({ icon, label }: { icon: ReactNode; label: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--surface-t4)] text-[var(--ink)]">
-        {icon}
-      </span>
-      <span className="type-caption whitespace-nowrap text-[var(--ink)]">{label}</span>
-    </div>
-  );
-}
-
-function WaldoConsoleDemo() {
-  return (
-    <div className="surface-card hidden w-full overflow-hidden bg-[var(--surface-t3)] p-1.5 lg:flex">
-      <aside className="flex w-[170px] flex-col gap-5 rounded-l-[20px] bg-[var(--surface-t3)] p-5">
-        <Image src="/logo.svg" alt="Waldo" width={74} height={18} unoptimized className="h-auto w-[74px]" />
-        <div className="flex flex-col gap-2">
-          <SidebarItem icon={<PlusIcon />} label="New chat" />
-          <SidebarItem icon={<SearchIcon />} label="Connectors" />
-        </div>
-        <div className="h-px w-full bg-[var(--border-focus)]" />
-        <div className="flex flex-col gap-2">
-          <SidebarItem icon={<SearchIcon />} label="Fetches" />
-          <SidebarItem icon={<SearchIcon />} label="Constellations" />
-        </div>
-        <div className="h-px w-full bg-[var(--border-focus)]" />
-        <div className="flex flex-col gap-2">
-          <p className="type-caption text-[var(--ink)]">Recents</p>
-          <p className="type-caption text-[var(--text-secondary)]">Morning load review</p>
-          <p className="type-caption text-[var(--text-secondary)]">Friday afternoon</p>
-          <p className="type-caption text-[var(--text-secondary)]">Tuesday pattern</p>
-        </div>
-      </aside>
-
-      <CinematicVideo
-        src="/waldo_demo.mp4"
-        containerClassName="flex-1 overflow-hidden border border-[var(--border-default)] bg-[var(--dark-t3)]"
-        containerStyle={{ height: "560px", borderRadius: "18px" }}
-      />
-    </div>
-  );
-}
-
 export function AlreadyDoneSection() {
   return (
-    <section id="already-handled" className="section-shell scroll-mt-28 flex flex-col gap-8 py-4 lg:gap-10">
+    <section id="already-handled" className="section-shell flex flex-col gap-8 py-4 lg:gap-10">
       <SectionIntro
         title={
           <>
-            Not another chart.
+            Not a chart.
             <br />
-            Not another ping.
+            Not a nudge.
             <br />
             Already handled.
           </>
@@ -89,8 +25,6 @@ export function AlreadyDoneSection() {
           Waldo reads what your wearable collects, understands what your body is actually saying, and handles the rest.
         </p>
       </SectionIntro>
-
-      <WaldoConsoleDemo />
 
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="surface-card flex min-h-[440px] flex-col justify-center p-6 sm:p-8">

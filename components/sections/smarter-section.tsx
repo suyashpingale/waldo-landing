@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { Aside, SectionIntro } from "@/components/landing-primitives";
 
 const dimensions = [
@@ -11,29 +9,9 @@ const dimensions = [
   ["Task Pileup", "rising", "unfinished work is carrying over."],
 ] as const;
 
-function DeviceConstellation() {
-  return (
-    <div className="relative mt-8 hidden h-[210px] overflow-hidden lg:block">
-      <div className="absolute left-[7%] top-[72px] w-[136px]">
-        <Image src="/figma-assets/health-iphone-left.png" alt="" width={272} height={450} className="h-auto w-full" />
-      </div>
-      <div className="absolute left-[21%] top-0 w-[520px]">
-        <Image src="/figma-assets/health-ipad.png" alt="" width={1042} height={633} className="h-auto w-full" />
-      </div>
-      <div className="absolute right-[2%] top-[82px] w-[244px]">
-        <Image src="/figma-assets/health-iphone-right.png" alt="" width={486} height={410} className="h-auto w-full" />
-      </div>
-      <div className="absolute left-0 top-[142px] w-[62px]">
-        <Image src="/figma-assets/health-watch.png" alt="" width={120} height={128} className="h-auto w-full" />
-      </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[var(--dark-t3)] to-transparent" />
-    </div>
-  );
-}
-
 export function SmarterSection() {
   return (
-    <section id="constellation" className="section-shell dark-panel scroll-mt-28 overflow-hidden rounded-[30px] p-6 sm:p-8 lg:p-12">
+    <section id="constellation" className="section-shell dark-panel overflow-hidden rounded-[30px] p-6 sm:p-8 lg:p-12">
       <SectionIntro
         dark
         title={
@@ -51,7 +29,7 @@ export function SmarterSection() {
       </SectionIntro>
 
       <div className="mt-8 grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
-        <div className="dark-card relative min-h-[520px] overflow-hidden p-5 sm:p-6">
+        <div className="dark-card relative min-h-[420px] overflow-hidden p-5 sm:p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="type-label text-[var(--surface-t2)]">The Constellation</p>
@@ -80,14 +58,12 @@ export function SmarterSection() {
               <g key={label as string}>
                 <circle cx={x as number} cy={y as number} r="28" fill="var(--dark-t1)" stroke="var(--border-dark-focus)" />
                 <circle cx={x as number} cy={y as number} r="10" fill="var(--surface-t2)" opacity="0.9" />
-                <text x={x as number} y={(y as number) + 52} textAnchor="middle" fill="var(--text-secondary)" style={{ fontFamily: "var(--font-body)", fontSize: 13, letterSpacing: 0 }}>
+                <text x={x as number} y={(y as number) + 52} textAnchor="middle" fill="var(--text-secondary)" style={{ fontFamily: "var(--font-body)", fontSize: 13, letterSpacing: "-0.01em" }}>
                   {label}
                 </text>
               </g>
             ))}
           </svg>
-
-          <DeviceConstellation />
         </div>
 
         <div className="grid gap-3">
