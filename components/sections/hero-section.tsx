@@ -24,10 +24,10 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Waldo — centered on the top edge of the white inner circle (≈28.1% down the dome). */}
+      {/* Waldo — straddles the top edge of the white inner circle, as in the Figma reference. */}
       <div
         className="pointer-events-none absolute left-1/2 z-20 w-[84px] -translate-x-1/2 -translate-y-1/2 sm:w-[108px] lg:w-[124px]"
-        style={{ top: "19.3vw" }}
+        style={{ top: "clamp(180px, 21.5vw, 430px)" }}
       >
         <Image
           src="/illustrations/default.svg"
@@ -43,8 +43,8 @@ export function HeroSection() {
       <div
         className="relative z-20 mx-auto flex max-w-[820px] flex-col items-center px-6 text-center"
         style={{
-          paddingTop: "clamp(190px, 27vw, 520px)",
-          paddingBottom: "clamp(96px, 10vw, 160px)",
+          paddingTop: "clamp(280px, 30.5vw, 560px)",
+          paddingBottom: "clamp(160px, 15vw, 240px)",
         }}
       >
         <h1 className="type-display text-[var(--ink)]" data-animate="fade-up">
@@ -71,7 +71,7 @@ export function HeroSection() {
           <br className="hidden sm:inline" /> figures your day before you smell your morning coffee.
         </p>
 
-        <WaldoCTA className="mt-8 sm:mt-10" />
+        <WaldoCTA className="mt-14 sm:mt-16" />
 
         {/* Connector wave — left→right floating marquee of source connectors.
             Awaiting the connector list from the owner before building. */}
