@@ -51,7 +51,11 @@ export function CinematicVideo({ src, containerStyle, containerClassName }: Cine
   const togglePlay = useCallback(() => {
     const v = videoRef.current;
     if (!v) return;
-    v.paused ? v.play() : v.pause();
+    if (v.paused) {
+      v.play();
+    } else {
+      v.pause();
+    }
   }, []);
 
   const toggleMute = useCallback(() => {
@@ -146,9 +150,9 @@ export function CinematicVideo({ src, containerStyle, containerClassName }: Cine
                 value={duration ? (currentTime / duration) * 1000 : 0}
                 onChange={handleSeek}
                 style={{
-                  flex: 1, height: 3, cursor: "pointer", accentColor: "#F97316",
+                  flex: 1, height: 3, cursor: "pointer", accentColor: "#FB943F",
                   WebkitAppearance: "none", appearance: "none",
-                  background: `linear-gradient(to right, #F97316 ${duration ? (currentTime / duration) * 100 : 0}%, rgba(255,255,255,0.2) 0%)`,
+                  background: `linear-gradient(to right, #FB943F ${duration ? (currentTime / duration) * 100 : 0}%, rgba(255,255,255,0.2) 0%)`,
                   borderRadius: 2, outline: "none",
                 }}
               />
@@ -184,7 +188,7 @@ export function CinematicVideo({ src, containerStyle, containerClassName }: Cine
 
               {/* Speed toggle */}
               <Btn onClick={cycleSpeed}>
-                <span style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, color: speed !== 1 ? "#F97316" : "white", letterSpacing: "-0.02em" }}>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, color: speed !== 1 ? "#FB943F" : "white", letterSpacing: "-0.02em" }}>
                   {speed}×
                 </span>
               </Btn>
@@ -218,8 +222,8 @@ function Btn({ onClick, accent, children }: { onClick: () => void; accent?: bool
     <button onClick={onClick} style={{
       width: 40, height: 40, borderRadius: "50%", cursor: "pointer", flexShrink: 0,
       display: "flex", alignItems: "center", justifyContent: "center",
-      background: accent ? "rgba(249,115,22,0.22)" : "rgba(250,250,248,0.12)",
-      border: accent ? "1px solid rgba(249,115,22,0.5)" : "1px solid rgba(255,255,255,0.18)",
+      background: accent ? "rgba(251,148,63,0.22)" : "rgba(250,250,248,0.12)",
+      border: accent ? "1px solid rgba(251,148,63,0.5)" : "1px solid rgba(255,255,255,0.18)",
       backdropFilter: "blur(8px)",
       transition: "background 0.15s ease, transform 0.1s ease",
     }}

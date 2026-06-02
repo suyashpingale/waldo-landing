@@ -4,15 +4,8 @@
 
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-
-function ArrowRightIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export function FooterSection() {
   const ref = useRef<HTMLElement>(null);
@@ -51,7 +44,6 @@ export function FooterSection() {
         className="absolute bottom-0 left-0 w-full pointer-events-none select-none"
         style={{ zIndex: 1, transform: `translate3d(0, ${sceneShift}px, 0)`, willChange: "transform" }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <picture>
           <source media="(max-width: 639px) and (orientation: portrait)"              srcSet="/assets/footer-bg-mobile.svg" />
           <source media="(orientation: landscape) and (max-height: 600px)"            srcSet="/assets/footer-bg-mobile-landscape.svg" />
@@ -72,13 +64,13 @@ export function FooterSection() {
             <p>You just have to let it in.</p>
           </div>
         </div>
-        <a
+        <Link
           href="/waitlist"
-          className="flex items-center gap-[4px] justify-center bg-[#1a1a1a] border border-[rgba(26,26,26,0.08)] border-solid text-[#fafaf8] text-[16px] lg:text-[18px] px-[32px] py-[18px] lg:px-[36px] lg:py-[22px] hover:bg-[#333] hover:scale-[1.02] transition-all whitespace-nowrap"
-          style={{ fontFamily: "var(--font-headline)", lineHeight: 1.3, borderRadius: "40px" }}
+          className="flex min-h-14 items-center justify-center rounded-full bg-[#1A1A1A] px-9 text-[16px] font-medium text-[#FAFAF8] shadow-[0_1px_2px_rgba(0,0,0,.04),0_8px_24px_rgba(0,0,0,.05)] transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] hover:-translate-y-px hover:bg-[#272725] active:scale-[0.98] lg:text-[16px]"
+          style={{ fontFamily: "var(--font-body)", lineHeight: 1.2, letterSpacing: "-0.01em" }}
         >
-          Get Started <ArrowRightIcon />
-        </a>
+          Let Waldo in →
+        </Link>
         <div className="flex gap-5 lg:gap-[30px] font-normal text-[#6b6b68] text-[10px] whitespace-nowrap" style={{ fontFamily: "var(--font-body)", fontVariationSettings: "'opsz' 14", lineHeight: 1.3 }}>
           <span>[Privacy Policy]</span>
           <span>[Contact]</span>

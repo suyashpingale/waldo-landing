@@ -4,6 +4,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import goodSleepDarkMode from "@/components/assets/good-sleep-dark-mode.svg";
 import vectorSpot        from "@/components/assets/Vector-1.svg";
 import goodWeekDarkMode  from "@/components/assets/good-week-dark-mode.svg";
@@ -12,14 +13,6 @@ import watchingDarkMode  from "@/components/assets/watching-dark-mode.svg";
 import { useCardStack }  from "@/hooks/use-card-stack";
 import { MobileDots }   from "@/components/mobile-dots";
 import { EASE, DUR_SETTLE, AUTO_CARD_MS } from "@/lib/motion";
-
-function ArrowRightIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
 
 const CARDS = [
   { icon: goodSleepDarkMode, iconW: 89,  iconH: 66, title: "The Constellation", body: "One Spot is a data point. Twelve Spots across four months is a Constellation. The fact that your worst sleep always follows your heaviest meeting days. The fact that your focus peaks in November and dips in March - every year, without fail. Waldo connected these dots for the long term goals.", footnote: "on it while you sleep." },
@@ -41,7 +34,7 @@ const SLOTS = [
 const T = `all ${DUR_SETTLE}ms ${EASE}`;
 
 export function FiveThingsSection() {
-  const { slotOf, offset, frontIndex, onClick, onMouseEnter, onMouseLeave, onTouchStart, onTouchEnd } = useCardStack(CARDS.length, AUTO_CARD_MS);
+  const { slotOf, frontIndex, onClick, onMouseEnter, onMouseLeave, onTouchStart, onTouchEnd } = useCardStack(CARDS.length, AUTO_CARD_MS);
   const FRONT = SLOTS.length - 1;
   const frontCardIdx = frontIndex;
   const frontCard = CARDS[frontCardIdx];
@@ -168,9 +161,9 @@ export function FiveThingsSection() {
       <div className="flex flex-col gap-[40px] items-center w-full">
         <h2 data-animate="headline" className="text-[#1a1a1a] text-[32px] lg:text-[48px] text-center px-4 lg:px-0" style={{ fontFamily: "var(--font-headline)", lineHeight: 1.1 }}>Five things Waldo does<br />while you get on with your day.</h2>
         <p data-animate="fade-up" className="text-[#1a1a1a] text-[18px] lg:text-[25px] text-center px-4 lg:px-0" style={{ fontFamily: "var(--font-headline)", lineHeight: 1.2 }}>Not just a suggestion or a notification.</p>
-        <a href="/waitlist" className="flex items-center gap-[4px] justify-center bg-[#1a1a1a] border border-[rgba(26,26,26,0.08)] border-solid text-[#fafaf8] text-[18px] text-center px-[36px] py-[22px] hover:bg-[#333] hover:scale-[1.02] transition-all" style={{ fontFamily: "var(--font-headline)", lineHeight: 1.3, borderRadius: "40px" }}>
-          Get Started <ArrowRightIcon />
-        </a>
+        <Link href="/waitlist" className="flex min-h-14 items-center justify-center rounded-full bg-[#1A1A1A] px-9 text-center text-[16px] font-medium text-[#FAFAF8] shadow-[0_1px_2px_rgba(0,0,0,.04),0_8px_24px_rgba(0,0,0,.05)] transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] hover:-translate-y-px hover:bg-[#272725] active:scale-[0.98]" style={{ fontFamily: "var(--font-body)", lineHeight: 1.2, letterSpacing: "-0.01em" }}>
+          Let Waldo in →
+        </Link>
       </div>
     </section>
   );

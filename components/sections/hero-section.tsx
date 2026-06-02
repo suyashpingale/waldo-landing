@@ -1,212 +1,510 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
+import { useEffect, useMemo, useState } from "react";
+import appleHealthAsset from "@/components/assets/health-apple -watch.png";
+import whoopAsset from "@/components/assets/health-whoop.png";
 
-function SlackCard() {
-  return (
-    <div className="absolute left-[6%] top-[18%] hidden w-[235px] -rotate-[9deg] rounded-[12px] bg-[#FAFAF8] px-5 py-4 shadow-[0_22px_46px_rgba(26,26,26,0.16)] lg:block">
-      <div className="flex items-center gap-1.5">
-        <span className="h-1.5 w-1.5 rounded-full bg-[#F97316]" />
-        <span
-          className="text-[8px] text-[#8D8D88]"
-          style={{ fontFamily: "var(--font-body)" }}
-        >
-          Slack
-        </span>
-        <span
-          className="ml-auto text-[8px] text-[#B7B7B0]"
-          style={{ fontFamily: "var(--font-body)" }}
-        >
-          11:49
-        </span>
-      </div>
-      <p
-        className="mt-1 truncate text-[12px] text-[#1A1A1A]"
-        style={{ fontFamily: "var(--font-body)", lineHeight: 1.2 }}
-      >
-        Need to talk about the sales review for Q1...
-      </p>
-      <p
-        className="mt-1 text-[9px] italic text-[#73736E]"
-        style={{ fontFamily: "var(--font-body)" }}
-      >
-        *Sunday, 11:43pm, really?*
-      </p>
-    </div>
-  );
+type MetricKey = "recovery" | "form" | "weight";
+
+type MetricState = {
+  key: MetricKey;
+  label: string;
+  value: number;
+  question: string;
+  read: string;
+  period: string;
+  zoneColor: string;
+  detail: Array<{ label: string; value: string; read: string }>;
+};
+
+const METRICS: MetricState[] = [
+  {
+    key: "recovery",
+    label: "Recovery",
+    value: 63,
+    question: "What did last night give you?",
+    read: "rested enough to push today.",
+    period: "past",
+    zoneColor: "#22C55E",
+    detail: [
+      { label: "Sleep", value: "5h 42m", read: "short, but workable." },
+      { label: "HRV", value: "38ms", read: "below baseline." },
+      { label: "Resting HR", value: "62", read: "steady enough." },
+    ],
+  },
+  {
+    key: "form",
+    label: "Form",
+    value: 76,
+    question: "What can you handle right now?",
+    read: "steady, with one rough edge.",
+    period: "present",
+    zoneColor: "#FB943F",
+    detail: [
+      { label: "Stress", value: "0.58", read: "watching the climb." },
+      { label: "Motion", value: "4,200", read: "enough movement." },
+      { label: "Circadian", value: "aligned", read: "morning is usable." },
+    ],
+  },
+  {
+    key: "weight",
+    label: "Weight",
+    value: 84,
+    question: "What is today asking of you?",
+    read: "heavy day; Waldo trims demand.",
+    period: "demand",
+    zoneColor: "#F43F5E",
+    detail: [
+      { label: "The Stack", value: "6 blocks", read: "too front-loaded." },
+      { label: "Signal Pressure", value: "high", read: "triage only." },
+      { label: "Load", value: "14/21", read: "strain is real." },
+    ],
+  },
+];
+
+const SOURCE_APPS = [
+  {
+    alt: "Apple Health watch screen",
+    image: appleHealthAsset,
+    label: "Apple Health",
+    read: "read at 6:12am.",
+    value: "24/7",
+  },
+  {
+    alt: "WHOOP sleep data screen",
+    image: whoopAsset,
+    label: "WHOOP",
+    read: "sleep context imported.",
+    value: "8:44",
+  },
+] as const;
+
+const POSITIONS = [
+  { left: "50%", top: "8%", x: "-50%", rotate: "-1deg", scale: 1.04, depth: 16, opacity: 1 },
+  { left: "13%", top: "21%", x: "0", rotate: "-7deg", scale: 0.93, depth: 9, opacity: 0.88 },
+  { left: "77%", top: "22%", x: "0", rotate: "6deg", scale: 0.93, depth: 11, opacity: 0.88 },
+] as const;
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduced(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return reduced;
 }
 
-function RecoveryBadge() {
-  const size = 120;
-  const radius = 46;
+function MetricDonut({ metric, compact = false }: { compact?: boolean; metric: MetricState }) {
+  const size = compact ? 112 : 132;
+  const radius = compact ? 43 : 50;
+  const stroke = compact ? 10 : 12;
   const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference * (1 - metric.value / 100);
 
   return (
-    <div className="absolute right-[20%] top-[8%] hidden h-[118px] w-[118px] rounded-full bg-[#FAFAF8] p-2 shadow-[0_20px_44px_rgba(26,26,26,0.16)] lg:block">
-      <svg width={size - 16} height={size - 16} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
-        <circle cx="60" cy="60" r={radius} fill="#EFF7D8" stroke="#DCECC0" strokeWidth="14" />
+    <div className="relative flex shrink-0 items-center justify-center rounded-full bg-white p-3 shadow-[inset_0_0_0_1px_var(--border-default)]">
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        role="img"
+        aria-label={`${metric.label} ${metric.value} percent, ${metric.read}`}
+      >
         <circle
-          cx="60"
-          cy="60"
+          cx={size / 2}
+          cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#8CD91F"
-          strokeWidth="14"
+          stroke="rgba(26,26,26,0.08)"
+          strokeWidth={stroke}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={metric.zoneColor}
+          strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}
-          strokeDashoffset={circumference * 0.37}
-          transform="rotate(-88 60 60)"
+          strokeDashoffset={dashOffset}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius - stroke * 1.35}
+          fill="#FAFAF8"
+          stroke="rgba(26,26,26,0.08)"
+          strokeWidth="1"
         />
         <text
-          x="60"
-          y="58"
+          x={size / 2}
+          y={size / 2 - 2}
           textAnchor="middle"
           dominantBaseline="middle"
           fill="#1A1A1A"
-          style={{ fontFamily: "var(--font-body)", fontSize: 26, fontWeight: 700 }}
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: compact ? 24 : 28,
+            fontWeight: 600,
+            letterSpacing: "-0.01em",
+          }}
         >
-          63%
+          {metric.value}%
         </text>
         <text
-          x="60"
-          y="78"
+          x={size / 2}
+          y={size / 2 + (compact ? 22 : 25)}
           textAnchor="middle"
           dominantBaseline="middle"
-          fill="#7A7A74"
-          style={{ fontFamily: "var(--font-body)", fontSize: 11 }}
+          fill="#6B6B68"
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: compact ? 10 : 11,
+            fontWeight: 500,
+            letterSpacing: "-0.01em",
+          }}
         >
-          Recovery
+          {metric.label}
         </text>
       </svg>
     </div>
   );
 }
 
-function HeartTile() {
-  return (
-    <div className="absolute right-[13.8%] top-[13.2%] hidden h-[52px] w-[52px] rotate-[13deg] items-center justify-center rounded-[12px] bg-[#FAFAF8] shadow-[0_18px_36px_rgba(26,26,26,0.14)] lg:flex">
-      <span
-        className="text-[26px]"
-        style={{ filter: "drop-shadow(0 6px 8px rgba(244,63,94,0.35))" }}
-      >
-        ♥
-      </span>
-    </div>
-  );
-}
+function MetricCard({
+  active,
+  metric,
+  mouse,
+  position,
+  reducedMotion,
+}: {
+  active: boolean;
+  metric: MetricState;
+  mouse: { x: number; y: number };
+  position: (typeof POSITIONS)[number];
+  reducedMotion: boolean;
+}) {
+  const parallaxX = reducedMotion ? 0 : mouse.x * position.depth;
+  const parallaxY = reducedMotion ? 0 : mouse.y * position.depth;
 
-function StressTile() {
-  const points = "4,36 16,31 24,18 34,23 44,12 53,18 64,10";
-
   return (
-    <div className="absolute right-[5.8%] top-[10.2%] hidden h-[80px] w-[70px] -rotate-[5deg] rounded-[9px] bg-[#FAFAF8] px-2 py-2 shadow-[0_18px_36px_rgba(26,26,26,0.14)] lg:block">
-      <svg viewBox="0 0 70 46" className="h-[46px] w-full" aria-hidden="true">
-        {[12, 24, 36, 48, 60].map((x) => (
-          <line key={`v-${x}`} x1={x} x2={x} y1="0" y2="44" stroke="#ECEBE6" strokeWidth="1" />
-        ))}
-        {[11, 22, 33].map((y) => (
-          <line key={`h-${y}`} x1="0" x2="70" y1={y} y2={y} stroke="#ECEBE6" strokeWidth="1" />
-        ))}
-        <polyline points={points} fill="none" stroke="#F97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      <div className="flex items-center gap-1">
-        <span
-          className="text-[8px] font-medium text-[#1A1A1A]"
-          style={{ fontFamily: "var(--font-body)" }}
-        >
-          Stress
-        </span>
-        <span
-          className="text-[6px] text-[#73736E]"
-          style={{ fontFamily: "var(--font-body)" }}
-        >
-          Elevated
-        </span>
+    <article
+      className="hero-floating-card absolute hidden w-[min(250px,24vw)] rounded-[24px] border border-[rgba(26,26,26,0.08)] bg-[#FAFAF8] p-4 text-left shadow-[0_22px_46px_rgba(26,26,26,.16)] md:block xl:w-[258px]"
+      style={
+        {
+          left: position.left,
+          opacity: position.opacity,
+          top: position.top,
+          "--card-rotate": position.rotate,
+          "--card-scale": position.scale,
+          "--parallax-x": `${parallaxX}px`,
+          "--parallax-y": `${parallaxY}px`,
+          transform: `translate3d(calc(${position.x} + ${parallaxX}px), ${parallaxY}px, 0) rotate(${position.rotate}) scale(${position.scale})`,
+          zIndex: active ? 12 : 8,
+        } as CSSProperties
+      }
+    >
+      <div className="flex items-start gap-3">
+        <MetricDonut compact metric={metric} />
+        <div className="min-w-0 pt-1">
+          <p
+            className="text-[13px] font-medium text-[#1A1A1A]"
+            style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.2 }}
+          >
+            {metric.label}
+          </p>
+          <p
+            className="mt-1 text-[12px] text-[#6B6B68]"
+            style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.3 }}
+          >
+            {metric.question}
+          </p>
+        </div>
       </div>
-    </div>
-  );
-}
-
-function ActivityCard() {
-  const bars = [12, 22, 15, 30, 36, 18, 42, 24, 38, 28, 44, 18, 32, 52, 24, 39, 20, 45, 36, 30, 48, 18];
-
-  return (
-    <div className="absolute right-[6.5%] top-[25.5%] hidden w-[190px] rotate-[10deg] rounded-[12px] bg-[#FAFAF8] px-4 py-3 shadow-[0_22px_46px_rgba(26,26,26,0.16)] lg:block">
       <p
-        className="text-[15px] font-black uppercase italic text-[#1A1A1A]"
-        style={{ fontFamily: "var(--font-body)", lineHeight: 1 }}
+        className="mt-3 text-[13px] text-[#9A9A96]"
+        style={{
+          fontFamily: "var(--font-body)",
+          fontStyle: "oblique 10deg",
+          letterSpacing: "-0.01em",
+          lineHeight: 1.3,
+        }}
       >
-        Activity <span className="text-[#F43F5E]">→345</span>{" "}
-        <span className="text-[#84CC16]">→43</span>{" "}
-        <span className="text-[#06B6D4]">→10</span>
+        {metric.value}% — {metric.read}
       </p>
-      <div className="mt-2 grid h-[44px] grid-cols-[repeat(22,minmax(0,1fr))] items-end gap-[2px] border-b border-[#D8D8D2]">
-        {bars.map((height, index) => (
-          <span
-            key={index}
-            className="rounded-t-[1px]"
-            style={{
-              height,
-              backgroundColor: index < 9 ? "#F43F5E" : index < 16 ? "#84CC16" : "#06B6D4",
-            }}
-          />
+    </article>
+  );
+}
+
+function MobileMetricCard({ metric }: { metric: MetricState }) {
+  return (
+    <article className="mx-auto flex w-full max-w-[342px] items-center gap-4 rounded-[24px] border border-[rgba(26,26,26,0.08)] bg-[#FAFAF8] p-4 text-left shadow-[0_22px_46px_rgba(26,26,26,.13)] md:hidden">
+      <MetricDonut compact metric={metric} />
+      <div className="min-w-0">
+        <p
+          className="text-[14px] font-medium text-[#1A1A1A]"
+          style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.2 }}
+        >
+          {metric.label} {metric.value}%
+        </p>
+        <p
+          className="mt-1 text-[13px] text-[#6B6B68]"
+          style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.35 }}
+        >
+          {metric.question}
+        </p>
+        <p
+          className="mt-2 text-[12px] text-[#9A9A96]"
+          style={{ fontFamily: "var(--font-body)", fontStyle: "oblique 10deg", letterSpacing: "-0.01em", lineHeight: 1.3 }}
+        >
+          {metric.read}
+        </p>
+      </div>
+    </article>
+  );
+}
+
+function SignalCard({ metric }: { metric: MetricState }) {
+  return (
+    <article className="absolute left-[2%] top-[60%] hidden w-[222px] rounded-[24px] border border-[rgba(26,26,26,0.08)] bg-[#FAFAF8] p-4 shadow-[0_1px_2px_rgba(0,0,0,.04),0_8px_24px_rgba(0,0,0,.05)] xl:block">
+      <p
+        className="text-[13px] font-medium text-[#1A1A1A]"
+        style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.2 }}
+      >
+        {metric.period}
+      </p>
+      <div className="mt-4 grid gap-2">
+        {metric.detail.map((item) => (
+          <div
+            key={item.label}
+            className="rounded-[12px] bg-white px-3 py-2 shadow-[inset_0_0_0_1px_rgba(26,26,26,0.08)]"
+          >
+            <div className="flex items-baseline justify-between gap-3">
+              <span
+                className="text-[12px] text-[#6B6B68]"
+                style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.2 }}
+              >
+                {item.label}
+              </span>
+              <span
+                className="text-[13px] font-medium text-[#1A1A1A]"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontVariantNumeric: "tabular-nums",
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.2,
+                }}
+              >
+                {item.value}
+              </span>
+            </div>
+            <p
+              className="mt-1 text-[11px] text-[#9A9A96]"
+              style={{ fontFamily: "var(--font-body)", fontStyle: "oblique 10deg", letterSpacing: "-0.01em", lineHeight: 1.25 }}
+            >
+              {item.read}
+            </p>
+          </div>
         ))}
       </div>
-      <div
-        className="mt-1 flex justify-between text-[7px] text-[#8D8D88]"
-        style={{ fontFamily: "var(--font-body)" }}
-      >
-        <span>12AM</span>
-        <span>6AM</span>
-        <span>12PM</span>
-        <span>6PM</span>
+    </article>
+  );
+}
+
+function SourceAppCard({
+  card,
+  index,
+  mouse,
+  reducedMotion,
+}: {
+  card: (typeof SOURCE_APPS)[number];
+  index: number;
+  mouse: { x: number; y: number };
+  reducedMotion: boolean;
+}) {
+  const depth = index === 0 ? 7 : 10;
+  const parallaxX = reducedMotion ? 0 : mouse.x * depth;
+  const parallaxY = reducedMotion ? 0 : mouse.y * depth;
+
+  return (
+    <article
+      className="hero-floating-card absolute hidden w-[164px] rounded-[24px] border border-[rgba(26,26,26,0.08)] bg-[#FAFAF8] p-3 shadow-[0_1px_2px_rgba(0,0,0,.04),0_8px_24px_rgba(0,0,0,.05)] sm:block"
+      style={
+        {
+          left: index === 0 ? "16%" : "72%",
+          top: index === 0 ? "60%" : "58%",
+          "--card-rotate": index === 0 ? "5deg" : "-5deg",
+          "--card-scale": 1,
+          "--parallax-x": `${parallaxX}px`,
+          "--parallax-y": `${parallaxY}px`,
+          transform: `translate3d(${parallaxX}px, ${parallaxY}px, 0) rotate(${index === 0 ? "5deg" : "-5deg"})`,
+          zIndex: 9,
+        } as CSSProperties
+      }
+    >
+      <div className="h-[82px] overflow-hidden rounded-[12px] bg-white shadow-[inset_0_0_0_1px_rgba(26,26,26,0.08)]">
+        <Image
+          src={card.image}
+          alt={card.alt}
+          width={148}
+          height={92}
+          className="h-full w-full object-cover object-top"
+          sizes="148px"
+        />
       </div>
+      <div className="mt-3 flex items-baseline justify-between gap-3">
+        <p
+          className="truncate text-[12px] font-medium text-[#1A1A1A]"
+          style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.15 }}
+        >
+          {card.label}
+        </p>
+        <p
+          className="text-[12px] font-medium text-[#1A1A1A]"
+          style={{ fontFamily: "var(--font-body)", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.01em", lineHeight: 1.15 }}
+        >
+          {card.value}
+        </p>
+      </div>
+      <p
+        className="mt-1 text-[11px] text-[#9A9A96]"
+        style={{ fontFamily: "var(--font-body)", fontStyle: "oblique 10deg", letterSpacing: "-0.01em", lineHeight: 1.25 }}
+      >
+        {card.read}
+      </p>
+    </article>
+  );
+}
+
+function StateDots({
+  active,
+  onSelect,
+}: {
+  active: number;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div className="mt-7 flex items-center justify-center gap-2" aria-label="Hero state selector">
+      {METRICS.map((metric, index) => (
+        <button
+          key={metric.key}
+          type="button"
+          aria-label={`Show ${metric.label}`}
+          aria-current={active === index}
+          className={`h-2 rounded-full transition-[width,background-color,opacity] duration-[600ms] ease-[cubic-bezier(0.19,1,0.22,1)] ${
+            active === index ? "w-8 bg-[#1A1A1A]" : "w-2 bg-[rgba(26,26,26,0.22)]"
+          }`}
+          onClick={() => onSelect(index)}
+        />
+      ))}
     </div>
   );
 }
 
 export function HeroSection() {
+  const reducedMotion = usePrefersReducedMotion();
+  const [active, setActive] = useState(0);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (reducedMotion) return;
+
+    const id = window.setInterval(() => {
+      setActive((index) => (index + 1) % METRICS.length);
+    }, 5000);
+
+    return () => window.clearInterval(id);
+  }, [reducedMotion]);
+
+  const orderedMetrics = useMemo(() => {
+    return METRICS.map((metric, index) => {
+      const offset = (index - active + METRICS.length) % METRICS.length;
+      return { metric, position: POSITIONS[offset], offset };
+    });
+  }, [active]);
+
+  const activeMetric = METRICS[active];
+
   return (
     <section
-      className="relative min-h-[760px] overflow-hidden bg-[#F4F3F0] sm:min-h-[820px] lg:min-h-0"
+      id="hero"
+      className="relative isolate flex min-h-[860px] w-screen flex-col overflow-hidden bg-[#F4F3F0] px-4 pb-14 pt-[132px] sm:min-h-[880px] lg:min-h-[920px] lg:pt-[116px]"
       style={{
-        aspectRatio: "1440 / 989",
-        borderRadius: 0,
         marginLeft: "calc(50% - 50vw)",
         marginRight: "calc(50% - 50vw)",
-        width: "100vw",
       }}
+      onPointerMove={(event) => {
+        if (reducedMotion) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        setMouse({
+          x: ((event.clientX - rect.left) / rect.width - 0.5) * 2,
+          y: ((event.clientY - rect.top) / rect.height - 0.5) * 2,
+        });
+      }}
+      onPointerLeave={() => setMouse({ x: 0, y: 0 })}
     >
-      <Image
-        src="/assets/hero-bg.svg"
-        alt=""
-        fill
-        priority
-        sizes="(max-width: 1440px) calc(100vw - 40px), 1440px"
-        className="pointer-events-none select-none object-fill"
-      />
+      <div className="hero-orange-dome pointer-events-none absolute left-1/2 top-0 z-0 h-[clamp(360px,42vw,560px)] w-[min(1180px,calc(100vw-24px))] -translate-x-1/2 rounded-b-[999px]" />
+      <div className="pointer-events-none absolute left-1/2 top-[84px] z-0 h-[min(520px,46vw)] w-[min(980px,calc(100vw-40px))] -translate-x-1/2 rounded-b-[999px] border border-[rgba(251,148,63,0.12)]" />
 
-      <SlackCard />
-      <RecoveryBadge />
-      <HeartTile />
-      <StressTile />
-      <ActivityCard />
+      <div className="relative z-10 mx-auto h-[318px] w-full max-w-[1160px] sm:h-[350px] lg:h-[384px]">
+        {orderedMetrics.map(({ metric, position, offset }) => (
+          <MetricCard
+            key={metric.key}
+            active={offset === 0}
+            metric={metric}
+            mouse={mouse}
+            position={position}
+            reducedMotion={reducedMotion}
+          />
+        ))}
 
-      <div className="absolute left-1/2 top-[30.5%] z-20 w-[8.2%] min-w-[86px] max-w-[134px] -translate-x-1/2">
-        <Image
-          src="/illustrations/default.svg"
-          alt="Waldo"
-          width={169}
-          height={131}
-          priority
-          className="h-auto w-full drop-shadow-[0_7px_0_rgba(255,255,255,0.68)]"
-        />
+        <MobileMetricCard metric={activeMetric} />
+
+        {SOURCE_APPS.map((card, index) => (
+          <SourceAppCard
+            key={card.label}
+            card={card}
+            index={index}
+            mouse={mouse}
+            reducedMotion={reducedMotion}
+          />
+        ))}
+
+        <SignalCard metric={activeMetric} />
+
+        <div className="pointer-events-none absolute left-1/2 top-[calc(100%-120px)] z-10 w-[112px] -translate-x-1/2 sm:top-[calc(100%-128px)] sm:w-[132px] lg:top-[calc(100%-142px)] lg:w-[148px]">
+          <Image
+            src="/illustrations/default.svg"
+            alt="Waldo"
+            width={169}
+            height={131}
+            priority
+            className="h-auto w-full drop-shadow-[0_18px_28px_rgba(26,26,26,0.18)]"
+          />
+        </div>
       </div>
 
-      <div className="absolute left-1/2 top-[52%] z-20 flex w-[74%] max-w-[760px] -translate-x-1/2 flex-col items-center text-center">
+      <div className="relative z-10 mx-auto mt-8 flex w-full max-w-[780px] flex-col items-center text-center sm:mt-5 lg:mt-8">
         <h1
           data-animate="headline"
-          className="text-[34px] text-[#1A1A1A] sm:text-[54px] lg:text-[62px]"
-          style={{ fontFamily: "var(--font-headline)", lineHeight: 1.08 }}
+          className="text-[#1A1A1A]"
+          style={{
+            fontFamily: "var(--font-headline)",
+            fontSize: "clamp(2.25rem,1rem + 5vw,3.875rem)",
+            fontWeight: 400,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.06,
+          }}
         >
           The first app that knows
           <br />
@@ -215,22 +513,29 @@ export function HeroSection() {
           something about it.
         </h1>
 
-        <p
-          className="mt-8 max-w-[620px] text-[17px] text-[#73736E] sm:text-[20px]"
-          style={{ fontFamily: "var(--font-body)", lineHeight: 1.38 }}
+        <div
+          className="mt-7 max-w-[58ch] text-[16px] text-[#6B6B68]"
+          style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.5 }}
         >
-          Waldo scans complex data from your health wearable, and{" "}
-          <br className="hidden sm:block" />
-          figures your day before you smell your morning coffee.
-        </p>
+          <p>Waldo monitors your health wearable 24/7 and understands what your body is actually telling you.</p>
+          <p className="mt-1 font-medium text-[#1A1A1A]">Then it does something about it.</p>
+          <p
+            className="mt-3 text-[13px] text-[#9A9A96]"
+            style={{ fontStyle: "oblique 10deg", lineHeight: 1.3 }}
+          >
+            quietly, before the day gets heavy.
+          </p>
+        </div>
 
         <Link
           href="/waitlist"
-          className="mt-14 inline-flex min-h-[60px] items-center justify-center rounded-full bg-[#1A1A1A] px-10 text-[18px] text-[#FAFAF8] shadow-[0_18px_32px_rgba(26,26,26,0.14)] transition-[transform,background-color] duration-150 hover:bg-[#2B2B2B] active:scale-[0.98]"
-          style={{ fontFamily: "var(--font-headline)" }}
+          className="mt-8 inline-flex h-14 items-center justify-center rounded-full bg-[#1A1A1A] px-8 text-[16px] font-medium text-[#FAFAF8] shadow-[0_1px_2px_rgba(0,0,0,.04),0_8px_24px_rgba(0,0,0,.05)] transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] hover:-translate-y-px hover:bg-[#272725] active:scale-[0.98] sm:px-9"
+          style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: 1.2 }}
         >
-          Get Started -&gt;
+          Let Waldo in →
         </Link>
+
+        <StateDots active={active} onSelect={setActive} />
       </div>
     </section>
   );

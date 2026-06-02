@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useRef, useCallback } from "react";
 import { WaldoLogoFull } from "./waldo-logo-full";
 import { NavLink } from "./nav-link";
@@ -99,7 +100,7 @@ export function Navbar({
         style={{ boxShadow: "0 1px 10px rgba(0,0,0,0.05)" }}
       >
         {/* Logo area — links to home */}
-        <a
+        <Link
           href="/"
           className="relative flex items-center justify-center w-[142px] h-[44px] shrink-0 cursor-pointer"
           onMouseEnter={handleLogoHover}
@@ -107,7 +108,7 @@ export function Navbar({
           aria-label="Waldo home"
         >
           <WaldoLogoFull wagging={logoWag} width={118} />
-        </a>
+        </Link>
 
         {/* Desktop — nav links */}
         <div
@@ -145,13 +146,13 @@ export function Navbar({
         </button>
 
         {/* CTA */}
-        <a
+        <Link
           href="/waitlist"
-          className="hidden lg:flex items-center justify-center bg-[#1a1a1a] text-[#fafaf8] px-[24px] py-[18px] rounded-[30px] whitespace-nowrap shrink-0 hover:bg-[#333] transition-colors"
-          style={{ fontFamily: "var(--font-headline)", fontSize: "14px", lineHeight: 1.3 }}
+          className="hidden h-12 items-center justify-center rounded-full bg-[#1A1A1A] px-6 text-[14px] font-medium text-[#FAFAF8] shadow-[0_1px_2px_rgba(0,0,0,.04),0_8px_24px_rgba(0,0,0,.05)] transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] hover:-translate-y-px hover:bg-[#272725] active:scale-[0.98] lg:flex"
+          style={{ fontFamily: "var(--font-body)", lineHeight: 1.2, letterSpacing: "-0.01em" }}
         >
-          Get early access
-        </a>
+          Let Waldo in →
+        </Link>
       </div>
 
       {/* ── Mobile dropdown ───────────────────────────────────── */}
@@ -180,14 +181,14 @@ export function Navbar({
               </div>
             ))}
             <div className="p-4">
-              <a
+              <Link
                 href="/waitlist"
                 onClick={closeMenu}
-                className="flex items-center justify-center bg-[#1a1a1a] text-[#fafaf8] px-6 py-4 rounded-[24px] w-full"
-                style={{ fontFamily: "var(--font-headline)", fontSize: "14px" }}
+                className="flex h-12 w-full items-center justify-center rounded-full bg-[#1A1A1A] px-6 text-[14px] font-medium text-[#FAFAF8]"
+                style={{ fontFamily: "var(--font-body)", letterSpacing: "-0.01em" }}
               >
-                Get early access
-              </a>
+                Let Waldo in →
+              </Link>
             </div>
           </div>
         </>

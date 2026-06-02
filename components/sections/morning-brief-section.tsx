@@ -4,20 +4,13 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import goodSleepDarkMode from "@/components/assets/good-sleep-dark-mode.svg";
 import vectorSpot        from "@/components/assets/Vector-1.svg";
 import vectorBrief       from "@/components/assets/Vector.svg";
 import { useCardStack }  from "@/hooks/use-card-stack";
 import { MobileDots }   from "@/components/mobile-dots";
 import { EASE, DUR_SETTLE, AUTO_CARD_MS } from "@/lib/motion";
-
-function ArrowRightIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
 
 const CARDS = [
   { icon: vectorSpot,        iconW: 90,  iconH: 69, title: "The Spot",          body: "Not a trend. Not a report. One thing, clearly said. That's a Spot. Waldo found it in six weeks of Tuesdays and Thursdays that looked ordinary.\n\nYou wouldn't have found it. Spots show up when there's something worth saying. Not before.",  footnote: "something Waldo noticed." },
@@ -33,7 +26,7 @@ const BACK: { rotate: string; left: string; top: string }[] = [
 const T = `all ${DUR_SETTLE}ms ${EASE}`;
 
 export function MorningBriefSection() {
-  const { slotOf, offset, frontIndex, onClick, onMouseEnter, onMouseLeave, onTouchStart, onTouchEnd } = useCardStack(CARDS.length, AUTO_CARD_MS);
+  const { slotOf, frontIndex, onClick, onMouseEnter, onMouseLeave, onTouchStart, onTouchEnd } = useCardStack(CARDS.length, AUTO_CARD_MS);
   const FRONT = CARDS.length - 1;
   const frontCardIdx = frontIndex;
   const frontCard = CARDS[frontCardIdx];
@@ -125,9 +118,9 @@ export function MorningBriefSection() {
         <p data-animate="fade-up" className="font-normal text-[#6b6b68] text-[14px] text-center px-6 lg:px-0" style={{ fontFamily: "var(--font-body)", fontVariationSettings: "'opsz' 14", lineHeight: 1.3, maxWidth: "455px" }}>
           It reschedules meetings, reprioritises tasks, and intervenes based on HRV, sleep, and circadian patterns - without being asked. You never open a dashboard to manage health. Waldo handles it.
         </p>
-        <a href="/waitlist" className="flex items-center gap-[4px] justify-center bg-[#1a1a1a] border border-[rgba(26,26,26,0.08)] border-solid text-[#fafaf8] text-[18px] text-center px-[36px] py-[22px] hover:bg-[#333] hover:scale-[1.02] transition-all" style={{ fontFamily: "var(--font-headline)", lineHeight: 1.3, borderRadius: "40px" }}>
-          Get Started <ArrowRightIcon />
-        </a>
+        <Link href="/waitlist" className="flex min-h-14 items-center justify-center rounded-full bg-[#1A1A1A] px-9 text-center text-[16px] font-medium text-[#FAFAF8] shadow-[0_1px_2px_rgba(0,0,0,.04),0_8px_24px_rgba(0,0,0,.05)] transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] hover:-translate-y-px hover:bg-[#272725] active:scale-[0.98]" style={{ fontFamily: "var(--font-body)", lineHeight: 1.2, letterSpacing: "-0.01em" }}>
+          Let Waldo in →
+        </Link>
       </div>
     </section>
   );
