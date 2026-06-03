@@ -48,6 +48,13 @@
   --panel-muted: var(--text-secondary);
   --panel-tertiary: var(--text-tertiary);
   --ease-premium: cubic-bezier(0.19, 1, 0.22, 1);
+  --bar-track: var(--surface-t4);
+  --bar-track-inset: inset 0 1px 2px rgba(26,26,26,0.06);
+  --bar-fill-ink: var(--ink);
+  --bar-fill-neutral: var(--text-tertiary);
+  --bar-h: 6px;
+  --bar-radius: 999px;
+  --bar-dwell: 6s;
   --zone-peak: #22C55E;
   --zone-heavy: color-mix(in srgb, var(--ink) 72%, var(--accent));
 }
@@ -77,6 +84,7 @@ html[data-theme="dark"] {
   --cta-hover: #E8E6E0;
   --mascot-shadow: rgba(0, 0, 0, 0.3);
   --hero-dome-opacity: 0.34;
+  --bar-track-inset: none;
   --zone-heavy: color-mix(in srgb, #FAFAF8 72%, var(--accent));
   color-scheme: dark;
 }
@@ -383,11 +391,6 @@ body {
   70%, 81% { transform: translateY(-62.5%); }
   84%, 95% { transform: translateY(-75%); }
   100% { transform: translateY(-87.5%); }
-}
-
-@keyframes section-four-progress {
-  from { width: 0%; }
-  to   { width: 100%; }
 }
 
 .where-ticker-track {

@@ -4,13 +4,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Aside, withHighlights } from "@/components/landing-primitives";
 
-const AUTO_DWELL_MS = 5600;
-const AUTO_SCROLL_MS = 2200;
-const PAUSE_AFTER_INTERACTION_MS = 9000;
-
-function easeInOutCubic(progress: number) {
-  return progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-}
+const AUTO_DWELL_MS = 6000;
+const AUTO_SCROLL_MS = 1800;
 
 type VisualKind = "morning" | "stress" | "patterns" | "long-game";
 type HealthTone = "sleep" | "heart" | "stress" | "recovery" | "motion";
@@ -125,7 +120,16 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-function PlayPauseIcon({ playing }: { playing: boolean }) {
+function PlayPauseIcon({ playing, ended }: { playing: boolean; ended: boolean }) {
+  if (ended) {
+    return (
+      <svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden>
+        <path d="M15.4 8.8a5.8 5.8 0 1 1-1.8-4.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <path d="M15.5 3.4v4.1h-4.1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
   if (playing) {
     return (
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
@@ -185,8 +189,7 @@ function HealthIcon({ tone }: { tone: HealthTone }) {
 
 function MockupShell({ children }: { children: ReactNode }) {
   return (
-    <div className="relative min-h-[300px] overflow-hidden rounded-[26px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-4 sm:min-h-[360px] sm:p-5 lg:min-h-[430px]">
-      <div className="absolute inset-x-8 bottom-[-56px] h-28 rounded-[999px] bg-[var(--surface-t3)] blur-2xl" aria-hidden />
+    <div className="relative min-h-[300px] overflow-hidden rounded-[20px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-4 sm:min-h-[360px] sm:rounded-[22px] sm:p-5 lg:min-h-[430px] lg:rounded-[24px]">
       <div className="relative h-full">{children}</div>
     </div>
   );
@@ -195,7 +198,7 @@ function MockupShell({ children }: { children: ReactNode }) {
 function PhonePlaceholder({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`relative mx-auto h-[330px] w-[174px] rounded-[34px] border-[7px] border-[var(--ink)] bg-[var(--surface-t3)] p-3 shadow-[var(--shadow-floating)] sm:h-[390px] sm:w-[206px] ${className}`}
+      className={`relative mx-auto h-[330px] w-[174px] rounded-[34px] border-[7px] border-[var(--ink)] bg-[var(--surface-t3)] p-3 sm:h-[390px] sm:w-[206px] ${className}`}
     >
       <div className="absolute left-1/2 top-3 h-5 w-20 -translate-x-1/2 rounded-full bg-[var(--surface-t4)]" />
       <div className="mt-8 flex h-[calc(100%-2rem)] flex-col gap-3 overflow-hidden rounded-[20px] bg-[var(--surface-t2)] p-3 text-[var(--ink)]">
@@ -212,7 +215,7 @@ function VisualPlaceholder({ kind }: { kind: VisualKind }) {
         <div className="grid h-full gap-4 lg:grid-cols-[0.85fr_1.15fr]">
           <div className="flex flex-col justify-center gap-3">
             {["Investor call stays", "Low-priority sync moved", "Recovery block protected"].map((item, index) => (
-              <div key={item} className="rounded-[10px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4">
+              <div key={item} className="rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4">
                 <p className="type-label text-[var(--ink)]">{item}</p>
                 <p className="type-aside mt-1">handled quietly.</p>
                 <div className="mt-3 h-2 rounded-full bg-[var(--surface-t4)]">
@@ -244,7 +247,7 @@ function VisualPlaceholder({ kind }: { kind: VisualKind }) {
           {["heavy meeting day", "late bedtime", "low recovery", "quiet Friday", "better window"].map((label, index) => (
             <div
               key={label}
-              className="absolute rounded-full border border-[var(--border-default)] bg-[var(--surface-t2)] px-4 py-3 shadow-[var(--shadow-card)]"
+              className="absolute rounded-full border border-[var(--border-default)] bg-[var(--surface-t2)] px-4 py-3"
               style={{
                 left: `${12 + (index % 3) * 28}%`,
                 top: `${18 + Math.floor(index / 3) * 38 + (index % 2) * 8}%`,
@@ -257,7 +260,7 @@ function VisualPlaceholder({ kind }: { kind: VisualKind }) {
             <path d="M112 116 C180 90 250 190 315 146 C360 116 416 170 452 252" stroke="currentColor" strokeWidth="2" strokeDasharray="7 8" />
             <path d="M198 260 C230 202 300 220 356 120" stroke="currentColor" strokeWidth="2" strokeDasharray="7 8" />
           </svg>
-          <div className="absolute bottom-5 left-5 right-5 rounded-[20px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5 shadow-[var(--shadow-card)]">
+          <div className="absolute bottom-5 left-5 right-5 rounded-[16px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5">
             <p className="type-label text-[var(--ink)]">Pattern found</p>
             <p className="type-body tone-secondary mt-2">Your worst sleep follows the heaviest meeting days.</p>
           </div>
@@ -274,12 +277,12 @@ function VisualPlaceholder({ kind }: { kind: VisualKind }) {
             {Array.from({ length: 30 }).map((_, index) => (
               <div
                 key={index}
-                className="aspect-square rounded-[10px] border border-[var(--border-default)] bg-[var(--surface-t2)]"
+                className="aspect-square rounded-[8px] border border-[var(--border-default)] bg-[var(--surface-t2)]"
                 style={{ opacity: index % 7 === 0 || index % 11 === 0 ? 1 : 0.45 }}
               />
             ))}
           </div>
-          <div className="rounded-[22px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5">
+          <div className="rounded-[16px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5">
             <p className="type-label text-[var(--ink)]">The Tuesday Crash</p>
             <p className="type-body tone-secondary mt-2">A weekly dip, caught before it becomes the week.</p>
           </div>
@@ -305,7 +308,7 @@ function VisualPlaceholder({ kind }: { kind: VisualKind }) {
         </PhonePlaceholder>
         <div className="flex flex-col justify-center gap-3">
           {["Calendar softened", "Focus held", "Sleep debt noticed"].map((item) => (
-            <div key={item} className="rounded-[18px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4">
+            <div key={item} className="rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4">
               <p className="type-label text-[var(--ink)]">{item}</p>
               <p className="type-aside mt-1">one less thing to decide.</p>
             </div>
@@ -318,8 +321,8 @@ function VisualPlaceholder({ kind }: { kind: VisualKind }) {
 
 function HealthCard({ tone, headline, body }: HealthSlide["cards"][number]) {
   return (
-    <article className="flex min-h-[190px] flex-col justify-between rounded-[22px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--border-default)] bg-[var(--surface-t2)] text-[var(--ink)]">
+    <article className="flex min-h-[190px] flex-col justify-between rounded-[20px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5">
+      <div className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-t2)] text-[var(--ink)]">
         <HealthIcon tone={tone} />
       </div>
       <div className="mt-5">
@@ -373,43 +376,85 @@ export function AlreadyDoneSection() {
   const reducedMotion = usePrefersReducedMotion();
   const trackRef = useRef<HTMLDivElement>(null);
   const scrollAnimationRef = useRef<number | null>(null);
+  const progressAnimationRef = useRef<number | null>(null);
+  const progressRef = useRef(0);
+  const lastProgressTickRef = useRef<number | null>(null);
   const scrollSnapTypeRef = useRef<string | null>(null);
   const programmaticScrollRef = useRef(false);
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(true);
-  const [manualPauseUntil, setManualPauseUntil] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [ended, setEnded] = useState(false);
+  const [interactionPaused, setInteractionPaused] = useState(false);
+  const [documentHidden, setDocumentHidden] = useState(false);
   const [isScrollAnimating, setIsScrollAnimating] = useState(false);
 
-  const shouldAutoPlay = playing && !reducedMotion;
+  const shouldTickProgress = playing && !ended && !reducedMotion && !interactionPaused && !documentHidden && !isScrollAnimating;
+  const activeSlide = slides[active];
+  const activeLabel = activeSlide.tab;
+
+  const setProgressValue = (value: number) => {
+    const bounded = Math.max(0, Math.min(1, value));
+    progressRef.current = bounded;
+    setProgress(bounded);
+  };
 
   useEffect(() => {
     if (reducedMotion) setPlaying(false);
   }, [reducedMotion]);
 
   useEffect(() => {
-    if (!shouldAutoPlay) return;
-    if (active >= slides.length - 1) {
-      if (!isScrollAnimating) setPlaying(false);
-      return;
-    }
-
-    const remainingPause = manualPauseUntil - Date.now();
-    const timer = window.setTimeout(() => {
-      if (Date.now() < manualPauseUntil) return;
-      scrollToSlide(active + 1, true);
-    }, Math.max(AUTO_DWELL_MS, remainingPause));
-
-    return () => window.clearTimeout(timer);
-  }, [active, isScrollAnimating, manualPauseUntil, shouldAutoPlay]);
+    const handleVisibility = () => setDocumentHidden(document.hidden);
+    handleVisibility();
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, []);
 
   useEffect(() => {
     return () => {
       if (scrollAnimationRef.current !== null) window.cancelAnimationFrame(scrollAnimationRef.current);
+      if (progressAnimationRef.current !== null) window.cancelAnimationFrame(progressAnimationRef.current);
     };
   }, []);
 
-  const activeSlide = slides[active];
-  const activeLabel = activeSlide.tab;
+  useEffect(() => {
+    if (!shouldTickProgress) {
+      lastProgressTickRef.current = null;
+      return;
+    }
+
+    const tick = (now: number) => {
+      const last = lastProgressTickRef.current ?? now;
+      const delta = now - last;
+      lastProgressTickRef.current = now;
+      const next = Math.min(1, progressRef.current + delta / AUTO_DWELL_MS);
+
+      setProgressValue(next);
+
+      if (next >= 1) {
+        lastProgressTickRef.current = null;
+        if (active < slides.length - 1) {
+          setProgressValue(0);
+          scrollToSlide(active + 1, true);
+        } else {
+          setEnded(true);
+          setPlaying(false);
+        }
+        return;
+      }
+
+      progressAnimationRef.current = window.requestAnimationFrame(tick);
+    };
+
+    progressAnimationRef.current = window.requestAnimationFrame(tick);
+
+    return () => {
+      if (progressAnimationRef.current !== null) {
+        window.cancelAnimationFrame(progressAnimationRef.current);
+        progressAnimationRef.current = null;
+      }
+    };
+  }, [active, shouldTickProgress]);
 
   const cancelScrollAnimation = () => {
     if (scrollAnimationRef.current !== null) {
@@ -430,10 +475,14 @@ export function AlreadyDoneSection() {
     const card = track?.children[nextIndex] as HTMLElement | undefined;
 
     cancelScrollAnimation();
+    lastProgressTickRef.current = null;
+    setProgressValue(0);
+    setEnded(false);
     setActive(nextIndex);
     if (!track || !card) return;
 
-    const left = card.offsetLeft - Math.max(0, (track.clientWidth - card.clientWidth) / 2);
+    const paddingStart = parseFloat(window.getComputedStyle(track).paddingLeft) || 0;
+    const left = card.offsetLeft - paddingStart;
     const startLeft = track.scrollLeft;
     const distance = left - startLeft;
 
@@ -454,7 +503,7 @@ export function AlreadyDoneSection() {
       const elapsed = now - startTime;
       const progress = Math.min(1, elapsed / duration);
 
-      track.scrollLeft = startLeft + distance * easeInOutCubic(progress);
+      track.scrollLeft = startLeft + distance * progress;
 
       if (progress < 1) {
         scrollAnimationRef.current = window.requestAnimationFrame(step);
@@ -473,7 +522,6 @@ export function AlreadyDoneSection() {
   };
 
   const goTo = (index: number) => {
-    setManualPauseUntil(Date.now() + PAUSE_AFTER_INTERACTION_MS);
     scrollToSlide(index, false);
   };
 
@@ -497,12 +545,19 @@ export function AlreadyDoneSection() {
       }
     });
 
-    setActive(nearest);
+    if (nearest !== active) {
+      setActive(nearest);
+      setProgressValue(0);
+      setEnded(false);
+    }
   };
 
   return (
-    <section id="already-handled" className="w-screen max-w-none scroll-mt-28 overflow-hidden py-10 lg:py-14">
-      <div className="mx-auto mb-8 flex w-full max-w-[1200px] flex-col gap-6 px-4 sm:px-6 lg:mb-10 lg:px-10">
+    <section
+      id="already-handled"
+      className="w-screen max-w-none scroll-mt-28 overflow-hidden py-10 [--section-gutter:1rem] sm:[--section-gutter:1.5rem] lg:py-14 lg:[--section-gutter:max(2.5rem,calc((100vw-1200px)/2+2.5rem))]"
+    >
+      <div className="mb-8 flex w-full flex-col gap-6 px-[var(--section-gutter)] lg:mb-10">
         <div>
           <p className="type-eyebrow mb-4 text-[var(--text-tertiary)]">Health features</p>
           <h2 className="type-h1 text-[var(--ink)]" data-animate="headline">
@@ -515,17 +570,23 @@ export function AlreadyDoneSection() {
 
       <div
         ref={trackRef}
-        className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:gap-5 sm:px-12 lg:gap-6 lg:px-20 [&::-webkit-scrollbar]:hidden"
+        className="flex w-full snap-x snap-mandatory scroll-pl-[var(--section-gutter)] gap-4 overflow-x-auto px-[var(--section-gutter)] pb-2 [scrollbar-width:none] sm:gap-5 lg:gap-6 [&::-webkit-scrollbar]:hidden"
         aria-live="polite"
         aria-label={`Showing ${activeLabel}`}
         onScroll={handleScroll}
         onPointerDown={() => {
           cancelScrollAnimation();
-          setManualPauseUntil(Date.now() + PAUSE_AFTER_INTERACTION_MS);
+          setInteractionPaused(true);
+        }}
+        onPointerUp={() => {
+          setInteractionPaused(false);
         }}
         onTouchStart={() => {
           cancelScrollAnimation();
-          setManualPauseUntil(Date.now() + PAUSE_AFTER_INTERACTION_MS);
+          setInteractionPaused(true);
+        }}
+        onTouchEnd={() => {
+          setInteractionPaused(false);
         }}
       >
         {slides.map((slide, index) => {
@@ -536,8 +597,8 @@ export function AlreadyDoneSection() {
               key={slide.tab}
               id={`health-feature-card-${index}`}
               aria-label={slide.tab}
-              className="min-h-[690px] w-[calc(100vw-32px)] max-w-[1920px] shrink-0 snap-center rounded-[34px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-5 transition-[opacity,transform] duration-300 ease-[var(--ease-premium)] sm:min-h-[650px] sm:w-[calc(100vw-96px)] sm:p-7 lg:min-h-[620px] lg:w-[calc(100vw-160px)] lg:p-8"
-              style={{ opacity: isActive ? 1 : 0.52, transform: isActive ? "scale(1)" : "scale(0.965)" }}
+              aria-current={isActive}
+              className="min-h-[690px] w-[calc(100vw_-_var(--section-gutter)_-_var(--section-gutter))] max-w-[1200px] shrink-0 snap-start rounded-[32px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4 sm:min-h-[650px] sm:p-6 lg:min-h-[620px] lg:p-8"
             >
               {slide.kind === "feature" ? <FeatureContent slide={slide} /> : <HealthContent slide={slide} />}
             </article>
@@ -545,34 +606,48 @@ export function AlreadyDoneSection() {
         })}
       </div>
 
-      <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <div className="flex h-16 items-center gap-4 rounded-full bg-[var(--surface-t4)] px-7">
+      <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div
+          className="flex h-14 items-center gap-2 rounded-full bg-[var(--surface-t2)] px-5"
+          onFocusCapture={() => setInteractionPaused(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setInteractionPaused(false);
+          }}
+        >
           {slides.map((slide, index) => {
             const isCurrent = active === index;
-            const pillDuration = isScrollAnimating ? AUTO_SCROLL_MS : 300;
+            const isComplete = index < active || (ended && index <= active);
+            const fillWidth = isCurrent ? progress : isComplete ? 1 : 0;
+            const fillClass = isComplete && !isCurrent ? "bg-[var(--bar-fill-neutral)]" : "";
+            const fillBackground = isCurrent && !reducedMotion
+              ? "linear-gradient(90deg, var(--bar-fill-ink) 0%, var(--bar-fill-ink) calc(100% - 12px), color-mix(in srgb, var(--bar-fill-ink) 30%, transparent) 100%)"
+              : isCurrent
+              ? "var(--bar-fill-ink)"
+              : undefined;
 
             return (
               <button
                 key={slide.tab}
                 type="button"
                 aria-label={`Show ${slide.tab}`}
-                className="focusable-ring relative h-3 overflow-hidden rounded-full bg-[var(--border-focus)] transition-[width,background-color] ease-[var(--ease-premium)] hover:bg-[var(--text-tertiary)]"
-                style={{
-                  transitionDuration: `${pillDuration}ms`,
-                  width: isCurrent ? "4.75rem" : "0.75rem",
-                }}
+                className="focusable-ring flex h-11 min-w-11 items-center justify-center rounded-full px-1"
                 onClick={() => goTo(index)}
               >
-                {isCurrent ? (
+                <span
+                  className="relative block h-[var(--bar-h)] overflow-hidden rounded-[var(--bar-radius)] bg-[var(--bar-track)] transition-[width] duration-150 ease-[var(--ease-premium)]"
+                  style={{
+                    width: isCurrent ? "76px" : "8px",
+                    boxShadow: "var(--bar-track-inset)",
+                  }}
+                >
                   <span
-                    key={`${active}-${isScrollAnimating ? "scrolling" : "settled"}`}
-                    className="absolute inset-y-0 left-0 rounded-full bg-[var(--ink)]"
+                    className={`absolute inset-y-0 left-0 rounded-[var(--bar-radius)] ${fillClass}`}
                     style={{
-                      animation: isScrollAnimating ? `section-four-progress ${AUTO_SCROLL_MS}ms var(--ease-premium) both` : "none",
-                      width: isScrollAnimating ? undefined : "100%",
+                      width: `${fillWidth * 100}%`,
+                      background: fillBackground,
                     }}
                   />
-                ) : null}
+                </span>
               </button>
             );
           })}
@@ -580,15 +655,18 @@ export function AlreadyDoneSection() {
 
         <button
           type="button"
-          className="focusable-ring flex h-16 w-16 items-center justify-center rounded-full bg-[var(--surface-t4)] text-[var(--ink)] transition-[background-color] duration-200 hover:bg-[var(--surface-t2)]"
-          aria-label={playing ? "Pause carousel" : "Play carousel"}
+          className="focusable-ring flex h-14 w-14 items-center justify-center rounded-full bg-[var(--surface-t2)] text-[var(--ink)] transition-[background-color] duration-150 ease-[var(--ease-premium)] hover:bg-[var(--surface-t1)]"
+          aria-label={ended ? "Replay carousel" : playing ? "Pause carousel" : "Play carousel"}
           onClick={() => {
-            if (!playing && active >= slides.length - 1) return;
+            if (ended) {
+              scrollToSlide(0, false);
+              setPlaying(true);
+              return;
+            }
             setPlaying((current) => !current);
-            setManualPauseUntil(0);
           }}
         >
-          <PlayPauseIcon playing={playing && !reducedMotion} />
+          <PlayPauseIcon playing={playing && !reducedMotion} ended={ended} />
         </button>
       </div>
     </section>
