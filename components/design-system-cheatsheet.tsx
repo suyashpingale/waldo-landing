@@ -186,11 +186,11 @@ const behaviorCards = [
 
 const css = `
   .ds-card {
-    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.05);
+    border: 1px solid rgba(26,26,26,.08);
   }
 
   .ds-elevated {
-    box-shadow: 0 2px 4px rgba(0,0,0,.04), 0 16px 40px rgba(0,0,0,.06);
+    border: 1px solid rgba(26,26,26,.08);
   }
 
   .ds-preview-float {
@@ -590,9 +590,9 @@ export function DesignSystemCheatsheet() {
               type="button"
               key={item.id}
               onClick={() => setActiveLens(index)}
-              className="rounded-[24px] border border-[rgba(26,26,26,.08)] bg-[#FAFAF8] p-5 text-left transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(26,26,26,.08)]"
+              className="rounded-[24px] border border-[rgba(26,26,26,.08)] bg-[#FAFAF8] p-5 text-left transition duration-300 hover:-translate-y-1"
               style={{
-                boxShadow: activeLens === index ? `inset 0 0 0 1px ${item.color}` : undefined,
+                borderColor: activeLens === index ? item.color : "rgba(26,26,26,.08)",
               }}
             >
               <div className="mb-8 flex items-center justify-between">
@@ -833,10 +833,9 @@ export function DesignSystemCheatsheet() {
                 type="button"
                 key={card.name}
                 onClick={() => setBehaviorIndex(index)}
-                className="rounded-[24px] border bg-[#FAFAF8] p-5 text-left transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(26,26,26,.08)]"
+                className="rounded-[24px] border bg-[#FAFAF8] p-5 text-left transition duration-300 hover:-translate-y-1"
                 style={{
                   borderColor: behaviorIndex === index ? "#2388FF" : "rgba(26,26,26,.08)",
-                  boxShadow: behaviorIndex === index ? "inset 0 0 0 1px rgba(35,136,255,.35)" : undefined,
                 }}
               >
                 <div className="mb-5 flex items-center justify-between gap-3">
@@ -899,7 +898,7 @@ export function DesignSystemCheatsheet() {
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {actionCards.map(([name, icon, description, meta]) => (
-            <article key={name} className="rounded-[24px] border border-[rgba(26,26,26,.08)] bg-[#FAFAF8] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(26,26,26,.08)]">
+            <article key={name} className="rounded-[24px] border border-[rgba(26,26,26,.08)] bg-[#FAFAF8] p-4 transition duration-300 hover:-translate-y-1">
               <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-[16px] bg-[#1A1A1A]">
                 <Image src={icon} alt="" width={34} height={34} className="max-h-9 w-auto object-contain" />
               </div>

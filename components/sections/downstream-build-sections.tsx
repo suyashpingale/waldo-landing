@@ -213,7 +213,7 @@ function ConsoleAddOn() {
 
         <CinematicVideo
           src="/waldo_demo.mp4"
-          containerClassName="flex-1 overflow-hidden border border-[var(--border-default)] bg-[var(--surface-t3)]"
+          containerClassName="flex-1 overflow-hidden bg-[var(--surface-t3)]"
           containerStyle={{ height: "560px", borderRadius: "18px" }}
         />
       </div>

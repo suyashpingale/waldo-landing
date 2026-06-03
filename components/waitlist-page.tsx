@@ -136,7 +136,6 @@ const TIME_CONFIG = {
         height:       "58px",
         borderRadius: "50%",
         background:   "radial-gradient(circle at 36% 34%, #fffbeb, #fde68a)",
-        boxShadow:    "0 0 40px rgba(253,230,138,0.25), 0 0 90px rgba(253,230,138,0.10)",
         animation:    "moon-rise 0.6s 0.45s ease-out both, moon-glow 4.5s 1.1s ease-in-out infinite",
       },
     },

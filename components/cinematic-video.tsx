@@ -113,7 +113,6 @@ export function CinematicVideo({ src, containerStyle, containerClassName }: Cine
           aspectRatio: "16/9",
           borderRadius: expanded ? 16 : 14,
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(26,26,26,0.55)",
           transition: "width 0.5s cubic-bezier(0.22,1,0.36,1), border-radius 0.5s ease",
         }}>
           <video
