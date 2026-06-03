@@ -11,7 +11,6 @@ import { AgentFeaturesSection } from "./sections/agent-features-section";
 import { UseCasesSection } from "./sections/use-cases-section";
 import { ValidationSection } from "./sections/validation-section";
 import { SecuritySection } from "./sections/security-section";
-import { FiveThingsSection } from "./sections/five-things-section";
 import { WhereIsWaldoSection } from "./sections/where-is-waldo-section";
 import { SmarterSection } from "./sections/smarter-section";
 import { DownstreamBuildSections } from "./sections/downstream-build-sections";
@@ -68,13 +67,12 @@ export function PageLayout() {
           <AlreadyDoneSection />
           <AgentFeaturesSection />
           <UseCasesSection />
-          <ValidationSection />
-          <SecuritySection />
-          <FaqSection />
-          <FiveThingsSection />
           <WhereIsWaldoSection />
           <SmarterSection />
           <DownstreamBuildSections />
+          <ValidationSection />
+          <SecuritySection />
+          <FaqSection />
         </div>
 
         <FooterSection />

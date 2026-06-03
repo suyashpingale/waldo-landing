@@ -4,26 +4,6 @@ import Image from "next/image";
 
 import { Aside, SectionIntro, withHighlights } from "@/components/landing-primitives";
 
-const statCards = [
-  {
-    value: "27.2%",
-    description:
-      "of Claude personal-guidance conversations were health and wellness requests. People are already using AI here. Waldo gives that structure.",
-    source: "Anthropic",
-    href: "https://www.anthropic.com/research/claude-personal-guidance",
-  },
-  {
-    value: "[PENDING]",
-    description: "fewer missed health signals after 2 weeks of use.",
-    source: "Internal data, early access",
-  },
-  {
-    value: "[PENDING]",
-    description: "actions taken per day without user prompting.",
-    source: "Internal data, early access",
-  },
-] as const;
-
 const guidanceBars = [
   ["Health / wellness", 27.2],
   ["Professional / career", 25.9],
@@ -51,25 +31,6 @@ const compatibilityItems = [
   { label: "Garmin" },
   { label: "Fitbit" },
 ] as const;
-
-function StatCard({ stat }: { stat: (typeof statCards)[number] }) {
-  return (
-    <article className="surface-card-top flex min-h-[230px] flex-col p-5">
-      <p className="type-data text-[clamp(2.5rem,4vw,4rem)] leading-none text-[var(--ink)]">{stat.value}</p>
-      <p className="type-body tone-secondary mt-5">{stat.description}</p>
-      <p className="type-caption mt-auto pt-6 text-[var(--text-tertiary)]">
-        Source:{" "}
-        {"href" in stat ? (
-          <a className="focusable-ring rounded-sm underline decoration-[var(--border-focus)] underline-offset-4" href={stat.href} target="_blank" rel="noreferrer">
-            {stat.source}
-          </a>
-        ) : (
-          stat.source
-        )}
-      </p>
-    </article>
-  );
-}
 
 function BarChartCard() {
   return (
@@ -181,13 +142,7 @@ export function ValidationSection() {
         aside="honest numbers only."
       />
 
-      <div className="mt-10 grid gap-4 md:grid-cols-3">
-        {statCards.map((stat) => (
-          <StatCard key={stat.description} stat={stat} />
-        ))}
-      </div>
-
-      <div className="mt-4">
+      <div className="mt-10">
         <BarChartCard />
       </div>
 
