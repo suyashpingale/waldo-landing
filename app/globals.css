@@ -116,6 +116,35 @@ body {
   }
 }
 
+.waldo-agent-gallery {
+  --agent-viewport-content: 980px;
+  --agent-side-padding: max(24px, calc(50% - var(--agent-viewport-content) / 2));
+  --agent-card-width: 372px;
+  --agent-wide-card-width: 764px;
+  --agent-card-height: 450px;
+  --agent-card-gap: 20px;
+  --agent-card-block-top: 30px;
+  --agent-card-block-inline: 15px;
+}
+
+@media (max-width: 1068px) {
+  .waldo-agent-gallery {
+    --agent-viewport-content: 692px;
+    --agent-card-width: 304px;
+    --agent-wide-card-width: 628px;
+    --agent-card-height: 368px;
+    --agent-card-block-top: 15px;
+  }
+}
+
+@media (max-width: 734px) {
+  .waldo-agent-gallery {
+    --agent-viewport-content: 420.875px;
+    --agent-side-padding: max(24px, calc(50% - 152px));
+    --agent-wide-card-width: 304px;
+  }
+}
+
 @keyframes waldo-carousel-control-in {
   from {
     opacity: 0;

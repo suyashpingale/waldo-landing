@@ -7,6 +7,7 @@ import { HeroSection } from "./sections/hero-section";
 import { HealthDataSection } from "./sections/health-data-section";
 import { MorningBriefSection } from "./sections/morning-brief-section";
 import { AlreadyDoneSection } from "./sections/already-done-section";
+import { AgentFeaturesSection } from "./sections/agent-features-section";
 import { FiveThingsSection } from "./sections/five-things-section";
 import { WhereIsWaldoSection } from "./sections/where-is-waldo-section";
 import { SmarterSection } from "./sections/smarter-section";
@@ -62,6 +63,7 @@ export function PageLayout() {
           <HealthDataSection />
           <MorningBriefSection />
           <AlreadyDoneSection />
+          <AgentFeaturesSection />
           <FiveThingsSection />
           <WhereIsWaldoSection />
           <SmarterSection />
