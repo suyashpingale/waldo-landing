@@ -182,6 +182,17 @@ body {
   }
 }
 
+@keyframes waldo-mcp-step-focus {
+  0%, 100% {
+    opacity: 0.52;
+    transform: translateX(0);
+  }
+  16%, 34% {
+    opacity: 1;
+    transform: translateX(3px);
+  }
+}
+
 .waldo-tool-chip {
   animation: waldo-tool-chip-talk 6.8s var(--ease-premium) infinite;
   animation-delay: var(--chip-delay, 0ms);
@@ -194,9 +205,15 @@ body {
   animation: waldo-tool-path-pulse 5.6s ease-in-out infinite;
 }
 
+.waldo-mcp-step {
+  animation: waldo-mcp-step-focus 5.8s var(--ease-premium) infinite;
+  animation-delay: var(--step-delay, 0ms);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .waldo-tool-chip,
-  .waldo-tool-path {
+  .waldo-tool-path,
+  .waldo-mcp-step {
     animation: none !important;
   }
 }

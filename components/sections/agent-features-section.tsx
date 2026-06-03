@@ -64,36 +64,6 @@ const overnightLog = [
   ["6:14am", "Brief ready. Waiting for your alarm."],
 ] as const;
 
-const workflowPanels = [
-  {
-    title: "Read",
-    eyebrow: "Body + day context",
-    rows: [
-      { connector: connectors[0], call: "APPLE_HEALTH.GET_HEALTH", result: "Recovery 61, Form 72" },
-      { connector: connectors[1], call: "CALENDAR.QUERY_EVENTS", result: "9am review, 3pm board prep" },
-      { connector: connectors[2], call: "GMAIL.GET_THREADS", result: "104 low-priority emails batched" },
-    ],
-  },
-  {
-    title: "Plan",
-    eyebrow: "Handoff selected",
-    rows: [
-      { connector: connectors[1], call: "PROPOSE_SCHEDULE", result: "move 9am to 10:30" },
-      { connector: connectors[4], call: "LINEAR.CREATE_TASK", result: "deck review due Thursday" },
-      { connector: connectors[2], call: "GMAIL.DRAFT_EMAIL", result: "draft ready, send locked" },
-    ],
-  },
-  {
-    title: "Act",
-    eyebrow: "Logged outcome",
-    rows: [
-      { connector: connectors[1], call: "EXECUTE_ACTION", result: "calendar event moved" },
-      { connector: connectors[4], call: "WRITE_TASK", result: "task created" },
-      { connector: connectors[5], call: "THE_HANDOFF", result: "3 steps logged, 1 tap waiting" },
-    ],
-  },
-] as const;
-
 const connectorStageItems = [
   {
     connector: connectors[1],
@@ -131,6 +101,45 @@ const connectorStageItems = [
     meta: "File search",
     style: { left: "53%", top: "8%", width: "198px", "--chip-shift-x": "8px", "--chip-shift-y": "12px", "--chip-delay": "2700ms" },
   },
+] as const;
+
+const mcpPullSources = [
+  {
+    connector: connectors[0],
+    label: "Recovery 61",
+    read: "rough morning",
+    style: { left: "5%", top: "18%", width: "206px", "--chip-shift-x": "10px", "--chip-shift-y": "-6px", "--chip-delay": "0ms" },
+  },
+  {
+    connector: connectors[1],
+    label: "9am review",
+    read: "can move",
+    style: { left: "8%", top: "64%", width: "206px", "--chip-shift-x": "13px", "--chip-shift-y": "6px", "--chip-delay": "520ms" },
+  },
+  {
+    connector: connectors[2],
+    label: "104 emails",
+    read: "2 need you",
+    style: { left: "37%", top: "11%", width: "188px", "--chip-shift-x": "8px", "--chip-shift-y": "8px", "--chip-delay": "980ms" },
+  },
+  {
+    connector: connectors[8],
+    label: "Slack quiet",
+    read: "status ready",
+    style: { left: "40%", top: "70%", width: "184px", "--chip-shift-x": "11px", "--chip-shift-y": "-7px", "--chip-delay": "1380ms" },
+  },
+  {
+    connector: connectors[4],
+    label: "Deck task",
+    read: "due Thursday",
+    style: { left: "61%", top: "29%", width: "178px", "--chip-shift-x": "8px", "--chip-shift-y": "9px", "--chip-delay": "1840ms" },
+  },
+] as const;
+
+const mcpFlowSteps = [
+  ["Read", "Body, calendar, inbox"],
+  ["Choose", "Morning review moves"],
+  ["Write", "Task and draft wait"],
 ] as const;
 
 function usePrefersReducedMotion() {
@@ -326,43 +335,95 @@ function ConnectorsVisual() {
 
 function McpWorkflowVisual() {
   return (
-    <div className="grid h-full gap-3 md:grid-cols-3">
-      {workflowPanels.map((panel, panelIndex) => (
-        <div key={panel.title} className="rounded-[14px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-3">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="type-caption text-[var(--text-tertiary)]">{panel.eyebrow}</p>
-              <p className="type-label mt-1 text-[var(--ink)]">{panel.title}</p>
+    <div className="relative h-full overflow-hidden rounded-[18px] bg-[var(--surface-t1)] p-4 sm:p-5">
+      <div className="hidden h-full sm:block">
+        <div className="absolute left-5 top-5 z-20 max-w-[220px]">
+          <p className="type-caption text-[var(--text-tertiary)]">Live handoff</p>
+          <p className="type-label mt-1 text-[var(--ink)]">Waldo is pulling what matters.</p>
+        </div>
+
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 764 450" fill="none" aria-hidden>
+          <path className="waldo-tool-path" d="M148 116 C248 108 330 138 405 205" />
+          <path className="waldo-tool-path" d="M150 320 C258 305 335 270 405 234" style={{ animationDelay: "420ms" }} />
+          <path className="waldo-tool-path" d="M404 96 C430 132 438 165 438 190" style={{ animationDelay: "840ms" }} />
+          <path className="waldo-tool-path" d="M442 338 C448 304 452 274 456 252" style={{ animationDelay: "1260ms" }} />
+          <path className="waldo-tool-path" d="M565 172 C544 187 518 202 496 214" style={{ animationDelay: "1680ms" }} />
+          <path className="waldo-tool-path" d="M505 236 C565 258 610 292 648 330" style={{ animationDelay: "2100ms" }} />
+        </svg>
+
+        {mcpPullSources.map((source) => (
+          <div
+            key={source.connector.name}
+            className="waldo-tool-chip absolute z-10 flex items-center gap-3 rounded-[14px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-3"
+            style={source.style as CSSProperties}
+          >
+            <ConnectorIcon connector={source.connector} />
+            <div className="min-w-0">
+              <p className="type-caption truncate text-[var(--ink)]">{source.label}</p>
+              <p className="type-caption mt-1 truncate text-[var(--text-tertiary)]">{source.read}</p>
             </div>
-            <span className="type-caption rounded-full bg-[var(--surface-t3)] px-2 py-1 text-[var(--text-tertiary)]">
-              0{panelIndex + 1}
+          </div>
+        ))}
+
+        <div className="absolute left-[56%] top-1/2 z-20 w-[244px] -translate-x-1/2 -translate-y-1/2 rounded-[18px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="type-label text-[var(--ink)]">Waldo</p>
+            <span className="flex items-center gap-1.5 rounded-full bg-[var(--surface-t1)] px-2.5 py-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--zone-peak)]" aria-hidden />
+              <span className="type-caption text-[var(--text-tertiary)]">running</span>
             </span>
           </div>
+          <p className="type-caption mt-3 text-[var(--text-secondary)]">Turning a rough morning into one handoff.</p>
           <div className="mt-4 grid gap-2">
-            {panel.rows.map((row) => (
-              <div key={row.call} className="rounded-[10px] bg-[var(--surface-t2)] p-2">
-                <div className="flex items-center gap-2">
-                  <ConnectorIcon connector={row.connector} size="small" />
-                  <p className="min-w-0 truncate font-mono text-[11px] font-medium leading-[1.25] text-[var(--ink)]">
-                    {row.call}
-                  </p>
+            {mcpFlowSteps.map(([step, detail], index) => (
+              <div
+                key={step}
+                className="waldo-mcp-step rounded-[10px] bg-[var(--surface-t1)] px-3 py-2"
+                style={{ "--step-delay": `${index * 1200}ms` } as CSSProperties}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="type-caption text-[var(--ink)]">{step}</p>
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--text-tertiary)]" aria-hidden />
                 </div>
-                <div className="mt-2 flex items-center gap-2 pl-9">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--zone-peak)]" aria-hidden />
-                  <p className="min-w-0 truncate font-mono text-[10px] leading-[1.25] text-[var(--text-secondary)]">
-                    {row.result}
-                  </p>
-                </div>
+                <p className="type-caption mt-1 text-[var(--text-tertiary)]">{detail}</p>
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-[10px] border border-[var(--border-default)] bg-[var(--surface-t1)] px-3 py-2">
-            <p className="font-mono text-[10px] leading-[1.3] text-[var(--text-tertiary)]">
-              {panelIndex === 1 ? "email_send: requires tap" : "status: logged"}
-            </p>
+        </div>
+
+        <div className="absolute bottom-5 right-5 z-20 w-[218px] rounded-[16px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-3">
+          <p className="type-caption text-[var(--text-tertiary)]">Output</p>
+          <div className="mt-3 grid gap-2">
+            {["9am moved to 10:30", "Deck task created", "Email draft waits for tap"].map((line) => (
+              <div key={line} className="rounded-[9px] bg-[var(--surface-t1)] px-3 py-2">
+                <p className="type-caption text-[var(--ink)]">{line}</p>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
+      </div>
+
+      <div className="grid h-full content-between gap-3 sm:hidden">
+        <div>
+          <p className="type-caption text-[var(--text-tertiary)]">Live handoff</p>
+          <p className="type-label mt-1 text-[var(--ink)]">Waldo pulls from the sources around your day.</p>
+        </div>
+        <div className="grid gap-2">
+          {mcpPullSources.slice(0, 4).map((source) => (
+            <div key={source.connector.name} className="flex items-center gap-3 rounded-[12px] bg-[var(--surface-t2)] p-2.5">
+              <ConnectorIcon connector={source.connector} size="small" />
+              <div className="min-w-0">
+                <p className="type-caption truncate text-[var(--ink)]">{source.label}</p>
+                <p className="type-caption truncate text-[var(--text-tertiary)]">{source.read}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-[14px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-3">
+          <p className="type-caption text-[var(--text-tertiary)]">Output</p>
+          <p className="type-label mt-1 text-[var(--ink)]">Calendar moved. Task created. Email waiting.</p>
+        </div>
+      </div>
     </div>
   );
 }
