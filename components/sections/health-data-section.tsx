@@ -1,4 +1,6 @@
-import { ProblemVisual } from "@/components/problem-visual";
+import Image from "next/image";
+
+import sectionTwoAsset from "@/components/assets/section-2.png";
 
 export function HealthDataSection() {
   return (
@@ -25,7 +27,15 @@ export function HealthDataSection() {
           </p>
         </div>
 
-        <ProblemVisual />
+        <div className="mt-auto flex w-full justify-center pt-16 sm:pt-20">
+          <Image
+            src={sectionTwoAsset}
+            alt=""
+            sizes="(min-width: 1024px) 980px, (min-width: 640px) 86vw, 740px"
+            className="h-auto w-[740px] max-w-none select-none sm:w-[86vw] lg:w-[980px]"
+            priority={false}
+          />
+        </div>
       </div>
     </section>
   );
