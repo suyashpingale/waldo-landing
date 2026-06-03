@@ -162,6 +162,45 @@ body {
   }
 }
 
+@keyframes waldo-tool-chip-talk {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(var(--chip-shift-x, 10px), var(--chip-shift-y, -6px), 0);
+  }
+}
+
+@keyframes waldo-tool-path-pulse {
+  0%, 100% {
+    opacity: 0.16;
+    stroke-dashoffset: 32;
+  }
+  50% {
+    opacity: 0.48;
+    stroke-dashoffset: 0;
+  }
+}
+
+.waldo-tool-chip {
+  animation: waldo-tool-chip-talk 6.8s var(--ease-premium) infinite;
+  animation-delay: var(--chip-delay, 0ms);
+}
+
+.waldo-tool-path {
+  stroke: var(--border-focus);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+  animation: waldo-tool-path-pulse 5.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waldo-tool-chip,
+  .waldo-tool-path {
+    animation: none !important;
+  }
+}
+
 .type-display {
   font-family: var(--font-headline);
   font-size: clamp(1.65rem,1.05rem + 2.64vw,3.4rem);

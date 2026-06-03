@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { Aside, withHighlights } from "@/components/landing-primitives";
 
@@ -15,21 +16,43 @@ type AgentSlide = {
   visual: ReactNode;
 };
 
+type Connector = {
+  initials: string;
+  name: string;
+  label: string;
+  phase: string;
+  icon?: string;
+};
+
+// Some launch connectors do not exist in the downloaded Composio logo set yet.
+// Keep those as neutral text placeholders until the owner supplies the real assets.
 const connectors = [
-  ["AH", "Apple Health", "Read at 6:12am", "V1"],
-  ["GC", "Google Calendar", "2 events moved", "V1"],
-  ["GM", "Gmail", "14 threads scanned", "V1"],
-  ["TD", "Todoist", "3 tasks reprioritised", "V1"],
-  ["LN", "Linear", "Sprint tickets pulled", "V1"],
-  ["AC", "Apple Calendar", "All calendars synced", "V1"],
-  ["OM", "Open-Meteo", "Weather and UV fed to Brief", "V1"],
-  ["TG", "Telegram", "Brief delivered", "V1"],
-  ["SL", "Slack", "Focus status set", "Phase 2"],
-  ["SP", "Spotify", "Mood: calm, focused", "Phase 2"],
-  ["ST", "Strava", "Recovery day suggested", "Phase 2"],
-  ["GH", "GitHub", "PR load: 3 reviews pending", "Phase 2"],
-  ["GD", "Google Drive", "Doc search across 200 files", "Phase 2"],
-] as const;
+  { initials: "AH", name: "Apple Health", label: "Read at 6:12am", phase: "V1" },
+  {
+    initials: "GC",
+    name: "Google Calendar",
+    label: "2 events moved",
+    phase: "V1",
+    icon: "/assets/composio-connectors/googlecalendar.svg",
+  },
+  { initials: "GM", name: "Gmail", label: "14 threads scanned", phase: "V1", icon: "/assets/composio-connectors/gmail.svg" },
+  { initials: "TD", name: "Todoist", label: "3 tasks reprioritised", phase: "V1" },
+  { initials: "LN", name: "Linear", label: "Sprint tickets pulled", phase: "V1", icon: "/assets/composio-connectors/linear.svg" },
+  { initials: "AC", name: "Apple Calendar", label: "All calendars synced", phase: "V1" },
+  { initials: "OM", name: "Open-Meteo", label: "Weather and UV fed to Brief", phase: "V1" },
+  { initials: "TG", name: "Telegram", label: "Brief delivered", phase: "V1" },
+  { initials: "SL", name: "Slack", label: "Focus status set", phase: "Phase 2", icon: "/assets/composio-connectors/slack.svg" },
+  { initials: "SP", name: "Spotify", label: "Mood: calm, focused", phase: "Phase 2" },
+  { initials: "ST", name: "Strava", label: "Recovery day suggested", phase: "Phase 2" },
+  { initials: "GH", name: "GitHub", label: "PR load: 3 reviews pending", phase: "Phase 2", icon: "/assets/composio-connectors/github.svg" },
+  {
+    initials: "GD",
+    name: "Google Drive",
+    label: "Doc search across 200 files",
+    phase: "Phase 2",
+    icon: "/assets/composio-connectors/googledrive.svg",
+  },
+] satisfies Connector[];
 
 const overnightLog = [
   ["11:14pm", "The Close: day summary delivered"],
@@ -39,6 +62,75 @@ const overnightLog = [
   ["2:02am", "Pre-computed tomorrow's Brief (2.3 seconds)"],
   ["6:12am", "Patrol: scanned overnight HRV"],
   ["6:14am", "Brief ready. Waiting for your alarm."],
+] as const;
+
+const workflowPanels = [
+  {
+    title: "Read",
+    eyebrow: "Body + day context",
+    rows: [
+      { connector: connectors[0], call: "APPLE_HEALTH.GET_HEALTH", result: "Recovery 61, Form 72" },
+      { connector: connectors[1], call: "CALENDAR.QUERY_EVENTS", result: "9am review, 3pm board prep" },
+      { connector: connectors[2], call: "GMAIL.GET_THREADS", result: "104 low-priority emails batched" },
+    ],
+  },
+  {
+    title: "Plan",
+    eyebrow: "Handoff selected",
+    rows: [
+      { connector: connectors[1], call: "PROPOSE_SCHEDULE", result: "move 9am to 10:30" },
+      { connector: connectors[4], call: "LINEAR.CREATE_TASK", result: "deck review due Thursday" },
+      { connector: connectors[2], call: "GMAIL.DRAFT_EMAIL", result: "draft ready, send locked" },
+    ],
+  },
+  {
+    title: "Act",
+    eyebrow: "Logged outcome",
+    rows: [
+      { connector: connectors[1], call: "EXECUTE_ACTION", result: "calendar event moved" },
+      { connector: connectors[4], call: "WRITE_TASK", result: "task created" },
+      { connector: connectors[5], call: "THE_HANDOFF", result: "3 steps logged, 1 tap waiting" },
+    ],
+  },
+] as const;
+
+const connectorStageItems = [
+  {
+    connector: connectors[1],
+    action: "Move morning review",
+    meta: "Calendar write",
+    style: { left: "7%", top: "16%", width: "232px", "--chip-shift-x": "12px", "--chip-shift-y": "-7px", "--chip-delay": "0ms" },
+  },
+  {
+    connector: connectors[2],
+    action: "Draft late-start note",
+    meta: "Email draft",
+    style: { left: "5%", top: "62%", width: "230px", "--chip-shift-x": "15px", "--chip-shift-y": "5px", "--chip-delay": "620ms" },
+  },
+  {
+    connector: connectors[8],
+    action: "Set focus status",
+    meta: "Team signal",
+    style: { left: "35%", top: "25%", width: "210px", "--chip-shift-x": "9px", "--chip-shift-y": "9px", "--chip-delay": "1100ms" },
+  },
+  {
+    connector: connectors[4],
+    action: "Create deck task",
+    meta: "Work queue",
+    style: { left: "43%", top: "57%", width: "220px", "--chip-shift-x": "12px", "--chip-shift-y": "-8px", "--chip-delay": "1550ms" },
+  },
+  {
+    connector: connectors[11],
+    action: "Check PR load",
+    meta: "Code context",
+    style: { left: "14%", top: "40%", width: "210px", "--chip-shift-x": "14px", "--chip-shift-y": "0px", "--chip-delay": "2100ms" },
+  },
+  {
+    connector: connectors[12],
+    action: "Find Q1 deck",
+    meta: "File search",
+    style: { left: "53%", top: "8%", width: "198px", "--chip-shift-x": "8px", "--chip-shift-y": "12px", "--chip-delay": "2700ms" },
+  },
 ] as const;
 
 function usePrefersReducedMotion() {
@@ -73,12 +165,39 @@ function ArrowIcon({ direction }: { direction: "prev" | "next" }) {
   );
 }
 
+function ConnectorIcon({
+  connector,
+  size = "default",
+}: {
+  connector: Pick<Connector, "icon" | "initials" | "name">;
+  size?: "small" | "default";
+}) {
+  const frameClass =
+    size === "small"
+      ? "h-7 w-7 rounded-[9px]"
+      : "h-10 w-10 rounded-[12px]";
+  const imageSize = size === "small" ? 18 : 24;
+
+  return (
+    <span
+      className={`flex ${frameClass} shrink-0 items-center justify-center border border-[var(--border-default)] bg-[var(--surface-t1)]`}
+      aria-hidden
+    >
+      {connector.icon ? (
+        <Image src={connector.icon} alt="" width={imageSize} height={imageSize} className="h-auto w-auto max-w-[70%]" />
+      ) : (
+        <span className="type-caption text-[var(--ink)]">{connector.initials}</span>
+      )}
+    </span>
+  );
+}
+
 function ChatVisual() {
   return (
     <div className="grid h-full gap-3 lg:grid-cols-[0.96fr_1.04fr]">
       <div className="flex flex-col justify-end gap-3">
-        <div className="ml-auto max-w-[82%] rounded-[18px] bg-[var(--ink)] px-4 py-3 text-[var(--surface-t2)]">
-          <p className="type-caption">How did I sleep?</p>
+        <div className="ml-auto max-w-[82%] rounded-[18px] border border-[var(--border-default)] bg-[var(--surface-t3)] px-4 py-3">
+          <p className="type-caption text-[var(--ink)]">How did I sleep?</p>
         </div>
         <div className="max-w-[90%] rounded-[18px] border border-[var(--border-default)] bg-[var(--surface-t1)] px-4 py-3">
           <p className="type-caption text-[var(--ink)]">Not great, honestly.</p>
@@ -103,8 +222,8 @@ function ChatVisual() {
       </div>
 
       <div className="hidden flex-col justify-end gap-3 lg:flex">
-        <div className="ml-auto max-w-[86%] rounded-[18px] bg-[var(--ink)] px-4 py-3 text-[var(--surface-t2)]">
-          <p className="type-caption">Prep me for my 3pm</p>
+        <div className="ml-auto max-w-[86%] rounded-[18px] border border-[var(--border-default)] bg-[var(--surface-t3)] px-4 py-3">
+          <p className="type-caption text-[var(--ink)]">Prep me for my 3pm</p>
         </div>
         <div className="rounded-[18px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-4">
           <p className="type-label text-[var(--ink)]">Board review</p>
@@ -151,22 +270,96 @@ function DraftsVisual() {
 
 function ConnectorsVisual() {
   return (
-    <div className="grid h-full content-center gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {connectors.map(([initials, name, label, phase]) => (
-        <div key={name} className="rounded-[14px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-3">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-t2)]">
-              <span className="type-caption text-[var(--ink)]">{initials}</span>
-            </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="type-caption truncate text-[var(--ink)]">{name}</p>
-                <span className="type-caption rounded-full bg-[var(--surface-t3)] px-2 py-0.5 text-[var(--text-tertiary)]">
-                  {phase}
-                </span>
+    <div className="relative h-full overflow-hidden rounded-[18px] bg-[var(--surface-t1)]">
+      <div className="absolute right-4 top-4 h-[78%] w-[45%] overflow-hidden rounded-[18px] border border-[var(--border-default)] bg-[var(--surface-t2)] max-sm:right-3 max-sm:top-5 max-sm:h-[68%] max-sm:w-[58%]">
+        <div className="flex h-10 items-center gap-2 border-b border-[var(--border-default)] bg-[var(--surface-t3)] px-4">
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--text-tertiary)]" aria-hidden />
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--text-disabled)]" aria-hidden />
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--zone-peak)]" aria-hidden />
+          <p className="type-caption ml-2 truncate text-[var(--text-secondary)]">user - Waldo</p>
+        </div>
+        <div className="p-4 max-sm:p-3">
+          <p className="type-label text-[var(--ink)]">Waldo</p>
+          <div className="mt-4 grid gap-2">
+            {["reads body context", "selects the right tool", "writes back with guardrails"].map((line) => (
+              <div key={line} className="rounded-[10px] bg-[var(--surface-t1)] px-3 py-2">
+                <p className="font-mono text-[10px] leading-[1.25] text-[var(--text-secondary)]">{line}</p>
               </div>
-              <p className="type-caption tone-secondary mt-1">{label}</p>
+            ))}
+          </div>
+          <div className="mt-5 rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-t1)] px-3 py-3 max-sm:hidden">
+            <p className="font-mono text-[10px] leading-[1.35] text-[var(--text-tertiary)]">
+              MCP_HANDOFF: calendar, email, tasks, code, files
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 764 450" fill="none" aria-hidden>
+        <path className="waldo-tool-path" d="M178 102 C290 90 378 105 514 178" />
+        <path className="waldo-tool-path" d="M190 303 C305 296 412 274 522 222" style={{ animationDelay: "500ms" }} />
+        <path className="waldo-tool-path" d="M288 207 C370 196 443 202 522 202" style={{ animationDelay: "950ms" }} />
+        <path className="waldo-tool-path" d="M414 285 C456 274 494 254 548 229" style={{ animationDelay: "1450ms" }} />
+      </svg>
+
+      <div className="absolute left-4 top-4">
+        <p className="type-caption text-[var(--text-tertiary)]">MCP connectors</p>
+        <p className="type-label mt-1 text-[var(--ink)]">Tools talk to Waldo</p>
+      </div>
+
+      {connectorStageItems.map((item) => (
+        <div
+          key={item.action}
+          className="waldo-tool-chip absolute flex items-center gap-3 rounded-[14px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-3 max-sm:w-[185px]"
+          style={item.style as CSSProperties}
+        >
+          <ConnectorIcon connector={item.connector} />
+          <div className="min-w-0">
+            <p className="type-caption truncate text-[var(--ink)]">{item.action}</p>
+            <p className="type-caption mt-1 truncate text-[var(--text-tertiary)]">{item.meta}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function McpWorkflowVisual() {
+  return (
+    <div className="grid h-full gap-3 md:grid-cols-3">
+      {workflowPanels.map((panel, panelIndex) => (
+        <div key={panel.title} className="rounded-[14px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="type-caption text-[var(--text-tertiary)]">{panel.eyebrow}</p>
+              <p className="type-label mt-1 text-[var(--ink)]">{panel.title}</p>
             </div>
+            <span className="type-caption rounded-full bg-[var(--surface-t3)] px-2 py-1 text-[var(--text-tertiary)]">
+              0{panelIndex + 1}
+            </span>
+          </div>
+          <div className="mt-4 grid gap-2">
+            {panel.rows.map((row) => (
+              <div key={row.call} className="rounded-[10px] bg-[var(--surface-t2)] p-2">
+                <div className="flex items-center gap-2">
+                  <ConnectorIcon connector={row.connector} size="small" />
+                  <p className="min-w-0 truncate font-mono text-[11px] font-medium leading-[1.25] text-[var(--ink)]">
+                    {row.call}
+                  </p>
+                </div>
+                <div className="mt-2 flex items-center gap-2 pl-9">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--zone-peak)]" aria-hidden />
+                  <p className="min-w-0 truncate font-mono text-[10px] leading-[1.25] text-[var(--text-secondary)]">
+                    {row.result}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 rounded-[10px] border border-[var(--border-default)] bg-[var(--surface-t1)] px-3 py-2">
+            <p className="font-mono text-[10px] leading-[1.3] text-[var(--text-tertiary)]">
+              {panelIndex === 1 ? "email_send: requires tap" : "status: logged"}
+            </p>
           </div>
         </div>
       ))}
@@ -176,16 +369,16 @@ function ConnectorsVisual() {
 
 function OvernightVisual() {
   return (
-    <div className="flex h-full flex-col justify-center rounded-[18px] bg-[var(--dark-t2)] p-4 text-[var(--on-dark)]">
+    <div className="flex h-full flex-col justify-center rounded-[18px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-4">
       <div className="mb-4 flex items-center gap-2">
-        <span className="h-2 w-2 rounded-full bg-[var(--text-tertiary)]" aria-hidden />
-        <p className="type-caption uppercase text-[var(--on-dark-muted)]">Overnight patrol</p>
+        <span className="h-2 w-2 rounded-full bg-[var(--zone-peak)]" aria-hidden />
+        <p className="type-caption uppercase text-[var(--text-tertiary)]">Overnight patrol</p>
       </div>
       <div className="grid gap-2">
         {overnightLog.map(([time, line]) => (
-          <div key={time + line} className="grid grid-cols-[62px_1fr] gap-3 rounded-[10px] bg-[var(--dark-t1)] px-3 py-2">
-            <p className="type-data text-[var(--on-dark-muted)]">{time}</p>
-            <p className="type-caption text-[var(--on-dark)]">{line}</p>
+          <div key={time + line} className="grid grid-cols-[62px_1fr] gap-3 rounded-[10px] bg-[var(--surface-t2)] px-3 py-2">
+            <p className="type-data text-[var(--text-tertiary)]">{time}</p>
+            <p className="type-caption text-[var(--ink)]">{line}</p>
           </div>
         ))}
       </div>
@@ -219,6 +412,15 @@ const slides: AgentSlide[] = [
     wide: true,
     aside: "everything you use, connected to everything you feel.",
     visual: <ConnectorsVisual />,
+  },
+  {
+    label: "MCP workflow",
+    headline: "The body becomes a tool run.",
+    description:
+      "Waldo reads your signals, checks the tools around your day, plans the handoff, then writes back through MCP. Calendar moves. Tasks appear. Email drafts wait for your tap. *Everything stays logged.*",
+    wide: true,
+    aside: "the loop, out in the open.",
+    visual: <McpWorkflowVisual />,
   },
   {
     label: "Overnight",
