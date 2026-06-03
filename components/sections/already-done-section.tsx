@@ -432,8 +432,8 @@ export function AlreadyDoneSection() {
   };
 
   return (
-    <section id="already-handled" className="section-shell scroll-mt-28 overflow-hidden py-10 lg:py-14">
-      <div className="mb-8 flex flex-col gap-6 px-1 sm:px-2 lg:mb-10">
+    <section id="already-handled" className="w-screen max-w-none scroll-mt-28 overflow-hidden py-10 lg:py-14">
+      <div className="mx-auto mb-8 flex w-full max-w-[1200px] flex-col gap-6 px-4 sm:px-6 lg:mb-10 lg:px-10">
         <div>
           <p className="type-eyebrow mb-4 text-[var(--text-tertiary)]">Health features</p>
           <h2 className="type-h1 text-[var(--ink)]" data-animate="headline">
@@ -446,7 +446,7 @@ export function AlreadyDoneSection() {
 
       <div
         ref={trackRef}
-        className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:-mx-6 sm:gap-5 sm:px-6 lg:-mx-10 lg:gap-6 lg:px-10 [&::-webkit-scrollbar]:hidden"
+        className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:gap-5 sm:px-12 lg:gap-6 lg:px-20 [&::-webkit-scrollbar]:hidden"
         aria-live="polite"
         aria-label={`Showing ${activeLabel}`}
         onScroll={handleScroll}
@@ -472,7 +472,7 @@ export function AlreadyDoneSection() {
               key={slide.tab}
               id={`health-feature-card-${index}`}
               aria-label={slide.tab}
-              className="min-h-[690px] w-[calc(100%-56px)] max-w-[980px] shrink-0 snap-center rounded-[34px] border p-5 transition-[opacity,transform,background-color,border-color,box-shadow] duration-300 ease-[var(--ease-premium)] sm:min-h-[650px] sm:p-7 lg:min-h-[620px] lg:p-8"
+              className="min-h-[690px] w-[calc(100vw-32px)] max-w-[1920px] shrink-0 snap-center rounded-[34px] border p-5 transition-[opacity,transform,background-color,border-color,box-shadow] duration-300 ease-[var(--ease-premium)] sm:min-h-[650px] sm:w-[calc(100vw-96px)] sm:p-7 lg:min-h-[620px] lg:w-[calc(100vw-160px)] lg:p-8"
               style={cardStyle}
               onMouseEnter={() => setHovered(index)}
               onMouseLeave={() => setHovered(null)}
