@@ -132,7 +132,7 @@ function SecurityCard({ card }: { card: (typeof securityCards)[number] }) {
 
 function AutonomyPreview({ level }: { level: (typeof autonomyLevels)[number] }) {
   return (
-    <div className="rounded-[18px] bg-[var(--surface-t1)] p-5">
+    <div className="rounded-[8px] bg-[var(--surface-t1)] p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="type-caption text-[var(--text-tertiary)]">{level.label}</p>
@@ -166,7 +166,7 @@ function AutonomySlider() {
   const current = autonomyLevels[level];
 
   return (
-    <div className="surface-card grid gap-6 p-5 sm:p-7 lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
+    <div className="surface-card grid gap-6 rounded-[32px] p-5 sm:p-6 lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
       <div>
         <p className="type-caption text-[var(--text-tertiary)]">Autonomy</p>
         <h3 className="type-h2 mt-3 text-[var(--ink)]">Your agent. Your rules.</h3>
@@ -176,13 +176,13 @@ function AutonomySlider() {
         <Aside className="mt-5">your keys, your car.</Aside>
       </div>
 
-      <div className="rounded-[20px] bg-[var(--surface-t2)] p-4 sm:p-5">
+      <div className="rounded-[12px] bg-[var(--surface-t2)] p-3 sm:p-4">
         <div className="grid grid-cols-3 gap-2">
           {autonomyLevels.map((item, index) => (
             <button
               key={item.label}
               type="button"
-              className={`focusable-ring rounded-[14px] px-3 py-3 text-left transition-[background-color,color] duration-150 ${
+              className={`focusable-ring rounded-[8px] px-3 py-3 text-left transition-[background-color,color] duration-150 ${
                 index === level ? "bg-[var(--ink)] text-[var(--surface-t2)]" : "bg-[var(--surface-t1)] text-[var(--text-secondary)]"
               }`}
               onClick={() => setLevel(index)}

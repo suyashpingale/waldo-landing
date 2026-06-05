@@ -224,7 +224,7 @@ function PhonePlaceholder({ children, className = "" }: { children: ReactNode; c
       className={`relative mx-auto h-[330px] w-[174px] rounded-[34px] border-[7px] border-[var(--ink)] bg-[var(--surface-t3)] p-3 sm:h-[390px] sm:w-[206px] ${className}`}
     >
       <div className="absolute left-1/2 top-3 h-5 w-20 -translate-x-1/2 rounded-full bg-[var(--surface-t4)]" />
-      <div className="mt-8 flex h-[calc(100%-2rem)] flex-col gap-3 overflow-hidden rounded-[20px] bg-[var(--surface-t2)] p-3 text-[var(--ink)]">
+      <div className="mt-8 flex h-[calc(100%-2rem)] flex-col gap-3 overflow-hidden rounded-[15px] bg-[var(--surface-t2)] p-3 text-[var(--ink)]">
         {children}
       </div>
     </div>

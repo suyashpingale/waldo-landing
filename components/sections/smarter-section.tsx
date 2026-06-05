@@ -11,7 +11,7 @@ const dimensions = [
 
 export function SmarterSection() {
   return (
-    <section id="constellation" className="section-shell dark-panel overflow-hidden rounded-[30px] p-6 sm:p-8 lg:p-12">
+    <section id="constellation" className="section-shell dark-panel overflow-hidden rounded-[40px] p-5 sm:p-6 lg:p-8">
       <SectionIntro
         dark
         title={
