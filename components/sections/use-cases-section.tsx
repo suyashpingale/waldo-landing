@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment } from "react";
 
 import { Aside, SectionIntro } from "@/components/landing-primitives";
+import { RailArrows, useRailScroll } from "@/components/rail-controls";
 
 type ConnectorIcon = {
   label: string;
@@ -86,20 +87,6 @@ const useCases: UseCase[] = [
   },
 ];
 
-function ArrowIcon({ direction }: { direction: "prev" | "next" }) {
-  return (
-    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden>
-      <path
-        d={direction === "next" ? "M6.5 3.5 10.5 8.5 6.5 13.5" : "M10.5 3.5 6.5 8.5 10.5 13.5"}
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function UseCaseIcon({ icon }: { icon: ConnectorIcon }) {
   return (
     <span
@@ -117,40 +104,7 @@ function UseCaseIcon({ icon }: { icon: ConnectorIcon }) {
 }
 
 export function UseCasesSection() {
-  const railRef = useRef<HTMLDivElement>(null);
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [canGoForward, setCanGoForward] = useState(true);
-
-  const updateControls = () => {
-    const rail = railRef.current;
-    if (!rail) return;
-
-    setCanGoBack(rail.scrollLeft > 1);
-    setCanGoForward(rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 1);
-  };
-
-  useEffect(() => {
-    const rail = railRef.current;
-    if (!rail) return;
-
-    updateControls();
-    rail.addEventListener("scroll", updateControls, { passive: true });
-    window.addEventListener("resize", updateControls);
-
-    return () => {
-      rail.removeEventListener("scroll", updateControls);
-      window.removeEventListener("resize", updateControls);
-    };
-  }, []);
-
-  const scrollByCard = (direction: "prev" | "next") => {
-    const rail = railRef.current;
-    const card = rail?.querySelector<HTMLElement>("[data-use-case-card='true']");
-    if (!rail || !card) return;
-
-    const step = card.offsetWidth + 16;
-    rail.scrollBy({ left: direction === "next" ? step : -step, behavior: "smooth" });
-  };
+  const { railRef, canGoBack, canGoForward, scrollByCard } = useRailScroll();
 
   return (
     <section id="use-cases" className="section-shell w-full scroll-mt-28 overflow-hidden py-10 lg:py-12">
@@ -173,31 +127,17 @@ export function UseCasesSection() {
           </p>
         </SectionIntro>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            className="focusable-ring flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-default)] bg-[var(--surface-t2)] text-[var(--ink)] transition-opacity duration-150 disabled:opacity-[0.42]"
-            aria-label="Previous use cases"
-            disabled={!canGoBack}
-            onClick={() => scrollByCard("prev")}
-          >
-            <ArrowIcon direction="prev" />
-          </button>
-          <button
-            type="button"
-            className="focusable-ring flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-default)] bg-[var(--surface-t2)] text-[var(--ink)] transition-opacity duration-150 disabled:opacity-[0.42]"
-            aria-label="Next use cases"
-            disabled={!canGoForward}
-            onClick={() => scrollByCard("next")}
-          >
-            <ArrowIcon direction="next" />
-          </button>
-        </div>
+        <RailArrows
+          label="use cases"
+          canGoBack={canGoBack}
+          canGoForward={canGoForward}
+          onScroll={scrollByCard}
+        />
       </div>
 
       <div
         ref={railRef}
-        className="mt-10 snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="rail-fade mt-10 snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         aria-label="Use cases"
       >
         <div className="flex w-max">
@@ -206,6 +146,7 @@ export function UseCasesSection() {
               <article
                 id={`use-case-${useCase.category.toLowerCase()}`}
                 data-use-case-card="true"
+                data-rail-card="true"
                 className="surface-card flex min-h-[290px] w-[280px] shrink-0 snap-start scroll-mt-28 flex-col p-5 md:w-[320px]"
               >
                 <div className="flex items-center gap-2">

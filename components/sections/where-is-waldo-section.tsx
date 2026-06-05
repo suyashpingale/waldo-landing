@@ -22,7 +22,7 @@ export function WhereIsWaldoSection() {
           Right now, handling —
         </h2>
         <div className="mt-8 w-full max-w-[720px] overflow-hidden rounded-[24px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-4 sm:p-5">
-          <div className="h-[88px] overflow-hidden sm:h-[76px]">
+          <div className="ticker-window h-[88px] overflow-hidden sm:h-[76px]">
             <div className="where-ticker-track">
               {loop.map(([action, read], index) => (
                 <div key={`${action}-${index}`} className="flex h-[88px] flex-col justify-center gap-2 sm:h-[76px] sm:flex-row sm:items-baseline sm:justify-center sm:gap-4">

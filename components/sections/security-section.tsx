@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Aside, SectionIntro, withHighlights } from "@/components/landing-primitives";
+import { RailArrows, useRailScroll } from "@/components/rail-controls";
 
 type SecurityIconName = "lock" | "ban" | "shield" | "eye" | "file" | "check";
 
@@ -119,7 +120,7 @@ function SecurityIcon({ name }: { name: SecurityIconName }) {
 
 function SecurityCard({ card }: { card: (typeof securityCards)[number] }) {
   return (
-    <article className="surface-card-top flex min-h-[210px] w-[280px] shrink-0 snap-start flex-col p-5 sm:w-[300px]">
+    <article data-rail-card="true" className="surface-card-top flex min-h-[210px] w-[280px] shrink-0 snap-start flex-col p-5 sm:w-[300px]">
       <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[var(--surface-t3)]">
         <SecurityIcon name={card.icon} />
       </div>
@@ -222,6 +223,8 @@ function AutonomySlider() {
 }
 
 export function SecuritySection() {
+  const { railRef, canGoBack, canGoForward, scrollByCard } = useRailScroll();
+
   return (
     <section id="security" className="section-shell w-full scroll-mt-28 py-10 lg:py-12">
       <SectionIntro
@@ -240,10 +243,24 @@ export function SecuritySection() {
         </p>
       </SectionIntro>
 
-      <div className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {securityCards.map((card) => (
-          <SecurityCard key={card.headline} card={card} />
-        ))}
+      <div className="mt-10">
+        <div className="mb-4 flex justify-end">
+          <RailArrows
+            label="security details"
+            canGoBack={canGoBack}
+            canGoForward={canGoForward}
+            onScroll={scrollByCard}
+          />
+        </div>
+        <div
+          ref={railRef}
+          className="rail-fade flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          aria-label="Security commitments"
+        >
+          {securityCards.map((card) => (
+            <SecurityCard key={card.headline} card={card} />
+          ))}
+        </div>
       </div>
 
       <div className="mt-4">

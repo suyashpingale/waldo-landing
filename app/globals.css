@@ -522,6 +522,32 @@ body {
   animation: where-ticker 18s var(--ease-premium) infinite;
 }
 
+/* ── Scroll affordances (shared) ────────────────────────────── */
+/* Horizontal card rails: fade content at the edges so off-screen
+   cards are discoverable. Desktop fades both ends; mobile fades only
+   the trailing end so the leading card stays flush to the screen. */
+.rail-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
+}
+
+@media (max-width: 639px) {
+  .rail-fade {
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 22px), transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 22px), transparent 100%);
+  }
+}
+
+/* Vertical auto-ticker window: soft top/bottom fade + pause on hover. */
+.ticker-window {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+}
+
+.ticker-window:hover .where-ticker-track {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .where-ticker-track {
     animation: none;
