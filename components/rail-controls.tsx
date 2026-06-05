@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 // Shared horizontal-rail scroll controls. One source of truth for every
 // card rail (Use Cases, Security, …) so the affordance is identical everywhere.
@@ -16,6 +17,24 @@ function ChevronIcon({ direction }: { direction: "prev" | "next" }) {
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+// Canonical circular icon control. Every round nav/arrow button on the site
+// uses this exact shell so size, border, fill, hover, and disabled states match.
+export function IconButton({
+  children,
+  className = "",
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      className={`focusable-ring flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-default)] bg-[var(--surface-t2)] text-[var(--ink)] transition-[background-color,border-color,opacity,transform] duration-150 hover:border-[var(--border-focus)] hover:bg-[var(--surface-t1)] active:scale-[0.96] disabled:pointer-events-none disabled:opacity-[0.42] ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -72,24 +91,12 @@ export function RailArrows({
 }) {
   return (
     <div className={`flex shrink-0 items-center gap-2 ${className}`}>
-      <button
-        type="button"
-        className="focusable-ring flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-default)] bg-[var(--surface-t2)] text-[var(--ink)] transition-opacity duration-150 disabled:opacity-[0.42]"
-        aria-label={`Previous ${label}`}
-        disabled={!canGoBack}
-        onClick={() => onScroll("prev")}
-      >
+      <IconButton aria-label={`Previous ${label}`} disabled={!canGoBack} onClick={() => onScroll("prev")}>
         <ChevronIcon direction="prev" />
-      </button>
-      <button
-        type="button"
-        className="focusable-ring flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-default)] bg-[var(--surface-t2)] text-[var(--ink)] transition-opacity duration-150 disabled:opacity-[0.42]"
-        aria-label={`Next ${label}`}
-        disabled={!canGoForward}
-        onClick={() => onScroll("next")}
-      >
+      </IconButton>
+      <IconButton aria-label={`Next ${label}`} disabled={!canGoForward} onClick={() => onScroll("next")}>
         <ChevronIcon direction="next" />
-      </button>
+      </IconButton>
     </div>
   );
 }

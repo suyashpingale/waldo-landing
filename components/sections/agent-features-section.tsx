@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { Aside, withHighlights } from "@/components/landing-primitives";
+import { IconButton } from "@/components/rail-controls";
 
 const SCROLL_DURATION_MS = 1000;
 
@@ -637,24 +638,16 @@ export function AgentFeaturesSection() {
 
       <div className="mt-10 flex justify-end px-[var(--agent-side-padding)] max-[480px]:justify-center">
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="focusable-ring flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface-t4)] text-[var(--ink)] transition-opacity duration-150 disabled:opacity-[0.42]"
-            aria-label="Previous agent feature"
-            disabled={active === 0}
-            onClick={() => animateTo(active - 1)}
-          >
+          <IconButton aria-label="Previous agent feature" disabled={active === 0} onClick={() => animateTo(active - 1)}>
             <ArrowIcon direction="prev" />
-          </button>
-          <button
-            type="button"
-            className="focusable-ring flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface-t4)] text-[var(--ink)] transition-opacity duration-150 disabled:opacity-[0.42]"
+          </IconButton>
+          <IconButton
             aria-label="Next agent feature"
             disabled={active === slides.length - 1}
             onClick={() => animateTo(active + 1)}
           >
             <ArrowIcon direction="next" />
-          </button>
+          </IconButton>
         </div>
       </div>
     </section>
