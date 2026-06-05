@@ -96,7 +96,7 @@ body {
 .waldo-highlights {
   --slide-gap: 20px;
   --slide-width: min(87.5vw, 1260px);
-  --slide-height: 680px;
+  --slide-height: 700px;
   --slide-padding: max(6.25vw, calc((100vw - 1260px) / 2), 24px);
   --active-dot-width: 48px;
   --bar-dwell: 6.15s;
@@ -104,14 +104,14 @@ body {
 
 @media (max-width: 1068px) {
   .waldo-highlights {
-    --slide-height: 628px;
+    --slide-height: 660px;
   }
 }
 
 @media (max-width: 734px) {
   .waldo-highlights {
     --slide-width: max(calc(87.5vw - 20px), 280px);
-    --slide-height: 480px;
+    --slide-height: 720px;
     --active-dot-width: 32px;
   }
 }

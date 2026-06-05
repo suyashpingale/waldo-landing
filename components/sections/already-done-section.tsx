@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Aside, withHighlights } from "@/components/landing-primitives";
 
@@ -30,102 +30,273 @@ function appleGalleryEase(progress: number) {
   return ((ay * t + by) * t + cy) * t;
 }
 
-type VisualKind = "morning" | "stress" | "patterns" | "long-game";
+type VisualKind = "recovery" | "stress" | "patterns" | "body" | "longGame";
 type HealthTone = "sleep" | "heart" | "stress" | "recovery" | "motion";
 
-type FeatureSlide = {
-  kind: "feature";
+type FeaturePanel = {
+  label: string;
+  title: string;
+  body: string;
+  tone: HealthTone;
+  metric: string;
+};
+
+type ShowcaseSlide = {
   tab: string;
   headline: string;
-  description: string;
+  subheadline: string;
   aside: string;
   visual: VisualKind;
   badge?: string;
+  panels: FeaturePanel[];
 };
-
-type HealthSlide = {
-  kind: "health";
-  tab: string;
-  intro: string;
-  cards: Array<{
-    tone: HealthTone;
-    headline: string;
-    body: string;
-  }>;
-};
-
-type ShowcaseSlide = FeatureSlide | HealthSlide;
 
 const slides: ShowcaseSlide[] = [
   {
-    kind: "feature",
-    tab: "Mornings",
-    headline: "Wake up to what changed.",
-    description:
-      "Every morning, one message. Not another screen. Not a chart. Not four apps open before your coffee. Waldo tells you what last night meant for today, and *what it already did about it*.",
-    aside: "mornings, sorted.",
-    visual: "morning",
-  },
-  {
-    kind: "feature",
-    tab: "Stress",
-    headline: "Your stress, handled.",
-    description:
-      "When your stress climbs past a threshold and stays there, Waldo intervenes. *Pulls low-priority meetings.* Blocks recovery time. Adds a cooldown so it does not nag.",
-    aside: "you didn't ask. you didn't need to.",
-    visual: "stress",
-  },
-  {
-    kind: "feature",
-    tab: "Patterns",
-    headline: "See what you're too close to see.",
-    description:
-      "Waldo scans your signals throughout the day. Most of the time, nothing happens. But when it notices a *pattern across days, weeks, or months*, it tells you. Small observations that compound into a pattern you can act on.",
-    aside: "about seventy scans a day. you never notice.",
-    visual: "patterns",
-  },
-  {
-    kind: "health",
-    tab: "Your health",
-    intro:
-      "Your watch tracks 15+ health signals. Other apps show you all of them. Waldo reads all of them and *acts on the ones that matter today*.",
-    cards: [
+    tab: "Recovery is not a number.",
+    headline: "Recovery is not a number.",
+    subheadline: "It answers one question: what did last night give you?",
+    aside: "already on it.",
+    visual: "recovery",
+    panels: [
       {
+        label: "Sleep, stage by stage.",
+        title: "Sleep, stage by stage.",
+        body:
+          "Waldo tracks deep, REM, light, and awake. Duration alone does not tell you much. *Deep sleep in a short night can beat light sleep in a long one.* Waldo knows the difference.",
         tone: "sleep",
-        headline: "Sleep like you mean it.",
-        body: "Track stages, duration, debt, and bedtime consistency. When sleep runs short, Waldo *adjusts tomorrow before you wake up*.",
+        metric: "stages read",
       },
       {
+        label: "HRV tells the real story.",
+        title: "HRV tells the real story.",
+        body:
+          "Heart rate variability is the closest thing to a readiness signal your body produces. Waldo checks RMSSD against your 7-day baseline. *When it dips, Waldo acts on it.*",
         tone: "heart",
-        headline: "Stay close to your heart.",
-        body: "HRV trends, resting heart rate, baseline tracking. Waldo flags when your numbers drop below your baseline, then *changes the day around it*.",
+        metric: "baseline checked",
       },
       {
-        tone: "stress",
-        headline: "Your stress, in real time.",
-        body: "Not a chart you check later. Real-time stress confidence *triggers The Fetch* when it climbs too high. Waldo catches it before you feel it.",
-      },
-      {
+        label: "Resting state, quietly watched.",
+        title: "Resting state, quietly watched.",
+        body:
+          "Resting heart rate, respiratory rate, wrist temperature, and blood oxygen paint one picture: how recovered your nervous system actually is. *Waldo reads all four every night.*",
         tone: "recovery",
-        headline: "Recovery is not a number.",
-        body: "Sleep, HRV, and resting state combine into one score. The score is not the point; what Waldo *does with it* is.",
+        metric: "4 signals",
       },
       {
-        tone: "motion",
-        headline: "Motion with meaning.",
-        body: "Steps, exercise, VO2 Max, active energy. Waldo *identifies post-exercise recovery windows and protects them in your calendar*.",
+        label: "Sleep debt does not lie.",
+        title: "Sleep debt does not lie.",
+        body:
+          "A 14-day weighted average tracks how much sleep you owe yourself. One bad night is recoverable. Four in a row is a pattern. *Waldo adjusts your week before the crash lands.*",
+        tone: "sleep",
+        metric: "14-day debt",
+      },
+      {
+        label: "What Waldo does about it.",
+        title: "What Waldo does about it.",
+        body:
+          "Recovery at 63 and a 9am meeting? Pushed to 10:30. Recovery at 85? Your calendar stays untouched. *You wake up to the result, not the reasoning.*",
+        tone: "recovery",
+        metric: "morning moved",
       },
     ],
   },
   {
-    kind: "feature",
-    tab: "Long game",
-    badge: "Coming soon",
-    headline: "The longer it runs, the more Waldo learns.",
-    description:
-      "Six weeks of Tuesdays and Thursdays looked ordinary, until they did not. The fact that *your worst sleep always follows your heaviest meeting days*. You were too close to see it. Waldo wasn't.",
+    tab: "Your stress, handled in real time.",
+    headline: "Your stress, handled in real time.",
+    subheadline: "Not a chart you check later. Waldo catches it before you feel it.",
+    aside: "you didn't ask. you didn't need to.",
+    visual: "stress",
+    panels: [
+      {
+        label: "Stress confidence.",
+        title: "Stress confidence, not stress score.",
+        body:
+          "Most apps give you a number. Waldo watches confidence: how certain the signal is that stress is sustained. *When the read is strong enough to trust, Waldo moves.*",
+        tone: "stress",
+        metric: "confidence rising",
+      },
+      {
+        label: "The Fetch fires mid-day.",
+        title: "The Fetch fires mid-day.",
+        body:
+          "The moment stress sustains above threshold, Waldo pulls low-priority meetings from your afternoon and blocks recovery time. *No prompt asking if you are okay. Just cleared space.*",
+        tone: "stress",
+        metric: "space cleared",
+      },
+      {
+        label: "Cooldown built in.",
+        title: "Cooldown built in.",
+        body:
+          "Dismiss a Fetch and Waldo backs off. It does not nag. It waits, watches, and only fires again if the signal re-escalates after the cooldown. *Quiet by design.*",
+        tone: "recovery",
+        metric: "cooldown active",
+      },
+      {
+        label: "Circadian context matters.",
+        title: "Circadian context matters.",
+        body:
+          "A stress spike in the morning means something different than one after lunch. Waldo checks stress against circadian position and Form before deciding whether to intervene. *Context keeps it from overreacting.*",
+        tone: "motion",
+        metric: "context checked",
+      },
+      {
+        label: "What Waldo does about it.",
+        title: "What Waldo does about it.",
+        body:
+          "Stress climbing and your investor call matters? That stays. The low-priority 4:30? Pulled. *Waldo moves what you would cancel yourself and keeps what you would not.*",
+        tone: "stress",
+        metric: "meeting pulled",
+      },
+    ],
+  },
+  {
+    tab: "See what you're too close to see.",
+    headline: "See what you're too close to see.",
+    subheadline: "Waldo scans quietly. When something matters, you hear about it.",
+    aside: "~70 scans a day. you never notice.",
+    visual: "patterns",
+    panels: [
+      {
+        label: "The Patrol keeps watch.",
+        title: "The Patrol keeps watch.",
+        body:
+          "Waldo scans your biometric signals against your calendar, tasks, and communication load throughout the day. Most scans find nothing notable. *The useful ones get logged.*",
+        tone: "recovery",
+        metric: "quiet scan",
+      },
+      {
+        label: "Spots are single observations.",
+        title: "Spots are single observations.",
+        body:
+          "\"Your worst sleep follows your heaviest meeting days.\" One data point. One sentence. Waldo surfaces it when confidence is high enough, not before. *Small, useful, restrained.*",
+        tone: "sleep",
+        metric: "Spot found",
+      },
+      {
+        label: "Constellations connect dots.",
+        title: "Constellations connect the dots.",
+        body:
+          "Multiple Spots link into a named behavioral pattern. The Tuesday Crash becomes something Waldo can name, track, and act on. *Coming soon.*",
+        tone: "heart",
+        metric: "pattern named",
+      },
+      {
+        label: "Pre-activity readiness.",
+        title: "Pre-activity readiness.",
+        body:
+          "Before a high-stakes meeting, Waldo checks your Form score, context from last week, attendee list, and duration. *Not a generic reminder. A readiness check grounded in your actual data.*",
+        tone: "motion",
+        metric: "ready check",
+      },
+      {
+        label: "What Waldo does about it.",
+        title: "What Waldo does about it.",
+        body:
+          "Patterns are not useful if nothing changes. Tuesday overload causing Wednesday depletion? *Waldo starts protecting Wednesday mornings before the cycle repeats.*",
+        tone: "recovery",
+        metric: "cycle broken",
+      },
+    ],
+  },
+  {
+    tab: "Your body, actually understood.",
+    headline: "Your body, actually understood.",
+    subheadline: "Your watch tracks 15+ signals. Waldo acts on the ones that matter today.",
+    aside: "your watch tracks it. Waldo does something with it.",
+    visual: "body",
+    panels: [
+      {
+        label: "Sleep that changes tomorrow.",
+        title: "Sleep that changes tomorrow.",
+        body:
+          "Stages, duration, debt, bedtime consistency. The point is not the data. *Short night? Your morning adjusts. Debt accumulating? Your week shifts before the crash.*",
+        tone: "sleep",
+        metric: "tomorrow adjusted",
+      },
+      {
+        label: "Heart rate that means something.",
+        title: "Heart rate that means something.",
+        body:
+          "HRV trends, resting HR, and baseline tracking are not notifications. A dip below your 7-day average becomes a trigger. *Waldo connects the signal to your calendar.*",
+        tone: "heart",
+        metric: "HRV read",
+      },
+      {
+        label: "Stress you do not manage.",
+        title: "Stress you do not manage.",
+        body:
+          "Real-time confidence scoring is not a daily summary. It is a live signal that triggers The Fetch when it sustains too long. *Waldo catches it before you feel it.*",
+        tone: "stress",
+        metric: "Fetch armed",
+      },
+      {
+        label: "Recovery drives the day.",
+        title: "Recovery drives the day.",
+        body:
+          "Sleep, HRV, and resting state combine into one score. The score powers The Brief. The Brief powers your morning. *One signal, end to end.*",
+        tone: "recovery",
+        metric: "Brief ready",
+      },
+      {
+        label: "Motion with context.",
+        title: "Motion with context.",
+        body:
+          "Steps, exercise, VO2 Max, and active energy are more than counts. *A hard workout at 7am means your 9am needs to be light.*",
+        tone: "motion",
+        metric: "load softened",
+      },
+    ],
+  },
+  {
+    tab: "Learns every week you wear it.",
+    headline: "Learns every week you wear it.",
+    subheadline: "Week one is calibration. By week three, Waldo knows your patterns.",
     aside: "patterns you can't see from the inside.",
-    visual: "long-game",
+    visual: "longGame",
+    badge: "Coming soon",
+    panels: [
+      {
+        label: "Memory that compounds.",
+        title: "Memory that compounds.",
+        body:
+          "Waldo remembers facts, events, discoveries, preferences, and advice. It does not just remember your HRV. *It remembers what usually causes it to drop.*",
+        tone: "heart",
+        metric: "memory linked",
+      },
+      {
+        label: "Dreaming Mode.",
+        title: "Dreaming Mode.",
+        body:
+          "At 2am, Waldo consolidates. It promotes patterns, merges related memories, and pre-builds tomorrow's Brief. *By the time you wake up, it already knows what kind of day is waiting.*",
+        tone: "sleep",
+        metric: "2am pass",
+      },
+      {
+        label: "Corrections sharpen it.",
+        title: "Corrections sharpen it.",
+        body:
+          "Undo a Fetch? Waldo learns. Keep a meeting it tried to move? Noted. *The first week has friction. The third week feels quietly familiar.*",
+        tone: "recovery",
+        metric: "model tuned",
+      },
+      {
+        label: "The Slope watches trajectory.",
+        title: "The Slope watches the trajectory.",
+        body:
+          "Four weeks of data across recovery, form, demand, meeting load, communication pressure, and task pileup. *When the whole picture declines, Waldo escalates.*",
+        tone: "motion",
+        metric: "4-week slope",
+      },
+      {
+        label: "What Waldo does about it.",
+        title: "What Waldo does about it.",
+        body:
+          "When The Tuesday Crash repeats, Waldo does not just tell you. *It starts protecting Wednesdays, then keeps doing it.*",
+        tone: "stress",
+        metric: "Wednesday held",
+      },
+    ],
   },
 ];
 
@@ -210,187 +381,214 @@ function HealthIcon({ tone }: { tone: HealthTone }) {
   );
 }
 
-function MockupShell({ children }: { children: ReactNode }) {
-  return (
-    <div className="relative min-h-[300px] overflow-hidden rounded-[20px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-4 sm:min-h-[360px] sm:rounded-[22px] sm:p-5 lg:min-h-[430px] lg:rounded-[24px]">
-      <div className="relative h-full">{children}</div>
-    </div>
-  );
-}
-
-function PhonePlaceholder({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return (
-    <div
-      className={`relative mx-auto h-[330px] w-[174px] rounded-[34px] border-[7px] border-[var(--ink)] bg-[var(--surface-t3)] p-3 sm:h-[390px] sm:w-[206px] ${className}`}
-    >
-      <div className="absolute left-1/2 top-3 h-5 w-20 -translate-x-1/2 rounded-full bg-[var(--surface-t4)]" />
-      <div className="mt-8 flex h-[calc(100%-2rem)] flex-col gap-3 overflow-hidden rounded-[15px] bg-[var(--surface-t2)] p-3 text-[var(--ink)]">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function VisualPlaceholder({ kind }: { kind: VisualKind }) {
-  if (kind === "stress") {
-    return (
-      <MockupShell>
-        <div className="grid h-full gap-4 lg:grid-cols-[0.85fr_1.15fr]">
-          <div className="flex flex-col justify-center gap-3">
-            {["Investor call stays", "Low-priority sync moved", "Recovery block protected"].map((item, index) => (
-              <div key={item} className="rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4">
-                <p className="type-label text-[var(--ink)]">{item}</p>
-                <p className="type-aside mt-1">handled quietly.</p>
-                <div className="mt-3 h-2 rounded-full bg-[var(--surface-t4)]">
-                  <div className="h-full rounded-full bg-[var(--action)]" style={{ width: `${76 - index * 16}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-          <PhonePlaceholder className="lg:translate-y-5">
-            <p className="type-caption text-[var(--text-tertiary)]">stress read</p>
-            <div className="mt-2 rounded-[8px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-4">
-              <p className="type-h3 text-[var(--ink)]">Fetch</p>
-              <Aside className="mt-2">afternoon protected.</Aside>
-            </div>
-            <div className="mt-auto grid gap-2">
-              <div className="h-12 rounded-[8px] bg-[var(--surface-t1)]" />
-              <div className="h-12 rounded-[8px] bg-[var(--surface-t1)]" />
-            </div>
-          </PhonePlaceholder>
-        </div>
-      </MockupShell>
-    );
-  }
-
-  if (kind === "patterns") {
-    return (
-      <MockupShell>
-        <div className="relative h-full min-h-[360px]">
-          {["heavy meeting day", "late bedtime", "low recovery", "quiet Friday", "better window"].map((label, index) => (
-            <div
-              key={label}
-              className="absolute rounded-full border border-[var(--border-default)] bg-[var(--surface-t2)] px-4 py-3"
-              style={{
-                left: `${12 + (index % 3) * 28}%`,
-                top: `${18 + Math.floor(index / 3) * 38 + (index % 2) * 8}%`,
-              }}
-            >
-              <p className="type-caption text-[var(--text-secondary)]">{label}</p>
-            </div>
-          ))}
-          <svg className="absolute inset-0 h-full w-full text-[var(--border-focus)]" viewBox="0 0 560 360" fill="none" aria-hidden>
-            <path d="M112 116 C180 90 250 190 315 146 C360 116 416 170 452 252" stroke="currentColor" strokeWidth="2" strokeDasharray="7 8" />
-            <path d="M198 260 C230 202 300 220 356 120" stroke="currentColor" strokeWidth="2" strokeDasharray="7 8" />
-          </svg>
-          <div className="absolute bottom-5 left-5 right-5 rounded-[16px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5">
-            <p className="type-label text-[var(--ink)]">Pattern found</p>
-            <p className="type-body tone-secondary mt-2">Your worst sleep follows the heaviest meeting days.</p>
-          </div>
-        </div>
-      </MockupShell>
-    );
-  }
-
-  if (kind === "long-game") {
-    return (
-      <MockupShell>
-        <div className="flex h-full min-h-[360px] flex-col justify-between">
-          <div className="grid grid-cols-6 gap-2">
-            {Array.from({ length: 30 }).map((_, index) => (
-              <div
-                key={index}
-                className="aspect-square rounded-[8px] border border-[var(--border-default)] bg-[var(--surface-t2)]"
-                style={{ opacity: index % 7 === 0 || index % 11 === 0 ? 1 : 0.45 }}
-              />
-            ))}
-          </div>
-          <div className="rounded-[16px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5">
-            <p className="type-label text-[var(--ink)]">The Tuesday Crash</p>
-            <p className="type-body tone-secondary mt-2">A weekly dip, caught before it becomes the week.</p>
-          </div>
-        </div>
-      </MockupShell>
-    );
-  }
+function PanelPill({
+  panel,
+  index,
+  isOpen,
+  onOpen,
+}: {
+  panel: FeaturePanel;
+  index: number;
+  isOpen: boolean;
+  onOpen: () => void;
+}) {
+  const panelId = `${panel.label.replace(/[^a-z0-9]/gi, "-").toLowerCase()}-${index}`;
 
   return (
-    <MockupShell>
-      <div className="grid h-full gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-        <PhonePlaceholder className="lg:-rotate-2 lg:translate-y-5">
-          <p className="type-caption text-[var(--text-tertiary)]">morning brief</p>
-          <div className="rounded-[8px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-4">
-            <p className="type-body tone-primary">Rough night. Your morning moved. Lunch stays clear.</p>
-            <Aside className="mt-3">already moved.</Aside>
-          </div>
-          <div className="mt-auto space-y-2">
-            <div className="h-10 rounded-[8px] bg-[var(--surface-t1)]" />
-            <div className="h-10 rounded-[8px] bg-[var(--surface-t1)]" />
-            <div className="h-10 rounded-[8px] bg-[var(--surface-t1)]" />
-          </div>
-        </PhonePlaceholder>
-        <div className="flex flex-col justify-center gap-3">
-          {["Calendar softened", "Focus held", "Sleep debt noticed"].map((item) => (
-            <div key={item} className="rounded-[12px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4">
-              <p className="type-label text-[var(--ink)]">{item}</p>
-              <p className="type-aside mt-1">one less thing to decide.</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </MockupShell>
-  );
-}
-
-function HealthCard({ tone, headline, body }: HealthSlide["cards"][number]) {
-  return (
-    <article className="flex min-h-[190px] flex-col justify-between rounded-[20px] border border-[var(--border-default)] bg-[var(--surface-t1)] p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-[8px] border border-[var(--border-default)] bg-[var(--surface-t2)] text-[var(--ink)]">
-        <HealthIcon tone={tone} />
-      </div>
-      <div className="mt-5">
-        <h4 className="type-h3 text-[var(--ink)]">{headline}</h4>
-        <p className="type-caption tone-secondary mt-3">{withHighlights(body)}</p>
-      </div>
-    </article>
-  );
-}
-
-function FeatureContent({ slide }: { slide: FeatureSlide }) {
-  return (
-    <div className="grid h-full gap-6 lg:grid-cols-[0.78fr_1.22fr] lg:items-stretch">
-      <div className="flex flex-col justify-center p-2 sm:p-4 lg:p-6">
-        <div className="mb-5 flex flex-wrap items-center gap-2">
-          <p className="type-eyebrow text-[var(--text-tertiary)]">{slide.tab}</p>
-          {slide.badge ? (
-            <span className="type-caption rounded-full border border-[var(--border-default)] bg-[var(--surface-t1)] px-3 py-1 text-[var(--text-secondary)]">
-              {slide.badge}
+    <div>
+      <button
+        type="button"
+        className={`focusable-ring flex w-full items-center gap-3 rounded-full px-4 py-3 text-left transition-[background-color,color] duration-200 ease-[var(--ease-premium)] ${
+          isOpen ? "bg-[var(--surface-t1)] text-[var(--ink)]" : "bg-[var(--surface-t3)] text-[var(--text-secondary)]"
+        }`}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        onClick={onOpen}
+      >
+        <span
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-[background-color,color,transform] duration-200 ease-[var(--ease-premium)] ${
+            isOpen ? "bg-[var(--ink)] text-[var(--surface-t2)]" : "bg-[var(--surface-t2)] text-[var(--ink)]"
+          }`}
+          aria-hidden
+        >
+          {isOpen ? (
+            <span className="h-[2px] w-3 rounded-full bg-current" />
+          ) : (
+            <span className="relative h-3 w-3">
+              <span className="absolute left-0 top-1/2 h-[2px] w-3 -translate-y-1/2 rounded-full bg-current" />
+              <span className="absolute left-1/2 top-0 h-3 w-[2px] -translate-x-1/2 rounded-full bg-current" />
             </span>
-          ) : null}
+          )}
+        </span>
+        <span className="type-label">{panel.label}</span>
+      </button>
+      <div
+        id={panelId}
+        className={`grid transition-[grid-template-rows,opacity] duration-[420ms] ease-[var(--ease-premium)] ${
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="mt-3 rounded-[16px] bg-[var(--surface-t1)] p-5">
+            <p className="type-body tone-secondary">{withHighlights(panel.body)}</p>
+          </div>
         </div>
-        <h3 className="type-h2 text-[var(--ink)]">{slide.headline}</h3>
-        <p className="type-body tone-secondary mt-5 max-w-[48ch]">{withHighlights(slide.description)}</p>
-        <Aside className="mt-5">{slide.aside}</Aside>
       </div>
-      <VisualPlaceholder kind={slide.visual} />
     </div>
   );
 }
 
-function HealthContent({ slide }: { slide: HealthSlide }) {
+function WatchSignalStage({ slide, panel }: { slide: ShowcaseSlide; panel: FeaturePanel }) {
+  const isRecovery = slide.visual === "recovery";
+  const isStress = slide.visual === "stress";
+  const isPatterns = slide.visual === "patterns";
+  const isBody = slide.visual === "body";
+
   return (
-    <div className="grid h-full gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
-      <div className="p-2 sm:p-4 lg:p-6">
-        <p className="type-eyebrow mb-5 text-[var(--text-tertiary)]">{slide.tab}</p>
-        <h3 className="type-h2 text-[var(--ink)]">Your health, read in context.</h3>
-        <p className="type-body tone-secondary mt-5 max-w-[46ch]">{withHighlights(slide.intro)}</p>
-        <Aside className="mt-5">the signal is only useful when it moves something.</Aside>
+    <div className="relative flex h-full min-h-[260px] items-center justify-center overflow-hidden rounded-[18px] bg-[var(--surface-t1)] max-lg:min-h-[220px]">
+      <div className="absolute inset-x-8 top-8 hidden h-px bg-[var(--border-default)] lg:block" />
+      <div className="absolute inset-x-10 bottom-10 hidden h-px bg-[var(--border-default)] lg:block" />
+
+      <div className="relative flex h-[310px] w-[248px] items-center justify-center rounded-[54px] border-[8px] border-[var(--ink)] bg-[var(--dark-t4)] p-5 text-[var(--surface-t2)] sm:h-[360px] sm:w-[290px] lg:h-[450px] lg:w-[360px]">
+        <div className="absolute left-1/2 top-5 h-6 w-24 -translate-x-1/2 rounded-full bg-[var(--ink)]" />
+        <div className="flex h-full w-full flex-col justify-between rounded-[34px] bg-[var(--dark-t3)] p-6 pt-14">
+          <div>
+            <p className="type-caption text-[var(--on-dark-subtle)]">{slide.tab}</p>
+            <h4 className="type-h3 mt-3 max-w-[14ch] text-[var(--surface-t2)]">{panel.metric}</h4>
+          </div>
+
+          {isRecovery ? (
+            <div className="mx-auto flex h-36 w-36 items-center justify-center rounded-full bg-[conic-gradient(var(--zone-peak)_0_62%,var(--dark-t1)_62%_100%)] p-4">
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-[var(--dark-t3)]">
+                <span className="type-h2 text-[var(--surface-t2)]">63</span>
+              </div>
+            </div>
+          ) : null}
+
+          {isStress ? (
+            <div className="space-y-3">
+              {[68, 82, 58].map((value, index) => (
+                <div key={value} className="h-3 overflow-hidden rounded-full bg-[var(--dark-t1)]">
+                  <div
+                    className="h-full rounded-full bg-[var(--surface-t2)]"
+                    style={{ width: `${value - index * 8}%`, opacity: 0.86 - index * 0.16 }}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {isPatterns ? (
+            <div className="relative mx-auto h-36 w-36">
+              {[0, 1, 2, 3, 4].map((node) => (
+                <span
+                  key={node}
+                  className="absolute h-5 w-5 rounded-full bg-[var(--surface-t2)]"
+                  style={{
+                    left: `${18 + (node % 3) * 34}%`,
+                    top: `${18 + Math.floor(node / 3) * 44 + (node % 2) * 14}%`,
+                    opacity: node === 2 ? 1 : 0.56,
+                  }}
+                />
+              ))}
+              <svg className="absolute inset-0 h-full w-full text-[var(--surface-t2)] opacity-40" viewBox="0 0 144 144" fill="none" aria-hidden>
+                <path d="M32 44 C56 24 76 82 104 54 C112 46 118 64 122 92" stroke="currentColor" strokeWidth="2" strokeDasharray="5 6" />
+                <path d="M50 110 C62 70 84 102 96 40" stroke="currentColor" strokeWidth="2" strokeDasharray="5 6" />
+              </svg>
+            </div>
+          ) : null}
+
+          {isBody ? (
+            <div className="grid grid-cols-2 gap-3">
+              {["sleep", "hrv", "stress", "motion"].map((item) => (
+                <div key={item} className="rounded-[12px] bg-[var(--dark-t1)] p-3">
+                  <p className="type-caption text-[var(--on-dark-subtle)]">{item}</p>
+                  <div className="mt-3 h-2 rounded-full bg-[var(--dark-t4)]">
+                    <div className="h-full w-2/3 rounded-full bg-[var(--surface-t2)]" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {!isRecovery && !isStress && !isPatterns && !isBody ? (
+            <div className="grid grid-cols-5 gap-2">
+              {Array.from({ length: 25 }).map((_, index) => (
+                <span
+                  key={index}
+                  className="aspect-square rounded-[8px] bg-[var(--surface-t2)]"
+                  style={{ opacity: index % 6 === 0 || index % 11 === 0 ? 0.9 : 0.24 }}
+                />
+              ))}
+            </div>
+          ) : null}
+
+          <div className="rounded-[18px] bg-[var(--dark-t1)] p-4">
+            <p className="type-label text-[var(--surface-t2)]">{panel.title}</p>
+            <p className="type-caption mt-2 text-[var(--on-dark-muted)]">action layer ready</p>
+          </div>
+        </div>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {slide.cards.map((card) => (
-          <HealthCard key={card.headline} {...card} />
-        ))}
+
+      <div className="absolute bottom-5 left-5 right-5 rounded-[16px] bg-[var(--surface-t2)] p-4 lg:left-auto lg:right-8 lg:w-[260px]">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[var(--surface-t1)] text-[var(--ink)]">
+            <HealthIcon tone={panel.tone} />
+          </div>
+          <div>
+            <p className="type-label text-[var(--ink)]">{panel.metric}</p>
+            <p className="type-caption text-[var(--text-tertiary)]">Waldo read</p>
+          </div>
+        </div>
       </div>
+    </div>
+  );
+}
+
+function SlideContent({
+  slide,
+  slideIndex,
+  openPanel,
+  onOpenPanel,
+}: {
+  slide: ShowcaseSlide;
+  slideIndex: number;
+  openPanel: number;
+  onOpenPanel: (panelIndex: number) => void;
+}) {
+  const panel = slide.panels[openPanel] ?? slide.panels[0];
+
+  return (
+    <div className="grid h-full min-h-0 gap-4 p-4 sm:p-5 lg:grid-cols-[minmax(330px,0.92fr)_minmax(420px,1.35fr)] lg:p-6">
+      <div className="flex min-h-0 flex-col rounded-[20px] bg-[var(--surface-t2)] p-3 sm:p-4">
+        <div className="rounded-[16px] bg-[var(--surface-t1)] p-5">
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <p className="type-eyebrow text-[var(--text-tertiary)]">Tab {slideIndex + 1}</p>
+            {slide.badge ? (
+              <span className="type-caption rounded-full bg-[var(--surface-t3)] px-3 py-1 text-[var(--text-secondary)]">
+                {slide.badge}
+              </span>
+            ) : null}
+          </div>
+          <h3 className="type-h2 max-w-[14ch] text-[var(--ink)]">{slide.headline}</h3>
+          <p className="type-body tone-secondary mt-4 max-w-[48ch]">{slide.subheadline}</p>
+        </div>
+
+        <div className="mt-3 space-y-3 pr-1 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
+          {slide.panels.map((item, index) => (
+            <PanelPill
+              key={item.label}
+              panel={item}
+              index={index}
+              isOpen={openPanel === index}
+              onOpen={() => onOpenPanel(index)}
+            />
+          ))}
+        </div>
+        <Aside className="mt-4 px-2">{slide.aside}</Aside>
+      </div>
+
+      <WatchSignalStage slide={slide} panel={panel} />
     </div>
   );
 }
@@ -411,6 +609,7 @@ export function AlreadyDoneSection() {
   const [interactionPaused, setInteractionPaused] = useState(false);
   const [documentHidden, setDocumentHidden] = useState(false);
   const [isScrollAnimating, setIsScrollAnimating] = useState(false);
+  const [openPanels, setOpenPanels] = useState<Record<number, number>>({});
 
   const shouldTickProgress = playing && !ended && !reducedMotion && !interactionPaused && !documentHidden && !isScrollAnimating;
   const activeSlide = slides[active];
@@ -620,6 +819,7 @@ export function AlreadyDoneSection() {
       >
         {slides.map((slide, index) => {
           const isActive = active === index;
+          const openPanel = openPanels[index] ?? 0;
 
           return (
             <article
@@ -627,9 +827,18 @@ export function AlreadyDoneSection() {
               id={`health-feature-card-${index}`}
               aria-label={slide.tab}
               aria-current={isActive}
-              className="h-[var(--slide-height)] w-[var(--slide-width)] snap-center overflow-hidden rounded-[24px] border border-[var(--border-default)] bg-[var(--surface-t2)] p-4 max-[734px]:snap-start sm:p-6 lg:p-8"
+              className="h-[var(--slide-height)] w-[var(--slide-width)] snap-center overflow-y-auto rounded-[24px] bg-[var(--surface-t2)] [scrollbar-width:none] max-[734px]:snap-start lg:overflow-hidden [&::-webkit-scrollbar]:hidden"
             >
-              {slide.kind === "feature" ? <FeatureContent slide={slide} /> : <HealthContent slide={slide} />}
+              <SlideContent
+                slide={slide}
+                slideIndex={index}
+                openPanel={openPanel}
+                onOpenPanel={(panelIndex) => {
+                  setPlaying(false);
+                  setEnded(false);
+                  setOpenPanels((current) => ({ ...current, [index]: panelIndex }));
+                }}
+              />
             </article>
           );
         })}
