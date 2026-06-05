@@ -686,7 +686,7 @@ export function AlreadyDoneSection() {
       >
         {slides.map((slide, index) => {
           const isActive = active === index;
-          const openPanel = Object.prototype.hasOwnProperty.call(openPanels, index) ? openPanels[index] ?? null : isActive ? 0 : null;
+          const openPanel = Object.prototype.hasOwnProperty.call(openPanels, index) ? openPanels[index] ?? null : null;
 
           return (
             <article
