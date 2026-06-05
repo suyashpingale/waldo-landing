@@ -590,7 +590,7 @@ export function AgentFeaturesSection() {
   };
 
   return (
-    <section id="agent-features" className="waldo-agent-gallery w-screen max-w-none scroll-mt-28 overflow-hidden py-10 lg:py-14">
+    <section id="agent-features" className="waldo-agent-gallery w-screen max-w-none scroll-mt-28 overflow-hidden py-8 lg:py-12">
       <div className="px-[var(--agent-side-padding)]">
         <p className="type-eyebrow mb-4 text-[var(--text-tertiary)]">Agent features</p>
         <h2 className="type-h1 max-w-[760px] text-[var(--ink)]" data-animate="headline">

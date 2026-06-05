@@ -580,7 +580,7 @@ export function AlreadyDoneSection() {
   return (
     <section
       id="already-handled"
-      className="waldo-highlights w-screen max-w-none scroll-mt-28 overflow-hidden py-10 lg:py-14"
+      className="waldo-highlights w-screen max-w-none scroll-mt-28 overflow-hidden py-8 lg:py-12"
     >
       <div className="mb-8 flex w-full flex-col gap-6 px-[var(--slide-padding)] lg:mb-10">
         <div>

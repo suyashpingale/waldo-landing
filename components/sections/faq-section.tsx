@@ -51,7 +51,7 @@ export function FaqSection() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="section-shell w-full scroll-mt-28 flex flex-col gap-10 py-10 lg:py-12">
+    <section id="faq" className="section-shell w-full scroll-mt-28 flex flex-col gap-10 py-6 lg:py-8">
       <SectionIntro
         title={
           <>

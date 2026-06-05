@@ -117,7 +117,7 @@ export function ActionFanSection() {
   const frontCard = fanCards[frontIndex];
 
   return (
-    <section id="action-fan" className="section-shell scroll-mt-28 flex flex-col gap-8 py-10 lg:gap-10 lg:py-12">
+    <section id="action-fan" className="section-shell scroll-mt-28 flex flex-col gap-8 py-6 lg:gap-10 lg:py-8">
       <SectionIntro
         title={
           <>

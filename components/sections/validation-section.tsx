@@ -135,7 +135,7 @@ function CompatibilityStrip() {
 
 export function ValidationSection() {
   return (
-    <section id="validation" className="section-shell w-full scroll-mt-28 py-10 lg:py-12">
+    <section id="validation" className="section-shell w-full scroll-mt-28 py-6 lg:py-8">
       <SectionIntro
         eyebrow="Not just promises."
         title="Proof."

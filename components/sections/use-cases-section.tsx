@@ -107,7 +107,7 @@ export function UseCasesSection() {
   const { railRef, canGoBack, canGoForward, scrollByCard } = useRailScroll();
 
   return (
-    <section id="use-cases" className="section-shell w-full scroll-mt-28 overflow-hidden py-10 lg:py-12">
+    <section id="use-cases" className="section-shell w-full scroll-mt-28 overflow-hidden py-6 lg:py-8">
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <SectionIntro
           eyebrow="Use cases"

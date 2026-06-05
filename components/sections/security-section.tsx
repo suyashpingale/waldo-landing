@@ -226,7 +226,7 @@ export function SecuritySection() {
   const { railRef, canGoBack, canGoForward, scrollByCard } = useRailScroll();
 
   return (
-    <section id="security" className="section-shell w-full scroll-mt-28 py-10 lg:py-12">
+    <section id="security" className="section-shell w-full scroll-mt-28 py-6 lg:py-8">
       <SectionIntro
         title={
           <>
