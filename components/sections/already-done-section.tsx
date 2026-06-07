@@ -351,7 +351,7 @@ function PanelPill({
     return (
       <article
         id={panelId}
-        className="max-w-[440px] rounded-[24px] border border-[var(--border-default)] bg-[var(--surface-t1)] px-5 py-4"
+        className="max-w-[440px] rounded-[16px] border border-[var(--border-default)] bg-[var(--surface-t2)] px-5 py-4"
       >
         <p className="type-body text-[var(--text-secondary)]">
           <span className="font-medium text-[var(--ink)]">{panel.title}</span> {cleanBody}
@@ -364,12 +364,12 @@ function PanelPill({
     <div id={panelId}>
       <button
         type="button"
-        className="focusable-ring flex w-fit max-w-full items-center gap-3 rounded-full border border-[var(--border-default)] bg-[var(--surface-t1)] px-4 py-3 text-left text-[var(--ink)] transition-[background-color] duration-150 ease-[var(--ease-premium)] hover:bg-[var(--surface-t2)]"
+        className="focusable-ring flex w-fit max-w-full items-center gap-3 rounded-full border border-[var(--border-default)] bg-transparent px-4 py-3 text-left text-[var(--ink)] transition-[background-color] duration-150 ease-[var(--ease-premium)] hover:bg-[var(--surface-t3)]"
         aria-expanded={false}
         aria-controls={panelId}
         onClick={onOpen}
       >
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border-default)] bg-[var(--surface-t1)] text-[var(--ink)]" aria-hidden>
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border-default)] bg-transparent text-[var(--ink)]" aria-hidden>
           <span className="relative h-3 w-3">
             <span className="absolute left-0 top-1/2 h-[1.5px] w-3 -translate-y-1/2 rounded-full bg-current" />
             <span className="absolute left-1/2 top-0 h-3 w-[1.5px] -translate-x-1/2 rounded-full bg-current" />
@@ -421,7 +421,7 @@ function SlideContent({
   const panel = slide.panels[openPanel ?? 0] ?? slide.panels[0];
 
   return (
-    <div className="relative grid h-full min-h-0 gap-4 p-6 sm:p-8 lg:grid-cols-[minmax(330px,0.82fr)_minmax(460px,1.4fr)] lg:p-10 xl:p-12">
+    <div className="relative grid h-full min-h-0 gap-4 p-5 sm:p-6 lg:grid-cols-[minmax(300px,0.82fr)_minmax(400px,1.4fr)] lg:p-8">
       {openPanel !== null ? (
         <button
           type="button"
@@ -441,7 +441,7 @@ function SlideContent({
           <h3 className="type-h2 max-w-[16ch] text-[var(--ink)]">{slide.headline}</h3>
         </div>
 
-        <div className="space-y-3 pr-1 lg:min-h-0 lg:max-h-[470px] lg:overflow-y-auto">
+        <div className="space-y-3 pr-1 lg:min-h-0 lg:max-h-[400px] lg:overflow-y-auto">
           {slide.panels.map((item, index) => (
             <PanelPill
               key={item.label}
@@ -452,7 +452,6 @@ function SlideContent({
             />
           ))}
         </div>
-        <Aside className="mt-5">{slide.aside}</Aside>
       </div>
 
       <WatchSignalStage slide={slide} panel={panel} />
