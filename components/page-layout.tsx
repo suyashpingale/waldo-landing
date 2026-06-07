@@ -67,8 +67,8 @@ export function PageLayout() {
           <MorningBriefSection />
           <AlreadyDoneSection />
           <AgentFeaturesSection />
-          <ActionFanSection />
           <UseCasesSection />
+          <ActionFanSection />
           <ValidationSection />
           <SecuritySection />
           <SmarterSection />
