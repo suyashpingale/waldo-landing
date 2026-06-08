@@ -541,7 +541,9 @@ export function AlreadyDoneSection() {
         start: "top top",
         end: () => `+=${maxScroll + window.innerHeight * 0.5}`,
         pin: true,
-        scrub: 0.9,
+        // Lenis already smooths the scroll; keep scrub tight so the carousel
+        // tracks the pointer closely instead of double-lagging behind it.
+        scrub: 0.4,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
