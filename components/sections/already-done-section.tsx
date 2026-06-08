@@ -4,7 +4,6 @@ import * as Accordion from "@radix-ui/react-accordion";
 import { useEffect, useRef, useState } from "react";
 
 import { Aside } from "@/components/landing-primitives";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 const AUTO_DWELL_MS = 6150;
 const AUTO_SCROLL_MS = 1000;
@@ -462,12 +461,10 @@ function SlideContent({
 
 export function AlreadyDoneSection() {
   const reducedMotion = usePrefersReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const scrollAnimationRef = useRef<number | null>(null);
   const progressAnimationRef = useRef<number | null>(null);
   const progressRef = useRef(0);
-  const activeRef = useRef(0);
   const lastProgressTickRef = useRef<number | null>(null);
   const scrollSnapTypeRef = useRef<string | null>(null);
   const programmaticScrollRef = useRef(false);
@@ -478,10 +475,9 @@ export function AlreadyDoneSection() {
   const [interactionPaused, setInteractionPaused] = useState(false);
   const [documentHidden, setDocumentHidden] = useState(false);
   const [isScrollAnimating, setIsScrollAnimating] = useState(false);
-  const [scrollDriven, setScrollDriven] = useState(false);
   const [openPanels, setOpenPanels] = useState<Record<number, number | null>>({});
 
-  const shouldTickProgress = playing && !ended && !reducedMotion && !scrollDriven && !interactionPaused && !documentHidden && !isScrollAnimating;
+  const shouldTickProgress = playing && !ended && !reducedMotion && !interactionPaused && !documentHidden && !isScrollAnimating;
   const activeSlide = slides[active];
   const activeLabel = activeSlide.tab;
 
@@ -489,11 +485,6 @@ export function AlreadyDoneSection() {
     const bounded = Math.max(0, Math.min(1, value));
     progressRef.current = bounded;
     setProgress(bounded);
-  };
-
-  const setActiveValue = (index: number) => {
-    activeRef.current = index;
-    setActive(index);
   };
 
   useEffect(() => {
@@ -513,65 +504,6 @@ export function AlreadyDoneSection() {
       if (progressAnimationRef.current !== null) window.cancelAnimationFrame(progressAnimationRef.current);
     };
   }, []);
-
-  useEffect(() => {
-    activeRef.current = active;
-  }, [active]);
-
-  useEffect(() => {
-    if (reducedMotion) return;
-
-    const section = sectionRef.current;
-    const track = trackRef.current;
-    if (!section || !track) return;
-
-    const mm = gsap.matchMedia();
-
-    mm.add("(min-width: 1024px)", () => {
-      const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
-      if (maxScroll < 8) return undefined;
-
-      setScrollDriven(true);
-      setPlaying(false);
-      setEnded(false);
-      lastProgressTickRef.current = null;
-
-      const trigger = ScrollTrigger.create({
-        trigger: section,
-        start: "top top",
-        end: () => `+=${maxScroll + window.innerHeight * 0.5}`,
-        pin: true,
-        scrub: 0.9,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const rawIndex = self.progress * (slides.length - 1);
-          const nextIndex = Math.max(0, Math.min(slides.length - 1, Math.round(rawIndex)));
-          const localProgress = nextIndex >= slides.length - 1 ? self.progress : rawIndex - Math.floor(rawIndex);
-
-          programmaticScrollRef.current = true;
-          track.scrollLeft = maxScroll * self.progress;
-          window.requestAnimationFrame(() => {
-            programmaticScrollRef.current = false;
-          });
-
-          if (nextIndex !== activeRef.current) setActiveValue(nextIndex);
-          setProgressValue(self.progress >= 0.999 ? 1 : localProgress);
-          setEnded(self.progress >= 0.999);
-        },
-      });
-
-      ScrollTrigger.refresh();
-
-      return () => {
-        trigger.kill();
-        setScrollDriven(false);
-        programmaticScrollRef.current = false;
-      };
-    });
-
-    return () => mm.revert();
-  }, [reducedMotion]);
 
   useEffect(() => {
     if (!shouldTickProgress) {
@@ -634,7 +566,7 @@ export function AlreadyDoneSection() {
     lastProgressTickRef.current = null;
     setProgressValue(0);
     setEnded(false);
-    setActiveValue(nextIndex);
+    setActive(nextIndex);
     if (!track || !card) return;
 
     const paddingStart = parseFloat(window.getComputedStyle(track).paddingLeft) || 0;
@@ -704,7 +636,7 @@ export function AlreadyDoneSection() {
     });
 
     if (nearest !== active) {
-      setActiveValue(nearest);
+      setActive(nearest);
       setProgressValue(0);
       setEnded(false);
     }
@@ -712,7 +644,6 @@ export function AlreadyDoneSection() {
 
   return (
     <section
-      ref={sectionRef}
       id="already-handled"
       className="waldo-highlights w-screen max-w-none scroll-mt-28 overflow-hidden py-8 lg:py-12"
     >
@@ -833,10 +764,8 @@ export function AlreadyDoneSection() {
           type="button"
           className="waldo-carousel-controls focusable-ring flex h-14 w-14 items-center justify-center rounded-full bg-[var(--surface-t2)] text-[var(--ink)] transition-[background-color] duration-150 ease-[var(--ease-premium)] hover:bg-[var(--surface-t1)]"
           style={{ animation: "waldo-carousel-control-in 940ms var(--ease-premium) both" }}
-          aria-label={scrollDriven ? "Carousel follows page scroll" : ended ? "Replay carousel" : playing ? "Pause carousel" : "Play carousel"}
-          disabled={scrollDriven}
+          aria-label={ended ? "Replay carousel" : playing ? "Pause carousel" : "Play carousel"}
           onClick={() => {
-            if (scrollDriven) return;
             if (ended) {
               scrollToSlide(0, false);
               setPlaying(true);
