@@ -691,7 +691,6 @@ export function AgentFeaturesSection() {
 
       <div
         ref={viewportRef}
-        data-lenis-prevent
         data-animate="stagger"
         data-stagger="0.08"
         className="mt-12 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"

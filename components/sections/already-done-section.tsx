@@ -729,7 +729,6 @@ export function AlreadyDoneSection() {
 
       <div
         ref={trackRef}
-        data-lenis-prevent
         data-animate="stagger"
         data-stagger="0.08"
         className="grid w-full auto-cols-[var(--slide-width)] grid-flow-col snap-x snap-mandatory scroll-pl-0 gap-[var(--slide-gap)] overflow-x-auto px-[var(--slide-padding)] pb-2 [scrollbar-width:none] max-[734px]:scroll-pl-[var(--slide-padding)] [&::-webkit-scrollbar]:hidden"
@@ -765,7 +764,6 @@ export function AlreadyDoneSection() {
               id={`health-feature-card-${index}`}
               aria-label={slide.tab}
               aria-current={isActive}
-              data-lenis-prevent
               data-stagger-item
               className="h-[var(--slide-height)] w-[var(--slide-width)] snap-center overflow-y-auto rounded-[24px] bg-[var(--surface-t2)] [scrollbar-width:none] max-[734px]:snap-start lg:overflow-hidden [&::-webkit-scrollbar]:hidden"
             >
