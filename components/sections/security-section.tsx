@@ -254,6 +254,7 @@ export function SecuritySection() {
         </div>
         <div
           ref={railRef}
+          data-lenis-prevent
           className="rail-fade flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           aria-label="Security commitments"
         >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 
 import { Aside } from "@/components/landing-primitives";
 
@@ -345,39 +346,50 @@ function PanelPill({
   onOpen: () => void;
 }) {
   const panelId = `${panel.label.replace(/[^a-z0-9]/gi, "-").toLowerCase()}-${index}`;
+  const panelContentId = `${panelId}-content`;
   const cleanBody = panel.body.replaceAll("*", "");
-
-  if (isOpen) {
-    return (
-      <article
-        id={panelId}
-        className="max-w-[440px] rounded-[16px] border border-[var(--border-default)] bg-[var(--surface-t2)] px-5 py-4"
-      >
-        <p className="type-body text-[var(--text-secondary)]">
-          <span className="font-medium text-[var(--ink)]">{panel.title}</span> {cleanBody}
-        </p>
-      </article>
-    );
-  }
+  const prefersReducedMotion = useReducedMotion();
+  const transition = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration: 0.42, ease: [0.22, 1, 0.36, 1] as const };
 
   return (
-    <div id={panelId}>
-      <button
-        type="button"
-        className="focusable-ring flex w-fit max-w-full items-center gap-3 rounded-full border border-[var(--border-default)] bg-transparent px-4 py-3 text-left text-[var(--ink)] transition-[background-color] duration-150 ease-[var(--ease-premium)] hover:bg-[var(--surface-t3)]"
-        aria-expanded={false}
-        aria-controls={panelId}
-        onClick={onOpen}
-      >
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border-default)] bg-transparent text-[var(--ink)]" aria-hidden>
-          <span className="relative h-3 w-3">
-            <span className="absolute left-0 top-1/2 h-[1.5px] w-3 -translate-y-1/2 rounded-full bg-current" />
-            <span className="absolute left-1/2 top-0 h-3 w-[1.5px] -translate-x-1/2 rounded-full bg-current" />
+    <motion.div
+      layout
+      className={isOpen ? "w-full max-w-[440px]" : "w-fit max-w-full"}
+      transition={transition}
+    >
+      {isOpen ? (
+        <motion.article
+          id={panelContentId}
+          layout
+          initial={prefersReducedMotion ? false : { opacity: 0, y: -6, filter: "blur(5px)" }}
+          animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={transition}
+          className="rounded-[16px] border border-[var(--border-default)] bg-[var(--surface-t2)] px-5 py-4"
+        >
+          <p className="type-body text-[var(--text-secondary)]">
+            <span className="font-medium text-[var(--ink)]">{panel.title}</span> {cleanBody}
+          </p>
+        </motion.article>
+      ) : (
+        <button
+          type="button"
+          className="focusable-ring flex w-fit max-w-full items-center gap-3 rounded-full border border-[var(--border-default)] bg-transparent px-4 py-3 text-left text-[var(--ink)] transition-[background-color] duration-150 ease-[var(--ease-premium)] hover:bg-[var(--surface-t3)]"
+          aria-expanded={false}
+          aria-controls={panelContentId}
+          onClick={onOpen}
+        >
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border-default)] bg-transparent text-[var(--ink)]" aria-hidden>
+            <span className="relative h-3 w-3">
+              <span className="absolute left-0 top-1/2 h-[1.5px] w-3 -translate-y-1/2 rounded-full bg-current" />
+              <span className="absolute left-1/2 top-0 h-3 w-[1.5px] -translate-x-1/2 rounded-full bg-current" />
+            </span>
           </span>
-        </span>
-        <span className="type-label">{panel.title}</span>
-      </button>
-    </div>
+          <span className="type-label">{panel.title}</span>
+        </button>
+      )}
+    </motion.div>
   );
 }
 
@@ -441,7 +453,7 @@ function SlideContent({
           <h3 className="type-h2 max-w-[16ch] text-[var(--ink)]">{slide.headline}</h3>
         </div>
 
-        <div className="space-y-3 pr-1 lg:min-h-0 lg:max-h-[400px] lg:overflow-y-auto">
+        <div className="space-y-3 pr-1 lg:min-h-0 lg:max-h-[400px] lg:overflow-y-auto" data-lenis-prevent>
           {slide.panels.map((item, index) => (
             <PanelPill
               key={item.label}
@@ -660,6 +672,7 @@ export function AlreadyDoneSection() {
 
       <div
         ref={trackRef}
+        data-lenis-prevent
         className="grid w-full auto-cols-[var(--slide-width)] grid-flow-col snap-x snap-mandatory scroll-pl-0 gap-[var(--slide-gap)] overflow-x-auto px-[var(--slide-padding)] pb-2 [scrollbar-width:none] max-[734px]:scroll-pl-[var(--slide-padding)] [&::-webkit-scrollbar]:hidden"
         aria-live="polite"
         aria-label={`Showing ${activeLabel}`}
@@ -693,6 +706,7 @@ export function AlreadyDoneSection() {
               id={`health-feature-card-${index}`}
               aria-label={slide.tab}
               aria-current={isActive}
+              data-lenis-prevent
               className="h-[var(--slide-height)] w-[var(--slide-width)] snap-center overflow-y-auto rounded-[24px] bg-[var(--surface-t2)] [scrollbar-width:none] max-[734px]:snap-start lg:overflow-hidden [&::-webkit-scrollbar]:hidden"
             >
               <SlideContent

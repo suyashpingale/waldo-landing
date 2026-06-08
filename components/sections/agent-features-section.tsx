@@ -632,6 +632,7 @@ export function AgentFeaturesSection() {
 
       <div
         ref={viewportRef}
+        data-lenis-prevent
         className="mt-12 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{ scrollSnapType: "x mandatory", scrollPaddingInline: "var(--agent-side-padding)" }}
         aria-label="Agent features gallery"
