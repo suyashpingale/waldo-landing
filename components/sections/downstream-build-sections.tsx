@@ -24,44 +24,44 @@ type FanCard = {
 
 const fanCards: FanCard[] = [
   {
-    title: "The Constellation",
+    title: "Read",
     icon: goodSleepDarkMode,
     iconW: 89,
     iconH: 66,
-    body: "One Spot is a data point. Twelve Spots across four months is a Constellation. The fact that your worst sleep always follows your heaviest meeting days. The fact that your focus peaks in November and dips in March - every year, without fail. Waldo connected these dots for the long term goals.",
-    footnote: "on it while you sleep.",
+    body: "Sleep, HRV, recovery, stress, calendar, inbox, and task load. Waldo reads the raw pieces together so a number never sits alone.",
+    footnote: "human context first.",
   },
   {
-    title: "The Spot",
+    title: "Decide",
     icon: vectorSpot,
     iconW: 90,
     iconH: 69,
-    body: "Not a trend. Not a report. One thing, clearly said. That's a Spot. Waldo found it in six weeks of Tuesdays and Thursdays that looked ordinary.\n\nYou wouldn't have found it. Spots show up when there's something worth saying. Not before.",
-    footnote: "something Waldo noticed.",
+    body: "Recovery, form, weight, signal pressure, focus window, and pattern confidence. Waldo decides what the day can handle before it touches the calendar.",
+    footnote: "the read becomes a choice.",
   },
   {
-    title: "The Adjustment",
+    title: "Do",
     icon: goodWeekDarkMode,
     iconW: 100,
     iconH: 77,
-    body: "Not a notification asking if you want to reschedule. Moved. Done. You get a note after the fact.\n\nWaldo doesn't ask. It acts. You stay in charge - you can always undo it - but you usually won't.",
-    footnote: "already moved.",
+    body: "Move meetings, block time, draft email, create task, prepare brief, update status. The homepage should leave a trail of completed work, not promises.",
+    footnote: "receipts, not suggestions.",
   },
   {
-    title: "The Patrol",
+    title: "Delegate",
     icon: goodDarkMode,
     iconW: 77,
     iconH: 79,
-    body: "The Patrol doesn't take breaks.\nWhile you were watching those four episodes on Sunday (the ones you told no one about), The Patrol was noting the time, reading the signal, and adjusting tomorrow's plan. You only see the result.",
-    footnote: "on it while you sleep.",
+    body: "Call the research agent, ask the scheduling agent, request a writing pass, route the returned draft. Waldo gives other agents the human context they were missing.",
+    footnote: "agent work with a pulse.",
   },
   {
-    title: "The Daily Brief",
+    title: "Remember",
     icon: watchingDarkMode,
     iconW: 99,
     iconH: 75,
-    body: "Every morning, one message. Not a dashboard. Not a chart. Not four apps open before your coffee. Waldo tells you what last night meant for today, and what it already did about it.",
-    footnote: "mornings, sorted.",
+    body: "Spots, Constellations, undo learning, and account boundaries. Waldo remembers what helped, what annoyed you, and what should stay separated.",
+    footnote: "the long game compounds.",
   },
 ];
 
@@ -88,7 +88,7 @@ function FanStackCard({ card, size }: { card: FanCard; size: "small" | "medium" 
       }}
     >
       <div>
-        <Image src={card.icon} alt="" width={card.iconW} height={card.iconH} unoptimized className="h-auto max-h-20 w-auto" />
+        <Image src={card.icon} alt="" width={card.iconW} height={card.iconH} className="h-auto max-h-20 w-auto" />
         <h3 className={front ? "mt-10 text-[36px] leading-[1.2] text-[var(--ink)]" : medium ? "mt-9 text-[32px] leading-[1.2] text-[var(--ink)]" : "mt-8 text-[29px] leading-[1.2] text-[var(--ink)]"}>
           {card.title}
         </h3>
@@ -116,14 +116,14 @@ export function ActionFanSection() {
           <SectionIntro
             title={
               <>
-                Five things Waldo does
+                Capability atlas:
                 <br />
-                while you get on with your day.
+                read, decide, do, delegate, remember.
               </>
             }
-            aside="not just a suggestion or a notification."
+            aside="the whole agency loop."
           >
-            <p>Cards shuffle with the same calm, tactile rhythm as the deployed build.</p>
+            <p>Cards keep the tactile fan, but the content now shows the product breadth without turning the homepage into a feature grid.</p>
           </SectionIntro>
         </div>
 

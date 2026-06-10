@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Aside, SectionIntro, withHighlights } from "@/components/landing-primitives";
 
 const guidanceBars = [
-  ["Health / wellness", 27.2],
+  ["Health guidance", 27.2],
   ["Professional / career", 25.9],
   ["Relationships", 12.3],
   ["Financial", 10.9],
@@ -40,7 +40,7 @@ function BarChartCard() {
           <p className="type-caption text-[var(--text-tertiary)]">Anthropic research</p>
           <h3 className="type-h2 mt-3 text-[var(--ink)]">Health guidance is already happening.</h3>
           <p className="type-body tone-secondary mt-4">
-            {withHighlights("Anthropic found health and wellness was the largest personal-guidance category. *The demand is already here.*")}
+            {withHighlights("Anthropic found health guidance was the largest personal-guidance category. *The demand is already here.*")}
           </p>
           <Aside className="mt-5">structure beats a loose chat window.</Aside>
         </div>

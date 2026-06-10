@@ -7,13 +7,14 @@ import { SmoothScroll } from "./smooth-scroll";
 import { HeroSection } from "./sections/hero-section";
 import { HealthDataSection } from "./sections/health-data-section";
 import { MorningBriefSection } from "./sections/morning-brief-section";
+import { SignalActionSection } from "./sections/signal-action-section";
 import { AlreadyDoneSection } from "./sections/already-done-section";
 import { AgentFeaturesSection } from "./sections/agent-features-section";
 import { UseCasesSection } from "./sections/use-cases-section";
 import { ValidationSection } from "./sections/validation-section";
 import { SecuritySection } from "./sections/security-section";
 import { WhereIsWaldoSection } from "./sections/where-is-waldo-section";
-import { SmarterSection } from "./sections/smarter-section";
+import { LongGameSection } from "./sections/long-game-section";
 import { ActionFanSection, SceneCloseSection } from "./sections/downstream-build-sections";
 import { FaqSection } from "./sections/faq-section";
 import { FooterSection } from "./sections/footer-section";
@@ -67,13 +68,14 @@ export function PageLayout() {
           <HeroSection />
           <HealthDataSection />
           <MorningBriefSection />
+          <SignalActionSection />
           <AlreadyDoneSection />
           <AgentFeaturesSection />
           <UseCasesSection />
           <ActionFanSection />
           <ValidationSection />
           <SecuritySection />
-          <SmarterSection />
+          <LongGameSection />
           <WhereIsWaldoSection />
           <FaqSection />
           <SceneCloseSection />

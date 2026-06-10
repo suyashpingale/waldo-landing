@@ -7,7 +7,7 @@ import { Aside, SectionIntro, withHighlights } from "@/components/landing-primit
 const faqs = [
   {
     q: "What actually is Waldo?",
-    a: "A personal AI agent that reads your health wearable 24/7, understands what the data means for your day, and acts: rescheduling meetings, blocking focus time, drafting emails, creating tasks, and more. *Not a health tracker. Not a chatbot.* An agent that happens to know how your body is doing.",
+    a: "A personal AI agent that reads your health wearable 24/7, understands what the data means for your day, and acts: rescheduling meetings, blocking focus time, drafting emails, creating tasks, and more. *Not another readout. Not a loose chat window.* An agent that happens to know how your body is doing.",
   },
   {
     q: "Does Waldo actually move my meetings?",

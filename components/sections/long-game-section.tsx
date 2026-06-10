@@ -1,15 +1,26 @@
 import { Aside, SectionIntro, withHighlights } from "@/components/landing-primitives";
 
 const dimensions = [
-  ["Recovery", "down", "last night *gave less*."],
-  ["Form", "uneven", "capacity *keeps moving*."],
-  ["Weight", "up", "day is *asking more*."],
-  ["The Stack", "dense", "meetings *keep clustering*."],
-  ["Signal Pressure", "high", "volume is *shaping the day*."],
-  ["Task Pileup", "rising", "unfinished work is *carrying over*."],
+  ["Late messages", "3x", "same window *keeps repeating*."],
+  ["Short sleep", "5h 42m", "recovery *starts lower*."],
+  ["Meeting stack", "dense", "calls *keep clustering*."],
+  ["Lower recovery", "63", "the morning *needs more room*."],
+  ["Task carryover", "rising", "unfinished work *needs routing*."],
+  ["Agent handoff", "ready", "specialist pass *can start*."],
+  ["Wednesday protected", "held", "the week *learned from it*."],
 ] as const;
 
-export function SmarterSection() {
+const constellationNodes = [
+  [108, 86, "Late messages"],
+  [265, 140, "Short sleep"],
+  [452, 82, "Meeting stack"],
+  [156, 268, "Lower recovery"],
+  [338, 264, "Task carryover"],
+  [514, 252, "Agent handoff"],
+  [332, 338, "Wednesday protected"],
+] as const;
+
+export function LongGameSection() {
   return (
     <section id="constellation" className="section-shell dark-panel overflow-hidden rounded-[24px] p-5 sm:p-6 lg:p-8">
       <div data-animate="blur-fade">
@@ -44,19 +55,15 @@ export function SmarterSection() {
 
           <svg viewBox="0 0 640 360" className="mt-6 h-auto w-full" role="img" aria-label="Pattern map showing heavy meetings connected to short sleep and lower recovery.">
             <g stroke="var(--panel-border-focus)" strokeWidth="1.5">
-              <line x1="130" y1="90" x2="315" y2="160" />
-              <line x1="315" y1="160" x2="500" y2="90" />
-              <line x1="315" y1="160" x2="450" y2="270" />
-              <line x1="315" y1="160" x2="170" y2="268" />
-              <line x1="170" y1="268" x2="450" y2="270" />
+              <line x1="108" y1="86" x2="265" y2="140" />
+              <line x1="265" y1="140" x2="452" y2="82" />
+              <line x1="265" y1="140" x2="156" y2="268" />
+              <line x1="265" y1="140" x2="338" y2="264" />
+              <line x1="338" y1="264" x2="514" y2="252" />
+              <line x1="338" y1="264" x2="332" y2="338" />
+              <line x1="156" y1="268" x2="332" y2="338" />
             </g>
-            {[
-              [130, 90, "Meeting stack"],
-              [315, 160, "Short sleep"],
-              [500, 90, "Late messages"],
-              [170, 268, "Lower recovery"],
-              [450, 270, "Next-day drift"],
-            ].map(([x, y, label]) => (
+            {constellationNodes.map(([x, y, label]) => (
               <g key={label as string}>
                 <circle cx={x as number} cy={y as number} r="28" fill="var(--panel-card)" stroke="var(--panel-border-focus)" />
                 <circle cx={x as number} cy={y as number} r="10" fill="var(--panel-ink)" opacity="0.9" />
