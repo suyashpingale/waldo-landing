@@ -25,7 +25,7 @@ export function LongGameSection() {
     <section id="constellation" className="section-shell dark-panel overflow-hidden rounded-[24px] p-5 sm:p-6 lg:p-8">
       <div data-animate="blur-fade">
         <SectionIntro
-          dark
+          className="[&_.type-body]:max-w-[46ch] [&_.type-body]:text-left sm:[&_.type-body]:text-center"
           title={
             <>
               The longer it runs,
