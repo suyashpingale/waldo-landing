@@ -116,14 +116,14 @@ export function ActionFanSection() {
           <SectionIntro
             title={
               <>
-                Capability atlas:
+                Five things Waldo does
                 <br />
-                read, decide, do, delegate, remember.
+                while you get on with your day.
               </>
             }
-            aside="the whole agency loop."
+            aside="not just a suggestion or a notification."
           >
-            <p>Cards keep the tactile fan, but the content now shows the product breadth without turning the homepage into a feature grid.</p>
+            <p>Cards shuffle with the same calm, tactile rhythm as the deployed build.</p>
           </SectionIntro>
         </div>
 
