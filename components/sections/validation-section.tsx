@@ -25,10 +25,11 @@ const visionConnectors = [
 const compatibilityItems = [
   { label: "Apple Watch", src: "/assets/health-apple-watch.png", imageClassName: "max-h-8 max-w-[58px]" },
   { label: "WHOOP", src: "/assets/health-whoop.png", imageClassName: "max-h-9 max-w-[46px]" },
-  // Oura, Garmin, and Fitbit logos are not present in the supplied assets yet.
+  // Oura, Garmin, Samsung, and Fitbit logos are not present in the supplied assets yet.
   // Keep monochrome placeholders until the owner supplies exact logo files.
   { label: "Oura" },
   { label: "Garmin" },
+  { label: "Samsung" },
   { label: "Fitbit" },
 ] as const;
 
