@@ -123,7 +123,7 @@ export function ActionFanSection() {
             }
             aside="not just a suggestion or a notification."
           >
-            <p>Cards shuffle with the same calm, tactile rhythm as the deployed build.</p>
+            <p>Read the day, decide what can move, do the work, delegate the rest, and remember what helped.</p>
           </SectionIntro>
         </div>
 
