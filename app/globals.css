@@ -1262,45 +1262,56 @@ body {
   50%       { opacity: 0.65; }
 }
 
-/* ── Where's Waldo ticker drum ──────────────────────────────── */
-/* 5 items (4 phrases + phrase-1 duplicate for seamless loop).
-   Each item = 20% of track height. Hold 21%, scroll 4% = 2.52s + 0.48s per phrase. */
-@keyframes waldo-ticker {
-  0%,   21%  { transform: translateY(0);    }
-  25%,  46%  { transform: translateY(-20%); }
-  50%,  71%  { transform: translateY(-40%); }
-  75%,  96%  { transform: translateY(-60%); }
-  100%        { transform: translateY(-80%); }
-}
-
-@keyframes waldo-progress {
-  from { width: 0%; }
-  to   { width: 100%; }
-}
-
 /* ── Problem: live data ticker pulse dot ────────────────────── */
 @keyframes live-dot {
   0%, 100% { transform: scale(1);   opacity: 1;   }
   50%       { transform: scale(1.7); opacity: 0.35; }
 }
 
-@keyframes where-ticker {
-  0%, 5% {
+@keyframes where-live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.45); }
+}
+
+@keyframes where-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
     transform: translateY(0);
-  }
-  100% {
-    transform: translateY(calc(-100% + var(--where-item-height, 88px)));
+    filter: blur(0);
   }
 }
 
-.where-ticker-track {
-  --where-item-height: 88px;
-  animation: where-ticker 42s linear infinite;
+@keyframes where-bar-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
-@media (min-width: 640px) {
-  .where-ticker-track {
-    --where-item-height: 76px;
+.where-live-dot {
+  animation: where-live-pulse 1.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.where-work-step,
+.where-receipt-row {
+  animation: where-step-in 560ms var(--ease-premium) var(--where-step-delay, 0ms) both;
+}
+
+.where-work-bar {
+  animation: where-bar-fill 720ms var(--ease-premium) calc(var(--where-step-delay, 0ms) + 120ms) both;
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .where-live-dot,
+  .where-work-step,
+  .where-receipt-row,
+  .where-work-bar {
+    animation: none;
   }
 }
 
@@ -1317,22 +1328,6 @@ body {
   .rail-fade {
     -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 22px), transparent 100%);
     mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 22px), transparent 100%);
-  }
-}
-
-/* Vertical auto-ticker window: soft top/bottom fade + pause on hover. */
-.ticker-window {
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
-  mask-image: linear-gradient(180deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
-}
-
-.ticker-window:hover .where-ticker-track {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .where-ticker-track {
-    animation: none;
   }
 }
 
