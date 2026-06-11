@@ -140,7 +140,6 @@ export function UseCasesSection() {
 
       <div
         ref={railRef}
-        data-lenis-prevent
         data-animate="stagger"
         data-stagger="0.055"
         className="rail-fade mt-10 snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"

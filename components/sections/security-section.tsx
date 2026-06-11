@@ -307,7 +307,6 @@ export function SecuritySection() {
         </div>
         <div
           ref={railRef}
-          data-lenis-prevent
           data-animate="stagger"
           data-stagger="0.055"
           className="rail-fade flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
