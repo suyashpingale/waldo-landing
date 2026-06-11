@@ -51,11 +51,13 @@ export function ScrollAnimations() {
         const words = el.innerText.trim().split(/\s+/).filter(Boolean);
 
         if (words.length <= 1) {
-          el.innerHTML = words
-            .map(w => `<span class="gsap-w" style="display:inline-block;line-height:inherit">${w}</span>`)
-            .join(" ");
+          el.textContent = words.join(" ");
+          el.style.paddingTop = "0.12em";
+          el.style.paddingBottom = "0.18em";
+          el.style.marginTop = "-0.12em";
+          el.style.marginBottom = "-0.18em";
 
-          gsap.from(el.querySelectorAll<HTMLElement>(".gsap-w"), {
+          gsap.from(el, {
             y: 18,
             opacity: 0,
             filter: "blur(6px)",

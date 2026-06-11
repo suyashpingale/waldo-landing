@@ -2,7 +2,7 @@
 
 import * as Accordion from "@radix-ui/react-accordion";
 
-import { Aside, SectionIntro, withHighlights } from "@/components/landing-primitives";
+import { SectionIntro, withHighlights } from "@/components/landing-primitives";
 
 const faqs = [
   {
@@ -93,7 +93,6 @@ export function FaqSection() {
           ))}
         </Accordion.Root>
       </div>
-      <Aside className="text-center">simple answer. no fog.</Aside>
     </section>
   );
 }

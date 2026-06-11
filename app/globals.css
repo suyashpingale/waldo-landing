@@ -1241,49 +1241,38 @@ body {
   50%       { transform: scale(1.7); opacity: 0.35; }
 }
 
-@keyframes where-live-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(1.45); }
-}
-
-@keyframes where-step-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-    filter: blur(3px);
-  }
-  to {
-    opacity: 1;
+@keyframes where-ticker {
+  0%, 5% {
     transform: translateY(0);
-    filter: blur(0);
+  }
+  100% {
+    transform: translateY(calc(-100% + var(--where-item-height, 88px)));
   }
 }
 
-@keyframes where-bar-fill {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+.where-ticker-track {
+  --where-item-height: 88px;
+  animation: where-ticker 42s linear infinite;
 }
 
-.where-live-dot {
-  animation: where-live-pulse 1.4s ease-in-out infinite;
-  transform-origin: center;
+@media (min-width: 640px) {
+  .where-ticker-track {
+    --where-item-height: 76px;
+  }
 }
 
-.where-work-step,
-.where-receipt-row {
-  animation: where-step-in 560ms var(--ease-premium) var(--where-step-delay, 0ms) both;
+/* Vertical auto-ticker window: soft top/bottom fade + pause on hover. */
+.ticker-window {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
 }
 
-.where-work-bar {
-  animation: where-bar-fill 720ms var(--ease-premium) calc(var(--where-step-delay, 0ms) + 120ms) both;
-  transform-origin: left center;
+.ticker-window:hover .where-ticker-track {
+  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .where-live-dot,
-  .where-work-step,
-  .where-receipt-row,
-  .where-work-bar {
+  .where-ticker-track {
     animation: none;
   }
 }

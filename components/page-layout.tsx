@@ -60,7 +60,7 @@ export function PageLayout() {
         }}
       >
         <div
-          className="mx-auto flex max-w-[1200px] flex-col items-center px-4 pb-20 sm:px-6 lg:px-10"
+          className="mx-auto flex max-w-[1200px] flex-col items-center px-4 pb-0 sm:px-6 lg:px-10"
           style={{ gap: "clamp(3rem, 5vw, 5rem)" }}
         >
           <HeroSection />
