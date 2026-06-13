@@ -503,8 +503,16 @@ function HealthFeatureVisualStage({
     );
   }
 
+  const isCornerIpadVisual = visual.nodeId === "1309:9685";
+  const stageClassName = [
+    "waldo-health-visual-stage pointer-events-none relative z-0 flex h-full min-h-[260px] overflow-visible md:min-h-[420px] lg:min-h-[300px]",
+    isCornerIpadVisual
+      ? "waldo-health-visual-stage--corner-ipad items-end justify-end"
+      : "items-center justify-center",
+  ].join(" ");
+
   return (
-    <div className="waldo-health-visual-stage pointer-events-none relative z-0 flex h-full min-h-[260px] items-center justify-center overflow-visible md:min-h-[420px] lg:min-h-[300px]">
+    <div className={stageClassName}>
       <div aria-hidden className="waldo-card-visual-glow absolute inset-x-[12%] bottom-[8%] h-[32%] rounded-full bg-[var(--accent-subtle)] blur-3xl" />
       <div
         key={`${visual.nodeId}-${activePanel ?? "default"}`}
