@@ -339,9 +339,11 @@ function PlayPauseIcon({ playing, ended }: { playing: boolean; ended: boolean })
 function PanelPill({
   panel,
   index,
+  onOpen,
 }: {
   panel: FeaturePanel;
   index: number;
+  onOpen: () => void;
 }) {
   const panelId = `${panel.label.replace(/[^a-z0-9]/gi, "-").toLowerCase()}-${index}`;
   const panelContentId = `${panelId}-content`;
@@ -354,6 +356,14 @@ function PanelPill({
           id={panelId}
           className="focusable-ring flex w-fit max-w-full items-center gap-3 rounded-full border border-[var(--border-default)] bg-transparent px-4 py-3 text-left text-[var(--ink)] transition-[background-color] duration-150 ease-[var(--ease-premium)] hover:bg-[var(--surface-t3)] data-[state=open]:hidden"
           aria-controls={panelContentId}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            if (event.button === 0) onOpen();
+          }}
+          onClick={(event) => {
+            event.stopPropagation();
+            if (event.detail === 0) onOpen();
+          }}
         >
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border-default)] bg-transparent text-[var(--ink)]" aria-hidden>
             <span className="relative h-3 w-3">
@@ -443,16 +453,19 @@ function SlideContent({
         <Accordion.Root
           type="single"
           collapsible
-          value={openPanel === null ? "" : `${openPanel}`}
-          onValueChange={(value) => onPanelChange(value === "" ? null : Number(value))}
+          value={openPanel === null ? undefined : `${openPanel}`}
+          onValueChange={(value) => onPanelChange(value ? Number(value) : null)}
           className="space-y-3 pr-1 lg:min-h-0 lg:max-h-[400px] lg:overflow-y-auto"
           data-lenis-prevent
+          onPointerDown={(event) => event.stopPropagation()}
+          onTouchStart={(event) => event.stopPropagation()}
         >
           {slide.panels.map((item, index) => (
             <PanelPill
               key={item.label}
               panel={item}
               index={index}
+              onOpen={() => onPanelChange(index)}
             />
           ))}
         </Accordion.Root>
