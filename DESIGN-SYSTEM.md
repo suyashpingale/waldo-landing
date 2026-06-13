@@ -181,8 +181,120 @@ All "selected / on" states use **Action `#2388FF`**. Focus = Border 8→16%. Dis
 
 ## 7. Icons & logos
 
-- **UI glyphs:** Lucide line icons, `1.5px` stroke, sized to text (20–24px).
-- **Source-app references** (e.g. hero floating cards): real brand logos as PNG/SVG (Apple Health, Whoop, etc.) — never a generic glyph or emoji.
+### Source hierarchy
+
+Icons must tell the same story everywhere. The source choice depends on what the icon represents:
+
+| Use case | Source | Rule |
+|---|---|---|
+| Waldo product UI: navigation, metrics, cards, agent actions, states, settings | **SF Symbols** | Use the canonical mapping below. Prefer filled symbols for primary navigation, Tier 1, Tier 2, and action cards. Use outline symbols for Tier 3 raw signals and dense supporting rows. |
+| Web utility chrome: chevrons, close, search, menus, generic input adornments | **Lucide** | `1.5px` stroke, sized to text (`16-24px`). Use only when the symbol is generic interface behavior, not a Waldo product concept. |
+| Source-app / connector references | **Real brand logos** | Use official PNG/SVG assets for Apple Health, Google Calendar, Slack, Gmail, Linear, etc. Never replace source apps with a generic glyph or emoji. |
+| Mascot / brand illustration | **Waldo assets** | Mascot, paw, spot, and custom illustration moments come from brand assets, not icon libraries. |
+
+### Style rules
+
+- **Filled vs outline:** filled SF Symbols = primary destinations, Tier 1/Tier 2 cards, agent actions, selected states. Outline SF Symbols = Tier 3 signals, metadata rows, and secondary references.
+- **Size:** nav `22-24px` · Tier cards `24-28px` · compact rows `16-20px` · large empty/flag states `32-40px`.
+- **Weight:** use the regular SF Symbol weight unless the icon sits inside a large hero/product artifact, where medium is allowed.
+- **Color:** default icons inherit the local text token. Selected/on icons use Action `#2388FF`. Primary icon buttons keep the Accent squircle with a light glyph. Warning/depleted icons use the zone color only when the state itself is the message.
+- **Containers:** standalone product icons sit in `12-16px` squircles using the surface ladder. Do not put a card-shaped icon tile inside another card unless it is a real repeated item.
+- **Accessibility:** decorative icons are `aria-hidden`. Meaningful icon-only buttons must have an accessible label. If the icon clarifies text already present, the text is the label.
+- **No emoji:** emoji never stand in for product icons, source apps, states, or mascot moments.
+
+### Canonical SF Symbols map
+
+Validated against the local SF Symbols API.
+
+| Feature | Category | SF Symbol | Rationale |
+|---|---|---|---|
+| Overview (home) | Navigation / Tabs | `house.fill` | Clearest home-base symbol for the main surface. |
+| Health Stats | Navigation / Tabs | `heart.text.square.fill` | Biometric record plus stats without feeling clinical. |
+| The Patrol | Navigation / Tabs | `eye.fill` | Patrol is continuous watching, so the eye is immediate. |
+| The Constellation | Navigation / Tabs | `point.3.connected.trianglepath.dotted` | Connected points map directly to pattern discovery. |
+| The Spots | Navigation / Tabs | `scope` | Spotting observations is the key metaphor. |
+| Connectors | Navigation / Tabs | `cable.connector.horizontal` | Literal connector symbol. |
+| Chat / Ask Waldo | Navigation / Tabs | `bubble.left.and.bubble.right.fill` | Two bubbles clearly signal conversation. |
+| Settings / Profile | Navigation / Tabs | `gearshape.fill` | Standard settings glyph, distinct from profile inside settings. |
+| Form | Tier 1 Metrics | `brain.head.profile.fill` | Best fit for present-tense cognitive capacity. |
+| Recovery | Tier 1 Metrics | `moon.zzz.fill` | Sleep and overnight replenishment in one glance. |
+| Weight | Tier 1 Metrics | `backpack.fill` | Communicates load carried through the day better than body weight. |
+| The Slope | Tier 1 Metrics | `chart.line.flattrend.xyaxis.circle.fill` | Trend line captures 4-week trajectory without implying up or down. |
+| Sleep | Tier 2 - Recovery | `bed.double.fill` | Most obvious icon for sleep duration and stages. |
+| HRV | Tier 2 - Recovery | `waveform.path.ecg.rectangle.fill` | ECG waveform in a filled tile reads as heart signal variability. |
+| Resting State | Tier 2 - Recovery | `heart.circle.fill` | Heart-centered composite for resting HR and related body state. |
+| Circadian | Tier 2 - Form | `sun.max.circle.fill` | Sun icon maps to wake timing, daylight, and rhythm. |
+| Motion | Tier 2 - Form | `figure.walk.circle.fill` | Walking figure covers everyday movement without over-indexing on workouts. |
+| Stress | Tier 2 - Form | `bolt.heart.fill` | Heart plus bolt signals physiological strain. |
+| Load | Tier 2 - Weight | `flame.circle.fill` | Exertion and strain are commonly read through flame energy. |
+| The Stack | Tier 2 - Weight | `calendar.day.timeline.left` | Timeline calendar shows meeting density and blocked time. |
+| Signal Pressure | Tier 2 - Weight | `envelope.badge.fill` | Badged mail implies incoming volume and urgency. |
+| Task Pileup | Tier 2 - Weight | `list.bullet.clipboard.fill` | Clipboard list reads as accumulated tasks. |
+| Mind State | Tier 2 - Weight | `face.smiling` | Mood-first symbol. |
+| Deep sleep % | Tier 3 Raw Signals | `moon.zzz` | Sleep-specific and calm, suited to a raw submetric. |
+| REM sleep % | Tier 3 Raw Signals | `eye` | REM is visually tied to dreaming and eye movement. |
+| Sleep efficiency | Tier 3 Raw Signals | `checkmark.circle` | A pass/check symbol fits sleep time used well. |
+| Sleep Debt (hours owed) | Tier 3 Raw Signals | `hourglass` | Time owed is the core meaning. |
+| Bedtime consistency | Tier 3 Raw Signals | `calendar.badge.clock` | Calendar plus clock signals repeated timing. |
+| RMSSD (raw HRV reading) | Tier 3 Raw Signals | `waveform.path.ecg` | Raw heart-waveform symbol for the underlying HRV value. |
+| HRV 7-day baseline | Tier 3 Raw Signals | `chart.line.flattrend.xyaxis` | A short baseline should feel like a stable comparison line. |
+| HRV 30-day baseline | Tier 3 Raw Signals | `chart.line.uptrend.xyaxis` | Longer baseline needs a more directional trend visual. |
+| Resting HR | Tier 3 Raw Signals | `heart` | The simplest readable heart-rate signal. |
+| Respiratory rate | Tier 3 Raw Signals | `lungs` | Direct anatomical match. |
+| Wrist temperature deviation | Tier 3 Raw Signals | `thermometer.variable` | Variable thermometer captures deviation from baseline. |
+| SpO2 | Tier 3 Raw Signals | `drop` | Closest body-fluid shorthand for blood oxygen. |
+| Wake alignment | Tier 3 Raw Signals | `sunrise` | Wake timing is anchored to morning alignment. |
+| Daylight exposure | Tier 3 Raw Signals | `sun.max` | Direct sunlight metaphor. |
+| Bedtime drift | Tier 3 Raw Signals | `moon.haze` | Moon with haze suggests nighttime timing slipping. |
+| Active energy | Tier 3 Raw Signals | `flame` | Standard energy/calorie metaphor. |
+| Steps | Tier 3 Raw Signals | `shoeprints.fill` | Literal step trail. |
+| VO2 Max | Tier 3 Raw Signals | `gauge.with.dots.needle.67percent` | Capacity gauge is clearest without reusing lungs. |
+| Exercise minutes | Tier 3 Raw Signals | `timer` | Time-in-activity is the measurement. |
+| Stress confidence score | Tier 3 Raw Signals | `gauge.with.needle` | Confidence is a scalar reading, so a gauge fits. |
+| Stress event history | Tier 3 Raw Signals | `clock.badge.exclamationmark` | Timestamped events plus alert state. |
+| The Brief | Agent Actions | `sunrise.fill` | Morning action message. |
+| The Fetch | Agent Actions | `bolt.heart.fill` | Stress-triggered intervention from body signal. |
+| The Window | Agent Actions | `calendar.badge.lock` | Protected calendar time. |
+| The Handoff | Agent Actions | `hand.raised.fill` | Approval/hand-off moment. |
+| The Adjustment | Agent Actions | `calendar.badge.clock` | Calendar change made because timing needed adjustment. |
+| The Close | Agent Actions | `moon.stars.fill` | Evening review and end-of-day close. |
+| The Patrol entries | Agent Actions | `list.bullet.rectangle.fill` | Individual log items in a console feed. |
+| The Spots | Agent Actions | `smallcircle.filled.circle.fill` | Single observed pattern chip. |
+| The Heads-Up | Agent Actions | `exclamationmark.triangle.fill` | Proactive warning before something lands. |
+| Body / HealthKit | Connectors | `applewatch` | Wearable-first body signal source. |
+| Schedule | Connectors | `calendar` | Universal schedule connector. |
+| Communication | Connectors | `envelope.fill` | Mail and comms metadata without implying chat content. |
+| Tasks | Connectors | `checklist` | Clear task-list metaphor. |
+| Mood / Music | Connectors | `music.note.list` | Music source plus listening history. |
+| Screen Time | Connectors | `hourglass` | Time-use connector in one symbol. |
+| Environment | Connectors | `cloud.sun.fill` | Weather plus ambient conditions. |
+| Location | Connectors | `location.fill` | Standard GPS/location glyph. |
+| Messaging / Delivery | Connectors | `paperplane.fill` | Delivery-channel metaphor for Telegram/WhatsApp-style sends. |
+| Connect wearable step | Onboarding | `applewatch.radiowaves.left.and.right` | Wearable pairing plus live signal. |
+| Grant HealthKit permissions step | Onboarding | `checkmark.shield.fill` | Permission granted with trust framing. |
+| Link messaging channel step | Onboarding | `message.badge.fill` | Messaging setup with a connection badge. |
+| Quick profile setup step | Onboarding | `person.crop.circle.badge.plus` | Add personal profile details. |
+| Signal strength indicator | Onboarding | `antenna.radiowaves.left.and.right` | Standard signal strength language. |
+| Sleep Debt flag | States & Flags | `hourglass.circle.fill` | Flagged time owed inside the sleep card. |
+| Pillar Drag callout | States & Flags | `arrow.down.circle.fill` | A component pulling the score downward. |
+| Escalation | States & Flags | `exclamationmark.triangle.fill` | Highest-severity warning state. |
+| Ghost state / locked feature | States & Flags | `lock.fill` | Locked or unavailable feature. |
+| Sync error | States & Flags | `arrow.triangle.2.circlepath.circle.fill` | Sync loop with failure state implied. |
+| Offline / cached data | States & Flags | `wifi.slash` | No live connection. |
+| Peak state | States & Flags | `mountain.2.fill` | Peak is visually literal and memorable. |
+| Depleted state | States & Flags | `battery.25percent` | Low-capacity metaphor users know instantly. |
+| First use / no data yet | States & Flags | `sparkles.rectangle.stack.fill` | Clean blank-slate state before history exists. |
+| Profile | Settings | `person.crop.circle.fill` | Standard profile identity symbol. |
+| Signal sources | Settings | `antenna.radiowaves.left.and.right.circle.fill` | Shows enabled inputs and signal feeds. |
+| Autonomy controls | Settings | `slider.horizontal.3` | Direct control-level metaphor. |
+| Notifications | Settings | `bell.badge.fill` | Notification settings with per-type badge. |
+| Waldo's memory | Settings | `brain.head.profile.fill` | Pattern memory and feedback history. |
+| Appearance | Settings | `circle.lefthalf.filled` | Light/dark mode toggle metaphor. |
+| Data & privacy | Settings | `lock.shield.fill` | Privacy and protected data. |
+| About / changelog | Settings | `info.circle.fill` | Standard about/info entry. |
+| Pup tier | Tiers / Subscription | `pawprint.fill` | Entry tier with the Waldo mascot language. |
+| Pro tier | Tiers / Subscription | `crown.fill` | Premium individual tier. |
+| Pack tier | Tiers / Subscription | `person.3.fill` | Group or team tier without repeating the paw icon. |
 
 ---
 

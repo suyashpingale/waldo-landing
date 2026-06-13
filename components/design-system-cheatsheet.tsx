@@ -84,6 +84,7 @@ const lenses: Lens[] = [
 const navItems = [
   ["showcase", "Showcase"],
   ["tokens", "Tokens"],
+  ["icons", "Icons"],
   ["controls", "Controls"],
   ["behavior", "Behavior"],
   ["blocks", "Blocks"],
@@ -110,6 +111,163 @@ const typeTokens = [
   ["Body", "SF Pro Rounded", "16", "Paragraph"],
   ["Label", "SF Pro Rounded", "14", "Controls"],
   ["Aside", "SF Pro Rounded italic", "13", "Waldo close"],
+];
+
+const iconUsageCards = [
+  ["Product UI", "SF Symbols", "Navigation, metrics, cards, actions, settings, and states use the map below."],
+  ["Utility chrome", "Lucide", "Generic controls only: chevrons, close, search, menus, and input adornments."],
+  ["Source apps", "Real logos", "Connector references use official Apple Health, Calendar, Slack, Gmail, Linear, and related assets."],
+  ["Brand moments", "Waldo assets", "Mascot, paw, spot, and custom illustration moments stay inside the Waldo asset set."],
+];
+
+const iconMapGroups = [
+  {
+    title: "Navigation",
+    items: [
+      ["Overview", "house.fill"],
+      ["Health Stats", "heart.text.square.fill"],
+      ["The Patrol", "eye.fill"],
+      ["The Constellation", "point.3.connected.trianglepath.dotted"],
+      ["The Spots", "scope"],
+      ["Connectors", "cable.connector.horizontal"],
+      ["Chat / Ask Waldo", "bubble.left.and.bubble.right.fill"],
+      ["Settings / Profile", "gearshape.fill"],
+    ],
+  },
+  {
+    title: "Tier 1 Metrics",
+    items: [
+      ["Form", "brain.head.profile.fill"],
+      ["Recovery", "moon.zzz.fill"],
+      ["Weight", "backpack.fill"],
+      ["The Slope", "chart.line.flattrend.xyaxis.circle.fill"],
+    ],
+  },
+  {
+    title: "Tier 2 Recovery",
+    items: [
+      ["Sleep", "bed.double.fill"],
+      ["HRV", "waveform.path.ecg.rectangle.fill"],
+      ["Resting State", "heart.circle.fill"],
+    ],
+  },
+  {
+    title: "Tier 2 Form",
+    items: [
+      ["Circadian", "sun.max.circle.fill"],
+      ["Motion", "figure.walk.circle.fill"],
+      ["Stress", "bolt.heart.fill"],
+    ],
+  },
+  {
+    title: "Tier 2 Weight",
+    items: [
+      ["Load", "flame.circle.fill"],
+      ["The Stack", "calendar.day.timeline.left"],
+      ["Signal Pressure", "envelope.badge.fill"],
+      ["Task Pileup", "list.bullet.clipboard.fill"],
+      ["Mind State", "face.smiling"],
+    ],
+  },
+  {
+    title: "Tier 3 Signals",
+    items: [
+      ["Deep sleep %", "moon.zzz"],
+      ["REM sleep %", "eye"],
+      ["Sleep efficiency", "checkmark.circle"],
+      ["Sleep Debt", "hourglass"],
+      ["Bedtime consistency", "calendar.badge.clock"],
+      ["RMSSD", "waveform.path.ecg"],
+      ["HRV 7-day baseline", "chart.line.flattrend.xyaxis"],
+      ["HRV 30-day baseline", "chart.line.uptrend.xyaxis"],
+      ["Resting HR", "heart"],
+      ["Respiratory rate", "lungs"],
+      ["Wrist temperature", "thermometer.variable"],
+      ["SpO2", "drop"],
+      ["Wake alignment", "sunrise"],
+      ["Daylight exposure", "sun.max"],
+      ["Bedtime drift", "moon.haze"],
+      ["Active energy", "flame"],
+      ["Steps", "shoeprints.fill"],
+      ["VO2 Max", "gauge.with.dots.needle.67percent"],
+      ["Exercise minutes", "timer"],
+      ["Stress confidence", "gauge.with.needle"],
+      ["Stress event history", "clock.badge.exclamationmark"],
+    ],
+  },
+  {
+    title: "Agent Actions",
+    items: [
+      ["The Brief", "sunrise.fill"],
+      ["The Fetch", "bolt.heart.fill"],
+      ["The Window", "calendar.badge.lock"],
+      ["The Handoff", "hand.raised.fill"],
+      ["The Adjustment", "calendar.badge.clock"],
+      ["The Close", "moon.stars.fill"],
+      ["The Patrol entries", "list.bullet.rectangle.fill"],
+      ["The Spots", "smallcircle.filled.circle.fill"],
+      ["The Heads-Up", "exclamationmark.triangle.fill"],
+    ],
+  },
+  {
+    title: "Connectors",
+    items: [
+      ["Body / HealthKit", "applewatch"],
+      ["Schedule", "calendar"],
+      ["Communication", "envelope.fill"],
+      ["Tasks", "checklist"],
+      ["Mood / Music", "music.note.list"],
+      ["Screen Time", "hourglass"],
+      ["Environment", "cloud.sun.fill"],
+      ["Location", "location.fill"],
+      ["Messaging / Delivery", "paperplane.fill"],
+    ],
+  },
+  {
+    title: "Onboarding",
+    items: [
+      ["Connect wearable", "applewatch.radiowaves.left.and.right"],
+      ["HealthKit permissions", "checkmark.shield.fill"],
+      ["Messaging channel", "message.badge.fill"],
+      ["Quick profile", "person.crop.circle.badge.plus"],
+      ["Signal strength", "antenna.radiowaves.left.and.right"],
+    ],
+  },
+  {
+    title: "States & Flags",
+    items: [
+      ["Sleep Debt flag", "hourglass.circle.fill"],
+      ["Pillar Drag", "arrow.down.circle.fill"],
+      ["Escalation", "exclamationmark.triangle.fill"],
+      ["Locked feature", "lock.fill"],
+      ["Sync error", "arrow.triangle.2.circlepath.circle.fill"],
+      ["Offline data", "wifi.slash"],
+      ["Peak state", "mountain.2.fill"],
+      ["Depleted state", "battery.25percent"],
+      ["No data yet", "sparkles.rectangle.stack.fill"],
+    ],
+  },
+  {
+    title: "Settings",
+    items: [
+      ["Profile", "person.crop.circle.fill"],
+      ["Signal sources", "antenna.radiowaves.left.and.right.circle.fill"],
+      ["Autonomy controls", "slider.horizontal.3"],
+      ["Notifications", "bell.badge.fill"],
+      ["Waldo's memory", "brain.head.profile.fill"],
+      ["Appearance", "circle.lefthalf.filled"],
+      ["Data & privacy", "lock.shield.fill"],
+      ["About / changelog", "info.circle.fill"],
+    ],
+  },
+  {
+    title: "Tiers",
+    items: [
+      ["Pup", "pawprint.fill"],
+      ["Pro", "crown.fill"],
+      ["Pack", "person.3.fill"],
+    ],
+  },
 ];
 
 const actionCards = [
@@ -663,6 +821,62 @@ export function DesignSystemCheatsheet() {
         </div>
       </section>
 
+      <section id="icons" className="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
+        <SectionTitle
+          kicker="icons"
+          lines={["One symbol map", "for every surface."]}
+          aside="same signal, same glyph."
+        />
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {iconUsageCards.map(([title, source, detail]) => (
+            <article key={title} className="rounded-[24px] border border-[rgba(26,26,26,.08)] bg-[#FAFAF8] p-5 transition duration-300 hover:-translate-y-1">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#1A1A1A] text-[13px] font-medium text-[#FAFAF8]">
+                {source === "SF Symbols" ? "SF" : source === "Lucide" ? "Lu" : source === "Real logos" ? "Logo" : "W"}
+              </div>
+              <p className="text-[15px] font-medium text-[#1A1A1A]">{title}</p>
+              <p className="mt-1 text-[12px] font-medium text-[#2388FF]">{source}</p>
+              <p className="mt-3 text-[13px] leading-6 text-[#6B6B68]">{detail}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-6 rounded-[36px] bg-[#1A1A1A] p-5 text-[#FAFAF8] ds-card">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-[13px] text-[#9A9A96]">canonical SF Symbols</p>
+              <h3 className="mt-1 text-[24px] font-medium">Use the symbol name as the implementation key.</h3>
+            </div>
+            <p className="max-w-[36ch] text-[13px] leading-6 text-[#9A9A96]">
+              Filled symbols carry primary concepts. Outline symbols stay in raw-signal and dense metadata rows.
+            </p>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {iconMapGroups.map((group) => (
+              <article key={group.title} className="rounded-[24px] bg-[#1D1D1B] p-4">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <p className="text-[14px] font-medium text-[#FAFAF8]">{group.title}</p>
+                  <span className="rounded-full bg-[#272725] px-3 py-1 text-[11px] tabular-nums text-[#9A9A96]">
+                    {group.items.length}
+                  </span>
+                </div>
+                <div className="grid gap-2">
+                  {group.items.map(([feature, symbol]) => (
+                    <div key={`${group.title}-${feature}`} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] gap-3 rounded-[14px] bg-[#171616] px-3 py-2">
+                      <span className="truncate text-[12px] text-[#FAFAF8]">{feature}</span>
+                      <code className="truncate text-[11px] text-[#9A9A96]">{symbol}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <p className="mt-5 text-[13px] italic text-[#6B6B68]">a repeated idea should not change costumes.</p>
+        </div>
+      </section>
+
       <section id="controls" className="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
         <SectionTitle
           kicker="controls"
@@ -980,6 +1194,7 @@ export function DesignSystemCheatsheet() {
             ["Type", "Corben for display and section heads. SF Pro Rounded for everything else."],
             ["Surfaces", "T3 canvas, T2 panels, T1 nested surfaces. T4 is only pressed or active."],
             ["Color", "Orange is brand emphasis. Action blue carries selected and on states."],
+            ["Icons", "Waldo product UI uses the SF Symbols map. Utility chrome uses Lucide; source apps use real logos."],
             ["Numbers", "No raw number appears without Waldo's plain-language read beside it."],
             ["Motion", "Use the premium ease, keep movement state-driven, honor reduced motion."],
             ["Responsive", "Check 375, 768, 1024, 1280, and 1440 before shipping a section."],
