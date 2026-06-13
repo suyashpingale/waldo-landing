@@ -273,17 +273,6 @@ export function SceneCloseSection() {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[30svh] bg-gradient-to-b from-[#f4f3f0] via-[#f4f3f0]/70 to-transparent"
       />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-[-10vw] top-[31svh] z-[1] h-28 w-[34vw] rounded-full bg-white/20 blur-3xl sm:h-36"
-        style={{ transform: `translate3d(${depth * -36}px, ${depth * 20}px, 0)` }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute right-[-9vw] top-[39svh] z-[1] h-24 w-[30vw] rounded-full bg-white/16 blur-3xl sm:h-32"
-        style={{ transform: `translate3d(${depth * 30}px, ${depth * 12}px, 0)` }}
-      />
-
       <FooterScenePicture
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] block h-[calc(100%+48px)] w-full select-none"
         imageClassName="block h-full w-full object-cover object-bottom"
@@ -313,31 +302,25 @@ export function SceneCloseSection() {
         <Aside className="mt-5">Your watch has been waiting for this.</Aside>
       </div>
 
-      <footer
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[4] px-4 pb-5 pt-20 text-[var(--ink)] sm:px-6 sm:pb-6 lg:px-10"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(244, 243, 240, 0) 0%, rgba(244, 243, 240, 0.34) 42%, rgba(244, 243, 240, 0.72) 100%)",
-        }}
-      >
+      <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-[4] px-4 pb-5 pt-20 text-[var(--ink)] sm:px-6 sm:pb-6 lg:px-10">
         <div
-          className="pointer-events-auto mx-auto grid max-w-[1200px] gap-5 border-t border-[rgba(26,26,26,0.08)] pt-4 sm:grid-cols-[1fr_auto] sm:items-end"
+          className="pointer-events-auto mx-auto grid max-w-[1200px] gap-5 border-t border-white/25 pt-4 sm:grid-cols-[1fr_auto] sm:items-end"
         >
           <div>
-            <p className="type-label">Waldo</p>
-            <p className="type-caption tone-secondary mt-2 max-w-[28rem]">Quietly reads the day, changes what can move, and leaves the important work intact.</p>
+            <p className="type-label text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.42)]">Waldo</p>
+            <p className="type-caption mt-2 max-w-[28rem] text-white/76 drop-shadow-[0_1px_2px_rgba(0,0,0,0.48)]">Quietly reads the day, changes what can move, and leaves the important work intact.</p>
           </div>
           <div className="flex flex-wrap gap-2 sm:justify-end" aria-label="Footer navigation">
             {footerLinks.map(([label, href]) => (
               <a
                 key={label}
                 href={href}
-                className="type-caption rounded-full border border-[rgba(26,26,26,0.12)] bg-[rgba(250,250,248,0.54)] px-3 py-2 text-[var(--text-secondary)] backdrop-blur-[2px] transition-[background-color,border-color,color,transform] duration-200 ease-[var(--ease-premium)] hover:-translate-y-1 hover:border-[rgba(26,26,26,0.28)] hover:bg-[rgba(255,255,255,0.74)] hover:text-[var(--ink)]"
+                className="type-caption rounded-full border border-white/18 bg-[rgba(26,26,26,0.68)] px-3 py-2 text-white/76 backdrop-blur-[2px] transition-[background-color,border-color,color,transform] duration-200 ease-[var(--ease-premium)] hover:-translate-y-1 hover:border-white/34 hover:bg-[rgba(26,26,26,0.82)] hover:text-white"
               >
                 {label}
               </a>
             ))}
-            <span className="type-caption rounded-full border border-transparent bg-[rgba(250,250,248,0.34)] px-3 py-2 text-[var(--text-tertiary)] backdrop-blur-[2px]">(c) 2026</span>
+            <span className="type-caption rounded-full border border-white/12 bg-[rgba(26,26,26,0.48)] px-3 py-2 text-white/54 backdrop-blur-[2px]">(c) 2026</span>
           </div>
         </div>
       </footer>
