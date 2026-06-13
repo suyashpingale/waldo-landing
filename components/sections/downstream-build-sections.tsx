@@ -1,7 +1,7 @@
 "use client";
 
 import Image, { type StaticImageData } from "next/image";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 
 import goodDarkMode from "@/components/assets/good-dark-mode.svg";
 import goodSleepDarkMode from "@/components/assets/good-sleep-dark-mode.svg";
@@ -74,6 +74,39 @@ const fanSlots = [
 ] as const;
 
 const cardTransition = `all ${DUR_SETTLE}ms ${EASE}`;
+
+const footerLinks = [
+  ["Brief", "#brief"],
+  ["Actions", "#action-fan"],
+  ["Security", "#security"],
+  ["Pattern", "#constellation"],
+] as const;
+
+function FooterScenePicture({
+  className,
+  imageClassName,
+  style,
+  breathing = false,
+}: {
+  className: string;
+  imageClassName: string;
+  style?: CSSProperties;
+  breathing?: boolean;
+}) {
+  return (
+    <picture className={className} style={style}>
+      <source media="(max-width: 639px) and (orientation: portrait)" srcSet="/assets/footer-bg-mobile.svg" />
+      <source media="(orientation: landscape) and (max-height: 600px)" srcSet="/assets/footer-bg-mobile-landscape.svg" />
+      <source media="(min-width: 640px) and (max-width: 1024px) and (orientation: portrait)" srcSet="/assets/footer-bg-tablet.svg" />
+      <img
+        src="/assets/footer-bg.svg"
+        alt=""
+        aria-hidden="true"
+        className={`${breathing ? "waldo-breathe " : ""}${imageClassName}`}
+      />
+    </picture>
+  );
+}
 
 function FanStackCard({ card, size }: { card: FanCard; size: "small" | "medium" | "front" }) {
   const front = size === "front";
@@ -222,24 +255,40 @@ export function SceneCloseSection() {
     };
   }, []);
 
-  const sceneShift = (1 - progress) * 42;
+  const depth = 1 - progress;
+  const sceneShift = depth * 58;
+  const contentShift = depth * -8;
 
   return (
-    <section ref={ref} id="scene-close" className="relative min-h-[100svh] w-screen self-start overflow-hidden bg-[var(--surface-t3)] [margin-left:calc(50%-50vw)] [margin-right:calc(50%-50vw)]">
+    <section
+      ref={ref}
+      id="scene-close"
+      className="relative min-h-[calc(100svh+152px)] w-screen self-start overflow-hidden bg-[#f4f3f0] text-[var(--ink)] [margin-left:calc(50%-50vw)] [margin-right:calc(50%-50vw)] sm:min-h-[calc(100svh+104px)]"
+    >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[calc(100%+48px)] select-none"
-        style={{ transform: `translate3d(0, ${sceneShift}px, 0)`, willChange: "transform" }}
-      >
-        <picture className="block h-full w-full">
-          <source media="(max-width: 639px) and (orientation: portrait)" srcSet="/assets/footer-bg-mobile.svg" />
-          <source media="(orientation: landscape) and (max-height: 600px)" srcSet="/assets/footer-bg-mobile-landscape.svg" />
-          <source media="(min-width: 640px) and (max-width: 1024px) and (orientation: portrait)" srcSet="/assets/footer-bg-tablet.svg" />
-          <img src="/assets/footer-bg.svg" alt="" className="waldo-breathe block h-full w-full object-cover object-bottom" />
-        </picture>
-      </div>
+        className="pointer-events-none absolute inset-0 z-0 select-none bg-[#f4f3f0]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[30svh] bg-gradient-to-b from-[#f4f3f0] via-[#f4f3f0]/70 to-transparent"
+      />
+      <FooterScenePicture
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] block h-[calc(100%+48px)] w-full select-none"
+        imageClassName="block h-full w-full object-cover object-bottom"
+        style={{
+          transform: `translate3d(0, ${sceneShift}px, 0)`,
+          willChange: "transform",
+        }}
+        breathing
+      />
 
-      <div className="relative z-[2] mx-auto flex min-h-[100svh] max-w-[1200px] flex-col items-center justify-start px-4 pt-28 text-center sm:px-6 lg:px-10" data-animate="blur-fade">
+      <div
+        className="relative z-[3] mx-auto flex min-h-[100svh] max-w-[1200px] flex-col items-center justify-start px-4 pt-[13svh] text-center sm:px-6 lg:px-10 lg:pt-[11svh]"
+        data-animate="blur-fade"
+        style={{ transform: `translate3d(0, ${contentShift}px, 0)`, willChange: "transform" }}
+      >
+        <p className="type-aside mb-5 text-[#6b6b68]">the last thing your watch should do is wait.</p>
         <h2 className="type-h1 text-[var(--ink)]" data-animate="headline">
           You&apos;re not the first.
           <br />
@@ -252,6 +301,29 @@ export function SceneCloseSection() {
         </div>
         <Aside className="mt-5">Your watch has been waiting for this.</Aside>
       </div>
+
+      <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-[4] px-4 pb-5 pt-20 text-[var(--ink)] sm:px-6 sm:pb-6 lg:px-10">
+        <div
+          className="pointer-events-auto mx-auto grid max-w-[1200px] gap-5 border-t border-white/25 pt-4 sm:grid-cols-[1fr_auto] sm:items-end"
+        >
+          <div>
+            <p className="type-label text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.42)]">Waldo</p>
+            <p className="type-caption mt-2 max-w-[28rem] text-white/76 drop-shadow-[0_1px_2px_rgba(0,0,0,0.48)]">Quietly reads the day, changes what can move, and leaves the important work intact.</p>
+          </div>
+          <div className="flex flex-wrap gap-2 sm:justify-end" aria-label="Footer navigation">
+            {footerLinks.map(([label, href]) => (
+              <a
+                key={label}
+                href={href}
+                className="type-caption rounded-full border border-white/18 bg-[rgba(26,26,26,0.68)] px-3 py-2 text-white/76 backdrop-blur-[2px] transition-[background-color,border-color,color,transform] duration-200 ease-[var(--ease-premium)] hover:-translate-y-1 hover:border-white/34 hover:bg-[rgba(26,26,26,0.82)] hover:text-white"
+              >
+                {label}
+              </a>
+            ))}
+            <span className="type-caption rounded-full border border-white/12 bg-[rgba(26,26,26,0.48)] px-3 py-2 text-white/54 backdrop-blur-[2px]">(c) 2026</span>
+          </div>
+        </div>
+      </footer>
     </section>
   );
 }
