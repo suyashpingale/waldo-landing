@@ -2,12 +2,14 @@
 
 import * as Accordion from "@radix-ui/react-accordion";
 import Image, { type StaticImageData } from "next/image";
-import { useCallback, useEffect, useRef, useState, type WheelEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 
 import edgeCircadianContext from "@/public/figma-assets/waldo-cards/edge-circadian-context.png";
 import edgeCooldown from "@/public/figma-assets/waldo-cards/edge-cooldown.png";
+import edgeDefaultState from "@/public/figma-assets/waldo-cards/edge-default-state.png";
 import edgeFetchMidday from "@/public/figma-assets/waldo-cards/edge-fetch-midday.png";
 import edgePhoneStress from "@/public/figma-assets/waldo-cards/edge-phone-stress.png";
+import edgeWaldoAction from "@/public/figma-assets/waldo-cards/edge-waldo-action.png";
 import morningLockscreenIpad from "@/public/figma-assets/waldo-cards/morning-lockscreen-ipad.png";
 import morningOverview from "@/public/figma-assets/waldo-cards/morning-overview.png";
 import morningPhoneRestingState from "@/public/figma-assets/waldo-cards/morning-phone-resting-state.png";
@@ -19,6 +21,20 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 const AUTO_DWELL_MS = 6150;
 const AUTO_SCROLL_MS = 1000;
 const PINNED_SCROLL_QUERY = "(min-width: 1100px) and (min-height: 820px)";
+const DRAG_START_THRESHOLD_PX = 8;
+const SCROLLBAR_GUTTER_PX = 18;
+const INTERACTIVE_CAROUSEL_SELECTOR = [
+  "a",
+  "button",
+  "input",
+  "label",
+  "select",
+  "summary",
+  "textarea",
+  "[contenteditable='true']",
+  "[role='button']",
+  "[role='link']",
+].join(",");
 
 function appleGalleryEase(progress: number) {
   const x1 = 0.2;
@@ -51,6 +67,12 @@ type HealthCardVisual = {
   alt: string;
   nodeId: string;
   shape?: "cluster" | "network" | "phone" | "tablet" | "watch";
+  backdrop?: {
+    image: StaticImageData;
+    alt: string;
+    nodeId: string;
+    shape?: "cluster" | "network" | "phone" | "tablet" | "watch";
+  };
 };
 
 type FeaturePanel = {
@@ -72,6 +94,34 @@ type ShowcaseSlide = {
   panels: FeaturePanel[];
 };
 
+type CarouselDragState = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  startScrollLeft: number;
+  currentScrollLeft: number;
+  maxScroll: number;
+  isDragging: boolean;
+  snapType: string | null;
+  previousBodyCursor: string;
+  previousBodyUserSelect: string;
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function isInteractiveCarouselTarget(target: EventTarget | null) {
+  return target instanceof HTMLElement && Boolean(target.closest(INTERACTIVE_CAROUSEL_SELECTOR));
+}
+
+function isScrollbarGutterPointer(event: ReactPointerEvent<HTMLDivElement>) {
+  if (event.pointerType !== "mouse") return false;
+
+  const rect = event.currentTarget.getBoundingClientRect();
+  return event.clientY >= rect.bottom - SCROLLBAR_GUTTER_PX;
+}
+
 const slides: ShowcaseSlide[] = [
   {
     tab: "Mornings, sorted.",
@@ -82,7 +132,7 @@ const slides: ShowcaseSlide[] = [
       image: morningOverview,
       alt: "Waldo morning health feature card showing recovery, sleep, and resting-state signals.",
       nodeId: "1309:10627",
-      shape: "cluster",
+      shape: "phone",
     },
     panels: [
       {
@@ -163,10 +213,10 @@ const slides: ShowcaseSlide[] = [
     aside: "you didn't ask. you didn't need to.",
     visual: "stress",
     defaultVisual: {
-      image: edgePhoneStress,
-      alt: "Waldo stress confidence phone card exported from Figma.",
-      nodeId: "1309:10094",
-      shape: "cluster",
+      image: edgeDefaultState,
+      alt: "Waldo edge default state card showing recovery, resting-state, and health signal context.",
+      nodeId: "edge-default-state",
+      shape: "network",
     },
     panels: [
       {
@@ -209,6 +259,12 @@ const slides: ShowcaseSlide[] = [
           alt: "Waldo stress cooldown card exported from Figma.",
           nodeId: "1322:7921",
           shape: "network",
+          backdrop: {
+            image: edgeFetchMidday,
+            alt: "Blurred Waldo Fetch mid-day stress context behind the cooldown handoff.",
+            nodeId: "1315:13117",
+            shape: "network",
+          },
         },
       },
       {
@@ -233,10 +289,10 @@ const slides: ShowcaseSlide[] = [
         tone: "stress",
         metric: "meeting pulled",
         visual: {
-          image: edgePhoneStress,
-          alt: "Waldo stress action card exported from Figma.",
-          nodeId: "1309:10094",
-          shape: "cluster",
+          image: edgeWaldoAction,
+          alt: "Waldo calendar action card showing Form-aware meeting protection.",
+          nodeId: "edge-waldo-action",
+          shape: "network",
         },
       },
     ],
@@ -496,6 +552,7 @@ function HealthFeatureVisualStage({
             width={112}
             height={112}
             aria-hidden
+            draggable={false}
             className="absolute left-1/2 top-[56%] h-24 w-24 -translate-x-1/2 -translate-y-1/2 object-contain lg:h-28 lg:w-28"
           />
         </div>
@@ -503,8 +560,50 @@ function HealthFeatureVisualStage({
     );
   }
 
+  const isCornerIpadVisual = visual.nodeId === "1309:9685";
+  const stageClassName = [
+    "waldo-health-visual-stage pointer-events-none relative z-0 flex h-full min-h-[260px] overflow-visible md:min-h-[420px] lg:min-h-[300px]",
+    isCornerIpadVisual
+      ? "waldo-health-visual-stage--corner-ipad items-end justify-end"
+      : "items-center justify-center",
+  ].join(" ");
+
+  if (visual.backdrop) {
+    return (
+      <div className={stageClassName}>
+        <div aria-hidden className="waldo-card-visual-glow absolute inset-x-[12%] bottom-[8%] h-[32%] rounded-full bg-[var(--accent-subtle)] blur-3xl" />
+        <div
+          key={`${visual.nodeId}-${visual.backdrop.nodeId}-${activePanel ?? "default"}`}
+          className="waldo-card-visual-shell waldo-card-visual-shell--layered relative"
+          data-node-id={visual.nodeId}
+          data-visual-shape={visual.shape ?? "cluster"}
+          data-visual-composite="blurred-backdrop"
+        >
+          <Image
+            src={visual.backdrop.image}
+            alt={visual.backdrop.alt}
+            sizes="(min-width: 1024px) 640px, (min-width: 640px) 70vw, 96vw"
+            className="waldo-card-visual-layer waldo-card-visual-layer--backdrop select-none"
+            loading="eager"
+            draggable={false}
+            unoptimized
+          />
+          <Image
+            src={visual.image}
+            alt={visual.alt}
+            sizes="(min-width: 1024px) 480px, (min-width: 640px) 54vw, 86vw"
+            className="waldo-card-visual-layer waldo-card-visual-layer--foreground select-none"
+            loading="eager"
+            draggable={false}
+            unoptimized
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="waldo-health-visual-stage pointer-events-none relative z-0 flex h-full min-h-[260px] items-center justify-center overflow-visible md:min-h-[420px] lg:min-h-[300px]">
+    <div className={stageClassName}>
       <div aria-hidden className="waldo-card-visual-glow absolute inset-x-[12%] bottom-[8%] h-[32%] rounded-full bg-[var(--accent-subtle)] blur-3xl" />
       <div
         key={`${visual.nodeId}-${activePanel ?? "default"}`}
@@ -519,6 +618,7 @@ function HealthFeatureVisualStage({
           className="waldo-card-visual-image select-none"
           fetchPriority={activePanel === null ? "high" : "auto"}
           loading="eager"
+          draggable={false}
           unoptimized
         />
       </div>
@@ -601,6 +701,7 @@ export function AlreadyDoneSection() {
   const scrollSnapTypeRef = useRef<string | null>(null);
   const programmaticScrollRef = useRef(false);
   const scrollDrivenRef = useRef(false);
+  const dragStateRef = useRef<CarouselDragState | null>(null);
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -608,6 +709,7 @@ export function AlreadyDoneSection() {
   const [interactionPaused, setInteractionPaused] = useState(false);
   const [documentHidden, setDocumentHidden] = useState(false);
   const [isScrollAnimating, setIsScrollAnimating] = useState(false);
+  const [isDraggingTrack, setIsDraggingTrack] = useState(false);
   const [scrollDriven, setScrollDriven] = useState(false);
   const [openPanels, setOpenPanels] = useState<Record<number, number | null>>({});
 
@@ -661,23 +763,6 @@ export function AlreadyDoneSection() {
       let maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
       if (maxScroll < 8) return undefined;
 
-      const getSnapPoints = () => {
-        const firstOffset = (track.children[0] as HTMLElement | undefined)?.offsetLeft ?? 0;
-        return Array.from(track.children).map((child) => {
-          const card = child as HTMLElement;
-          return Math.max(0, Math.min(1, (card.offsetLeft - firstOffset) / Math.max(1, maxScroll)));
-        });
-      };
-
-      const snapToCard = (progress: number) => {
-        const points = getSnapPoints();
-        if (points.length === 0) return progress;
-
-        return points.reduce((nearest, point) => (
-          Math.abs(point - progress) < Math.abs(nearest - progress) ? point : nearest
-        ), points[0] ?? progress);
-      };
-
       scrollDrivenRef.current = true;
       const pinnedSnapType = track.style.scrollSnapType || window.getComputedStyle(track).scrollSnapType;
       track.style.scrollSnapType = "none";
@@ -693,18 +778,14 @@ export function AlreadyDoneSection() {
         pin: true,
         pinSpacing: "margin",
         scrub: true,
-        snap: {
-          snapTo: snapToCard,
-          duration: { min: 0.18, max: 0.38 },
-          delay: 0.04,
-          ease: "power2.out",
-        },
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onRefresh: () => {
           maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
         },
         onUpdate: (self) => {
+          if (dragStateRef.current?.isDragging) return;
+
           const rawIndex = self.progress * (slides.length - 1);
           const nextIndex = Math.max(0, Math.min(slides.length - 1, Math.round(rawIndex)));
           const localProgress = nextIndex >= slides.length - 1 ? self.progress : rawIndex - Math.floor(rawIndex);
@@ -868,11 +949,11 @@ export function AlreadyDoneSection() {
     scrollToSlide(index, false);
   };
 
-  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
+  const handleWheelIntent = useCallback((event: globalThis.WheelEvent) => {
     if (!scrollDrivenRef.current) return;
     if (Math.abs(event.deltaX) < 18 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
 
-    event.preventDefault();
+    if (event.cancelable) event.preventDefault();
     const now = window.performance.now();
     if (wheelIntentRef.current !== null && now - wheelIntentRef.current < 520) return;
 
@@ -882,16 +963,22 @@ export function AlreadyDoneSection() {
     setInteractionPaused(true);
     scrollToSlide(activeRef.current + (event.deltaX > 0 ? 1 : -1), false);
     window.setTimeout(() => setInteractionPaused(false), 520);
-  };
+  }, [scrollToSlide]);
 
-  const handleScroll = () => {
+  useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
-    if (scrollDrivenRef.current) return;
-    if (programmaticScrollRef.current) return;
+    if (!track) return undefined;
 
-    const trackCenter = track.scrollLeft + track.clientWidth / 2;
-    let nearest = 0;
+    track.addEventListener("wheel", handleWheelIntent, { passive: false });
+    return () => track.removeEventListener("wheel", handleWheelIntent);
+  }, [handleWheelIntent]);
+
+  const getNearestSlideIndex = useCallback((scrollLeft: number) => {
+    const track = trackRef.current;
+    if (!track) return activeRef.current;
+
+    const trackCenter = scrollLeft + track.clientWidth / 2;
+    let nearest = activeRef.current;
     let nearestDistance = Number.POSITIVE_INFINITY;
 
     Array.from(track.children).forEach((child, index) => {
@@ -905,7 +992,169 @@ export function AlreadyDoneSection() {
       }
     });
 
-    if (nearest !== active) {
+    return nearest;
+  }, []);
+
+  const restoreDragSideEffects = useCallback((track: HTMLDivElement, state: CarouselDragState) => {
+    if (state.snapType !== null) {
+      track.style.scrollSnapType = state.snapType;
+    }
+    document.body.style.cursor = state.previousBodyCursor;
+    document.body.style.userSelect = state.previousBodyUserSelect;
+    setIsDraggingTrack(false);
+  }, []);
+
+  const finishPointerDrag = useCallback((event?: ReactPointerEvent<HTMLDivElement>, snapToNearest = true) => {
+    const state = dragStateRef.current;
+    const track = trackRef.current;
+
+    if (!state) {
+      setInteractionPaused(false);
+      return;
+    }
+
+    dragStateRef.current = null;
+
+    if (event?.currentTarget.hasPointerCapture(state.pointerId)) {
+      event.currentTarget.releasePointerCapture(state.pointerId);
+    }
+
+    if (track && state.isDragging) {
+      restoreDragSideEffects(track, state);
+    }
+
+    setInteractionPaused(false);
+
+    if (!track || !state.isDragging || !snapToNearest) return;
+
+    const nearest = getNearestSlideIndex(state.currentScrollLeft);
+    const card = track.children[nearest] as HTMLElement | undefined;
+    const pinnedTrigger = pinnedTriggerRef.current;
+
+    if (scrollDrivenRef.current && pinnedTrigger && card) {
+      const paddingStart = parseFloat(window.getComputedStyle(track).paddingLeft) || 0;
+      const left = clamp(card.offsetLeft - paddingStart, 0, state.maxScroll);
+      const targetProgress = left / Math.max(1, state.maxScroll);
+      const targetScrollTop = pinnedTrigger.start + (pinnedTrigger.end - pinnedTrigger.start) * targetProgress;
+
+      track.scrollLeft = left;
+      setActiveValue(nearest);
+      setProgressValue(0);
+      setEnded(nearest >= slides.length - 1);
+      window.scrollTo({ top: targetScrollTop, behavior: "auto" });
+      return;
+    }
+
+    scrollToSlide(nearest, false);
+  }, [getNearestSlideIndex, restoreDragSideEffects, scrollToSlide, setActiveValue, setProgressValue]);
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (isInteractiveCarouselTarget(event.target) || isScrollbarGutterPointer(event)) return;
+
+    cancelScrollAnimation();
+    setPlaying(false);
+    setEnded(false);
+    setInteractionPaused(true);
+
+    if (event.pointerType === "touch") return;
+
+    const track = event.currentTarget;
+    const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+    if (maxScroll < 4) return;
+
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startScrollLeft: track.scrollLeft,
+      currentScrollLeft: track.scrollLeft,
+      maxScroll,
+      isDragging: false,
+      snapType: null,
+      previousBodyCursor: document.body.style.cursor,
+      previousBodyUserSelect: document.body.style.userSelect,
+    };
+
+    track.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    if (!state || event.pointerId !== state.pointerId) return;
+
+    const track = event.currentTarget;
+    const deltaX = event.clientX - state.startX;
+    const deltaY = event.clientY - state.startY;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    if (!state.isDragging) {
+      if (absX < DRAG_START_THRESHOLD_PX) return;
+      if (absX <= absY * 1.15) return;
+
+      state.isDragging = true;
+      state.snapType = track.style.scrollSnapType || window.getComputedStyle(track).scrollSnapType;
+      track.style.scrollSnapType = "none";
+      document.body.style.cursor = "grabbing";
+      document.body.style.userSelect = "none";
+      setIsDraggingTrack(true);
+    }
+
+    event.preventDefault();
+
+    const nextScrollLeft = clamp(state.startScrollLeft - deltaX, 0, state.maxScroll);
+    const pinnedTrigger = pinnedTriggerRef.current;
+    state.currentScrollLeft = nextScrollLeft;
+
+    if (scrollDrivenRef.current && pinnedTrigger) {
+      const targetProgress = nextScrollLeft / Math.max(1, state.maxScroll);
+      const targetScrollTop = pinnedTrigger.start + (pinnedTrigger.end - pinnedTrigger.start) * targetProgress;
+
+      track.scrollLeft = nextScrollLeft;
+      const rawIndex = targetProgress * (slides.length - 1);
+      const nextIndex = Math.max(0, Math.min(slides.length - 1, Math.round(rawIndex)));
+      const localProgress = nextIndex >= slides.length - 1 ? targetProgress : rawIndex - Math.floor(rawIndex);
+
+      if (nextIndex !== activeRef.current) setActiveValue(nextIndex);
+      setProgressValue(targetProgress >= 0.999 ? 1 : localProgress);
+      setEnded(targetProgress >= 0.999);
+      window.scrollTo({ top: targetScrollTop, behavior: "auto" });
+      return;
+    }
+
+    track.scrollLeft = nextScrollLeft;
+  };
+
+  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    if (!state || state.pointerId !== event.pointerId) {
+      setInteractionPaused(false);
+      return;
+    }
+
+    finishPointerDrag(event, true);
+  };
+
+  const handlePointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    if (!state || state.pointerId !== event.pointerId) {
+      setInteractionPaused(false);
+      return;
+    }
+
+    finishPointerDrag(event, true);
+  };
+
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    if (scrollDrivenRef.current) return;
+    if (programmaticScrollRef.current) return;
+
+    const nearest = getNearestSlideIndex(track.scrollLeft);
+
+    if (nearest !== activeRef.current) {
       setActiveValue(nearest);
       setProgressValue(0);
       setEnded(false);
@@ -931,31 +1180,24 @@ export function AlreadyDoneSection() {
 
       <div
         ref={trackRef}
+        data-lenis-prevent
         data-animate="stagger"
         data-stagger="0.08"
-        className="grid w-full auto-cols-[var(--slide-width)] grid-flow-col snap-x snap-mandatory scroll-pl-0 gap-[var(--slide-gap)] overflow-x-auto px-[var(--slide-padding)] pb-2 [scrollbar-width:none] max-[734px]:scroll-pl-[var(--slide-padding)] [&::-webkit-scrollbar]:hidden"
+        className={[
+          "grid w-full auto-cols-[var(--slide-width)] grid-flow-col snap-x snap-mandatory scroll-pl-0 gap-[var(--slide-gap)] overflow-x-auto px-[var(--slide-padding)] pb-2 [scrollbar-width:none] max-[734px]:scroll-pl-[var(--slide-padding)] [&::-webkit-scrollbar]:hidden",
+          isDraggingTrack
+            ? "cursor-grabbing select-none [&_*]:cursor-grabbing"
+            : "cursor-grab [&_a]:cursor-pointer [&_button]:cursor-pointer",
+        ].join(" ")}
         aria-live="polite"
         aria-label={`Showing ${activeLabel}`}
         onScroll={handleScroll}
-        onWheel={handleWheel}
-        onPointerDown={() => {
-          cancelScrollAnimation();
-          setPlaying(false);
-          setEnded(false);
-          setInteractionPaused(true);
-        }}
-        onPointerUp={() => {
-          setInteractionPaused(false);
-        }}
-        onTouchStart={() => {
-          cancelScrollAnimation();
-          setPlaying(false);
-          setEnded(false);
-          setInteractionPaused(true);
-        }}
-        onTouchEnd={() => {
-          setInteractionPaused(false);
-        }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+        onLostPointerCapture={handlePointerCancel}
+        onDragStart={(event) => event.preventDefault()}
       >
         {slides.map((slide, index) => {
           const isActive = active === index;

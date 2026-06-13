@@ -337,6 +337,32 @@ body {
   }
 }
 
+@keyframes waldo-card-backdrop-recede {
+  from {
+    filter: blur(0) saturate(1);
+    opacity: 0.62;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+  to {
+    filter: blur(2.5px) saturate(0.94);
+    opacity: 0.28;
+    transform: translate3d(-50%, -50%, 0) scale(1.04);
+  }
+}
+
+@keyframes waldo-card-foreground-rise {
+  from {
+    filter: blur(14px) drop-shadow(0 18px 34px rgba(26, 26, 26, 0.06));
+    opacity: 0;
+    transform: translate3d(-50%, calc(-50% + 18px), 0) scale(0.94);
+  }
+  to {
+    filter: blur(0) drop-shadow(0 30px 54px rgba(26, 26, 26, 0.15));
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+}
+
 @keyframes waldo-card-visual-glow {
   0%, 100% {
     opacity: 0.36;
@@ -415,8 +441,68 @@ body {
   width: min(96%, 580px);
 }
 
+.waldo-card-visual-shell[data-node-id="1309:9685"] {
+  align-self: flex-end;
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  margin-bottom: clamp(-70px, -5vw, -48px);
+  margin-right: clamp(-118px, -8vw, -72px);
+  max-height: none;
+  max-width: none;
+  width: clamp(500px, 43vw, 620px);
+}
+
+.waldo-card-visual-shell[data-node-id="1309:9685"] .waldo-card-visual-image {
+  border-radius: 0;
+  box-shadow: none;
+  display: block;
+  max-height: min(58vh, calc(var(--slide-height) - 48px), 500px);
+}
+
+.waldo-health-visual-stage--corner-ipad {
+  overflow: hidden;
+  padding-bottom: 0;
+  padding-right: 0;
+}
+
 .waldo-card-visual-shell[data-visual-shape="network"] {
-  width: min(94%, 600px);
+  width: min(104%, 760px);
+}
+
+.waldo-card-visual-shell[data-visual-composite="blurred-backdrop"] {
+  aspect-ratio: 1.16;
+  filter: none;
+  max-height: min(62vh, calc(var(--slide-height) - 72px), 540px);
+  width: min(104%, 760px);
+}
+
+.waldo-card-visual-layer {
+  height: auto;
+  pointer-events: none;
+  position: absolute;
+  user-select: none;
+  width: auto;
+}
+
+.waldo-card-visual-layer--backdrop {
+  animation: waldo-card-backdrop-recede 760ms var(--ease-premium) both;
+  filter: blur(2.5px) saturate(0.94);
+  left: 50%;
+  max-height: 100%;
+  max-width: 108%;
+  opacity: 0.28;
+  top: 47%;
+  transform: translate3d(-50%, -50%, 0) scale(1.04);
+}
+
+.waldo-card-visual-layer--foreground {
+  animation: waldo-card-foreground-rise 780ms var(--ease-premium) 70ms both;
+  filter: drop-shadow(0 30px 54px rgba(26, 26, 26, 0.15));
+  left: 50%;
+  max-height: 60%;
+  max-width: 78%;
+  top: 48%;
+  transform: translate3d(-50%, -50%, 0) scale(1);
 }
 
 .waldo-card-visual-image {
@@ -533,6 +619,40 @@ body {
     width: min(98%, 480px);
   }
 
+  .waldo-health-visual-stage--corner-ipad {
+    min-height: clamp(250px, 38vh, 330px);
+    overflow: hidden !important;
+  }
+
+  .waldo-card-visual-shell[data-node-id="1309:9685"] {
+    margin-bottom: clamp(-50px, -10vw, -30px);
+    margin-right: clamp(-138px, -30vw, -82px);
+    padding: 0;
+    width: clamp(350px, 92vw, 500px);
+  }
+
+  .waldo-card-visual-shell[data-node-id="1309:9685"] .waldo-card-visual-image {
+    border-radius: 0;
+    max-height: min(36vh, 318px);
+  }
+
+  .waldo-card-visual-shell[data-visual-composite="blurred-backdrop"] {
+    aspect-ratio: 1.06;
+    max-height: min(35vh, 310px);
+    width: min(98%, 480px);
+  }
+
+  .waldo-card-visual-layer--backdrop {
+    max-width: 112%;
+    opacity: 0.22;
+  }
+
+  .waldo-card-visual-layer--foreground {
+    left: 50%;
+    max-height: 52%;
+    max-width: 78%;
+  }
+
   .waldo-card-visual-image {
     max-height: min(36vh, 304px);
   }
@@ -548,6 +668,7 @@ body {
   .waldo-mcp-step,
   .waldo-panel-content[data-state="open"] .waldo-panel-card,
   .waldo-card-visual-shell,
+  .waldo-card-visual-layer,
   .waldo-card-visual-glow,
   .waldo-agent-visual-shell,
   .waldo-work-check,
