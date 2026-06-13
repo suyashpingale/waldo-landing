@@ -8,6 +8,7 @@ import edgeCircadianContext from "@/public/figma-assets/waldo-cards/edge-circadi
 import edgeCooldown from "@/public/figma-assets/waldo-cards/edge-cooldown.png";
 import edgeFetchMidday from "@/public/figma-assets/waldo-cards/edge-fetch-midday.png";
 import edgePhoneStress from "@/public/figma-assets/waldo-cards/edge-phone-stress.png";
+import edgeWaldoAction from "@/public/figma-assets/waldo-cards/edge-waldo-action.png";
 import morningLockscreenIpad from "@/public/figma-assets/waldo-cards/morning-lockscreen-ipad.png";
 import morningOverview from "@/public/figma-assets/waldo-cards/morning-overview.png";
 import morningPhoneRestingState from "@/public/figma-assets/waldo-cards/morning-phone-resting-state.png";
@@ -287,10 +288,10 @@ const slides: ShowcaseSlide[] = [
         tone: "stress",
         metric: "meeting pulled",
         visual: {
-          image: edgePhoneStress,
-          alt: "Waldo stress action card exported from Figma.",
-          nodeId: "1309:10094",
-          shape: "cluster",
+          image: edgeWaldoAction,
+          alt: "Waldo calendar action card showing Form-aware meeting protection.",
+          nodeId: "edge-waldo-action",
+          shape: "network",
         },
       },
     ],
