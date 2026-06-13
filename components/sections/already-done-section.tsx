@@ -2,7 +2,7 @@
 
 import * as Accordion from "@radix-ui/react-accordion";
 import Image, { type StaticImageData } from "next/image";
-import { useCallback, useEffect, useRef, useState, type WheelEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 
 import edgeCircadianContext from "@/public/figma-assets/waldo-cards/edge-circadian-context.png";
 import edgeCooldown from "@/public/figma-assets/waldo-cards/edge-cooldown.png";
@@ -19,6 +19,20 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 const AUTO_DWELL_MS = 6150;
 const AUTO_SCROLL_MS = 1000;
 const PINNED_SCROLL_QUERY = "(min-width: 1100px) and (min-height: 820px)";
+const DRAG_START_THRESHOLD_PX = 8;
+const SCROLLBAR_GUTTER_PX = 18;
+const INTERACTIVE_CAROUSEL_SELECTOR = [
+  "a",
+  "button",
+  "input",
+  "label",
+  "select",
+  "summary",
+  "textarea",
+  "[contenteditable='true']",
+  "[role='button']",
+  "[role='link']",
+].join(",");
 
 function appleGalleryEase(progress: number) {
   const x1 = 0.2;
@@ -71,6 +85,33 @@ type ShowcaseSlide = {
   defaultVisual?: HealthCardVisual;
   panels: FeaturePanel[];
 };
+
+type CarouselDragState = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  startScrollLeft: number;
+  maxScroll: number;
+  isDragging: boolean;
+  snapType: string | null;
+  previousBodyCursor: string;
+  previousBodyUserSelect: string;
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function isInteractiveCarouselTarget(target: EventTarget | null) {
+  return target instanceof HTMLElement && Boolean(target.closest(INTERACTIVE_CAROUSEL_SELECTOR));
+}
+
+function isScrollbarGutterPointer(event: ReactPointerEvent<HTMLDivElement>) {
+  if (event.pointerType !== "mouse") return false;
+
+  const rect = event.currentTarget.getBoundingClientRect();
+  return event.clientY >= rect.bottom - SCROLLBAR_GUTTER_PX;
+}
 
 const slides: ShowcaseSlide[] = [
   {
@@ -496,6 +537,7 @@ function HealthFeatureVisualStage({
             width={112}
             height={112}
             aria-hidden
+            draggable={false}
             className="absolute left-1/2 top-[56%] h-24 w-24 -translate-x-1/2 -translate-y-1/2 object-contain lg:h-28 lg:w-28"
           />
         </div>
@@ -527,6 +569,7 @@ function HealthFeatureVisualStage({
           className="waldo-card-visual-image select-none"
           fetchPriority={activePanel === null ? "high" : "auto"}
           loading="eager"
+          draggable={false}
           unoptimized
         />
       </div>
@@ -609,6 +652,7 @@ export function AlreadyDoneSection() {
   const scrollSnapTypeRef = useRef<string | null>(null);
   const programmaticScrollRef = useRef(false);
   const scrollDrivenRef = useRef(false);
+  const dragStateRef = useRef<CarouselDragState | null>(null);
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -616,6 +660,7 @@ export function AlreadyDoneSection() {
   const [interactionPaused, setInteractionPaused] = useState(false);
   const [documentHidden, setDocumentHidden] = useState(false);
   const [isScrollAnimating, setIsScrollAnimating] = useState(false);
+  const [isDraggingTrack, setIsDraggingTrack] = useState(false);
   const [scrollDriven, setScrollDriven] = useState(false);
   const [openPanels, setOpenPanels] = useState<Record<number, number | null>>({});
 
@@ -876,11 +921,11 @@ export function AlreadyDoneSection() {
     scrollToSlide(index, false);
   };
 
-  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
+  const handleWheelIntent = useCallback((event: globalThis.WheelEvent) => {
     if (!scrollDrivenRef.current) return;
     if (Math.abs(event.deltaX) < 18 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
 
-    event.preventDefault();
+    if (event.cancelable) event.preventDefault();
     const now = window.performance.now();
     if (wheelIntentRef.current !== null && now - wheelIntentRef.current < 520) return;
 
@@ -890,16 +935,22 @@ export function AlreadyDoneSection() {
     setInteractionPaused(true);
     scrollToSlide(activeRef.current + (event.deltaX > 0 ? 1 : -1), false);
     window.setTimeout(() => setInteractionPaused(false), 520);
-  };
+  }, [scrollToSlide]);
 
-  const handleScroll = () => {
+  useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
-    if (scrollDrivenRef.current) return;
-    if (programmaticScrollRef.current) return;
+    if (!track) return undefined;
 
-    const trackCenter = track.scrollLeft + track.clientWidth / 2;
-    let nearest = 0;
+    track.addEventListener("wheel", handleWheelIntent, { passive: false });
+    return () => track.removeEventListener("wheel", handleWheelIntent);
+  }, [handleWheelIntent]);
+
+  const getNearestSlideIndex = useCallback((scrollLeft: number) => {
+    const track = trackRef.current;
+    if (!track) return activeRef.current;
+
+    const trackCenter = scrollLeft + track.clientWidth / 2;
+    let nearest = activeRef.current;
     let nearestDistance = Number.POSITIVE_INFINITY;
 
     Array.from(track.children).forEach((child, index) => {
@@ -913,7 +964,139 @@ export function AlreadyDoneSection() {
       }
     });
 
-    if (nearest !== active) {
+    return nearest;
+  }, []);
+
+  const restoreDragSideEffects = useCallback((track: HTMLDivElement, state: CarouselDragState) => {
+    if (state.snapType !== null) {
+      track.style.scrollSnapType = state.snapType;
+    }
+    document.body.style.cursor = state.previousBodyCursor;
+    document.body.style.userSelect = state.previousBodyUserSelect;
+    setIsDraggingTrack(false);
+  }, []);
+
+  const finishPointerDrag = useCallback((event?: ReactPointerEvent<HTMLDivElement>, snapToNearest = true) => {
+    const state = dragStateRef.current;
+    const track = trackRef.current;
+
+    if (!state) {
+      setInteractionPaused(false);
+      return;
+    }
+
+    dragStateRef.current = null;
+
+    if (event?.currentTarget.hasPointerCapture(state.pointerId)) {
+      event.currentTarget.releasePointerCapture(state.pointerId);
+    }
+
+    if (track && state.isDragging) {
+      restoreDragSideEffects(track, state);
+    }
+
+    setInteractionPaused(false);
+
+    if (!track || !state.isDragging || !snapToNearest) return;
+    scrollToSlide(getNearestSlideIndex(track.scrollLeft), false);
+  }, [getNearestSlideIndex, restoreDragSideEffects, scrollToSlide]);
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (isInteractiveCarouselTarget(event.target) || isScrollbarGutterPointer(event)) return;
+
+    cancelScrollAnimation();
+    setPlaying(false);
+    setEnded(false);
+    setInteractionPaused(true);
+
+    if (event.pointerType === "touch") return;
+
+    const track = event.currentTarget;
+    const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+    if (maxScroll < 4) return;
+
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startScrollLeft: track.scrollLeft,
+      maxScroll,
+      isDragging: false,
+      snapType: null,
+      previousBodyCursor: document.body.style.cursor,
+      previousBodyUserSelect: document.body.style.userSelect,
+    };
+
+    track.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    if (!state || event.pointerId !== state.pointerId) return;
+
+    const track = event.currentTarget;
+    const deltaX = event.clientX - state.startX;
+    const deltaY = event.clientY - state.startY;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    if (!state.isDragging) {
+      if (absX < DRAG_START_THRESHOLD_PX) return;
+      if (absX <= absY * 1.15) return;
+
+      state.isDragging = true;
+      state.snapType = track.style.scrollSnapType || window.getComputedStyle(track).scrollSnapType;
+      track.style.scrollSnapType = "none";
+      document.body.style.cursor = "grabbing";
+      document.body.style.userSelect = "none";
+      setIsDraggingTrack(true);
+    }
+
+    event.preventDefault();
+
+    const nextScrollLeft = clamp(state.startScrollLeft - deltaX, 0, state.maxScroll);
+    const pinnedTrigger = pinnedTriggerRef.current;
+
+    if (scrollDrivenRef.current && pinnedTrigger) {
+      const targetProgress = nextScrollLeft / Math.max(1, state.maxScroll);
+      const targetScrollTop = pinnedTrigger.start + (pinnedTrigger.end - pinnedTrigger.start) * targetProgress;
+      window.scrollTo({ top: targetScrollTop, behavior: "auto" });
+      return;
+    }
+
+    track.scrollLeft = nextScrollLeft;
+  };
+
+  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    if (!state || state.pointerId !== event.pointerId) {
+      setInteractionPaused(false);
+      return;
+    }
+
+    finishPointerDrag(event, true);
+  };
+
+  const handlePointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    if (!state || state.pointerId !== event.pointerId) {
+      setInteractionPaused(false);
+      return;
+    }
+
+    finishPointerDrag(event, true);
+  };
+
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    if (scrollDrivenRef.current) return;
+    if (programmaticScrollRef.current) return;
+
+    const nearest = getNearestSlideIndex(track.scrollLeft);
+
+    if (nearest !== activeRef.current) {
       setActiveValue(nearest);
       setProgressValue(0);
       setEnded(false);
@@ -939,31 +1122,24 @@ export function AlreadyDoneSection() {
 
       <div
         ref={trackRef}
+        data-lenis-prevent
         data-animate="stagger"
         data-stagger="0.08"
-        className="grid w-full auto-cols-[var(--slide-width)] grid-flow-col snap-x snap-mandatory scroll-pl-0 gap-[var(--slide-gap)] overflow-x-auto px-[var(--slide-padding)] pb-2 [scrollbar-width:none] max-[734px]:scroll-pl-[var(--slide-padding)] [&::-webkit-scrollbar]:hidden"
+        className={[
+          "grid w-full auto-cols-[var(--slide-width)] grid-flow-col snap-x snap-mandatory scroll-pl-0 gap-[var(--slide-gap)] overflow-x-auto px-[var(--slide-padding)] pb-2 [scrollbar-width:none] max-[734px]:scroll-pl-[var(--slide-padding)] [&::-webkit-scrollbar]:hidden",
+          isDraggingTrack
+            ? "cursor-grabbing select-none [&_*]:cursor-grabbing"
+            : "cursor-grab [&_a]:cursor-pointer [&_button]:cursor-pointer",
+        ].join(" ")}
         aria-live="polite"
         aria-label={`Showing ${activeLabel}`}
         onScroll={handleScroll}
-        onWheel={handleWheel}
-        onPointerDown={() => {
-          cancelScrollAnimation();
-          setPlaying(false);
-          setEnded(false);
-          setInteractionPaused(true);
-        }}
-        onPointerUp={() => {
-          setInteractionPaused(false);
-        }}
-        onTouchStart={() => {
-          cancelScrollAnimation();
-          setPlaying(false);
-          setEnded(false);
-          setInteractionPaused(true);
-        }}
-        onTouchEnd={() => {
-          setInteractionPaused(false);
-        }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+        onLostPointerCapture={handlePointerCancel}
+        onDragStart={(event) => event.preventDefault()}
       >
         {slides.map((slide, index) => {
           const isActive = active === index;
