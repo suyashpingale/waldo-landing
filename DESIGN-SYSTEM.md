@@ -296,6 +296,130 @@ Validated against the local SF Symbols API.
 | Pro tier | Tiers / Subscription | `crown.fill` | Premium individual tier. |
 | Pack tier | Tiers / Subscription | `person.3.fill` | Group or team tier without repeating the paw icon. |
 
+### Future-phase SF Symbols map
+
+These symbols extend the same icon language into lifestyle logging, body composition, training, chart selectors, and generic connector fallbacks. Labels here are implementation names; user-facing product copy still follows the banned-words list in Section 10.
+
+| Feature | Category | SF Symbol | Rationale |
+|---|---|---|---|
+| Food log | Lifestyle Logging / Food & Nutrition | `fork.knife.circle.fill` | Universal meal logging symbol, strong enough for a primary food card. |
+| Barcode scan | Lifestyle Logging / Food & Nutrition | `barcode.viewfinder` | Directly communicates scanning packaged food. |
+| Meal photo capture | Lifestyle Logging / Food & Nutrition | `camera.fill` | Simple camera metaphor for photo-based food logging. |
+| Recipe | Lifestyle Logging / Food & Nutrition | `book.pages.fill` | Saved recipe as a readable book/pages object. |
+| Calories | Lifestyle Logging / Food & Nutrition | `flame.fill` | Standard energy/calorie metaphor. |
+| Protein | Lifestyle Logging / Food & Nutrition | `dumbbell.fill` | Closest obvious proxy for protein and muscle support. |
+| Carbohydrates | Lifestyle Logging / Food & Nutrition | `carrot.fill` | Food-category approximation; clearer than an abstract molecule. |
+| Fat | Lifestyle Logging / Food & Nutrition | `drop.fill` | Closest simple macro icon for oils/fats. |
+| Fiber | Lifestyle Logging / Food & Nutrition | `leaf.fill` | Plant/fiber association is immediate enough. |
+| Micronutrients | Lifestyle Logging / Food & Nutrition | `sparkles` | Small essentials, vitamins, and minerals as tiny beneficial bits. |
+| Nutrition Score | Lifestyle Logging / Food & Nutrition | `chart.pie.fill` | Composite breakdown of intake quality. |
+| Net Energy | Lifestyle Logging / Food & Nutrition | `plusminus.circle.fill` | Captures calories in versus calories out. |
+| Late meal flag | Lifestyle Logging / Food & Nutrition | `clock.badge.exclamationmark.fill` | Time-based eating warning. |
+| Meal timing | Lifestyle Logging / Food & Nutrition | `clock.fill` | Focuses on when the meal happened, not what it was. |
+| Glucose / blood sugar | Lifestyle Logging / Food & Nutrition | `drop.degreesign.fill` | Blood-drop approximation for glucose. |
+| Fasting window | Lifestyle Logging / Food & Nutrition | `hourglass.circle.fill` | A timed eating window is the core concept. |
+| Supplement log | Lifestyle Logging / Supplements & Medication | `pills.fill` | Most direct supplement/medication logging icon. |
+| Individual vitamin | Lifestyle Logging / Supplements & Medication | `capsule.fill` | Single supplement item, distinct from the whole log. |
+| Medication reminder | Lifestyle Logging / Supplements & Medication | `bell.badge.fill` | Reminder or alert for taking medication. |
+| Medication adherence | Lifestyle Logging / Supplements & Medication | `checkmark.circle.fill` | Consistency and completion without gamification language. |
+| Water intake | Lifestyle Logging / Hydration | `waterbottle.fill` | Direct water logging metaphor. |
+| Hydration goal | Lifestyle Logging / Hydration | `target` | Goal progress target. |
+| Caffeine intake | Lifestyle Logging / Hydration | `cup.and.saucer.fill` | Coffee/tea signal for caffeine. |
+| Alcohol intake | Lifestyle Logging / Hydration | `wineglass.fill` | Obvious alcohol intake marker. |
+| Journal entry | Lifestyle Logging / Journal & Habit Tags | `book.closed.fill` | General freeform log entry. |
+| Sunlight exposure | Lifestyle Logging / Journal & Habit Tags | `sun.max.fill` | Direct manual sunlight tag. |
+| Screen time | Lifestyle Logging / Journal & Habit Tags | `iphone` | Phone-based screen exposure. |
+| Cold exposure | Lifestyle Logging / Journal & Habit Tags | `snowflake` | Clear cold cue. |
+| Sauna / heat exposure | Lifestyle Logging / Journal & Habit Tags | `thermometer.sun.fill` | Heat exposure without implying fever. |
+| Breathwork | Lifestyle Logging / Journal & Habit Tags | `wind` | Breath and airflow metaphor. |
+| Meditation | Lifestyle Logging / Journal & Habit Tags | `figure.mind.and.body` | Best built-in symbol for mind-body practice. |
+| Gratitude log | Lifestyle Logging / Journal & Habit Tags | `heart.text.square.fill` | Written reflection with positive sentiment. |
+| Mood self-report | Lifestyle Logging / Journal & Habit Tags | `face.smiling.fill` | User-entered feeling state. |
+| Energy self-report | Lifestyle Logging / Journal & Habit Tags | `bolt.fill` | Perceived energy level. |
+| Pain / soreness log | Lifestyle Logging / Journal & Habit Tags | `bandage.fill` | Body discomfort marker. |
+| Menstrual cycle tracking | Lifestyle Logging / Journal & Habit Tags | `drop.circle.fill` | Closest discreet cycle marker; use a custom glyph later if needed. |
+| Symptom log | Lifestyle Logging / Journal & Habit Tags | `stethoscope` | General symptom or health observation tag. |
+| Body weight | Body Composition & Long-Term Biomarkers | `scalemass.fill` | Direct scale reading. |
+| Body fat % | Body Composition & Long-Term Biomarkers | `percent` | Literal percentage marker, simple and readable. |
+| Muscle mass | Body Composition & Long-Term Biomarkers | `figure.strengthtraining.traditional` | Closest human-strength proxy for muscle. |
+| BMI | Body Composition & Long-Term Biomarkers | `ruler.fill` | Body measurement/index approximation. |
+| Waist circumference | Body Composition & Long-Term Biomarkers | `lines.measurement.horizontal` | Measurement-line icon fits circumference tracking. |
+| Blood pressure | Body Composition & Long-Term Biomarkers | `heart.circle.fill` | Heart-centered cardiovascular metric. |
+| Blood test / bloodwork | Body Composition & Long-Term Biomarkers | `doc.badge.arrow.up.fill` | Uploading lab results as a document. |
+| Biological Age | Body Composition & Long-Term Biomarkers | `clock.arrow.circlepath` | Time/age metric with long-term recalculation. |
+| Individual blood biomarker | Body Composition & Long-Term Biomarkers | `testtube.2` | Generic lab biomarker category. |
+| Health Records | Body Composition & Long-Term Biomarkers | `doc.text.fill` | Stored medical/health documents. |
+| Workout log | Workouts & Training | `figure.run.circle.fill` | General workout entry point. |
+| Strength training | Workouts & Training | `dumbbell.fill` | Direct strength icon. |
+| Cardio session | Workouts & Training | `heart.circle.fill` | Cardiovascular workout marker. |
+| Running | Workouts & Training | `figure.run` | Literal running activity. |
+| Cycling | Workouts & Training | `figure.outdoor.cycle` | Literal cycling activity. |
+| Swimming | Workouts & Training | `figure.pool.swim` | Literal swimming activity. |
+| Yoga | Workouts & Training | `figure.yoga` | Literal yoga activity. |
+| HIIT / interval training | Workouts & Training | `timer` | Timed intervals. |
+| Workout template | Workouts & Training | `rectangle.stack.fill` | Saved reusable routine stack. |
+| Workout plan | Workouts & Training | `calendar.badge.plus` | Planned workout schedule. |
+| Sets & reps | Workouts & Training | `list.number` | Numbered exercise prescription. |
+| Personal record / PR | Workouts & Training | `trophy.fill` | Achievement/record marker. |
+| Muscular strain | Workouts & Training | `bolt.fill` | Real-time exertion/strain cue. |
+| Cardio Load | Workouts & Training | `heart.text.square.fill` | Cardio demand as a recorded heart metric. |
+| Training readiness | Workouts & Training | `gauge.with.dots.needle.67percent` | Readiness as a capacity gauge. |
+| Rest day | Workouts & Training | `bed.double.fill` | Recovery/rest day marker. |
+| Warm-up | Workouts & Training | `thermometer.sun.fill` | Body warming up. |
+| Cool-down | Workouts & Training | `snowflake` | Cooling down after activity. |
+| Stretch | Workouts & Training | `figure.flexibility` | Direct flexibility/stretch symbol. |
+| Waldo mood states | Waldo-Specific Extras | `theatermasks.fill` | Category icon for multiple emotional states. |
+| Dreaming Mode | Waldo-Specific Extras | `moon.zzz.fill` | Nightly background processing while the user sleeps. |
+| Waldo Context Score | Waldo-Specific Extras | `brain.head.profile.fill` | Context depth represented as cognition. |
+| Signal Depth / Signal Strength | Waldo-Specific Extras | `antenna.radiowaves.left.and.right.circle.fill` | Connected-source strength in one glyph. |
+| Core Memory tag | Waldo-Specific Extras | `tag.fill` | Stored personal fact as a tagged memory. |
+| Pattern Memory | Waldo-Specific Extras | `point.3.connected.trianglepath.dotted` | Learned behavioural pattern as connected points. |
+| Feedback - thumbs up | Waldo-Specific Extras | `hand.thumbsup.fill` | Positive feedback action. |
+| Feedback - thumbs down | Waldo-Specific Extras | `hand.thumbsdown.fill` | Negative feedback action. |
+| Card flip | Waldo-Specific Extras | `rectangle.portrait.rotate` | Front/back card interaction hint. |
+| Trend - improving | Waldo-Specific Extras | `arrow.up.right.circle.fill` | Improving direction. |
+| Trend - declining | Waldo-Specific Extras | `arrow.down.right.circle.fill` | Declining direction. |
+| Trend - stable / holding | Waldo-Specific Extras | `equal.circle.fill` | No meaningful change. |
+| Zone - Peak | Waldo-Specific Extras | `mountain.2.fill` | Peak capacity/state. |
+| Zone - Good | Waldo-Specific Extras | `checkmark.seal.fill` | Good/acceptable zone. |
+| Zone - Low | Waldo-Specific Extras | `exclamationmark.circle.fill` | Low state without full escalation. |
+| Zone - Depleted | Waldo-Specific Extras | `battery.25percent` | Low reserve/capacity. |
+| Data freshness | Waldo-Specific Extras | `clock.arrow.circlepath` | Recently updated or age-of-data cue. |
+| Sync in progress | Waldo-Specific Extras | `arrow.triangle.2.circlepath.circle.fill` | Active sync cycle. |
+| Calibration period | Waldo-Specific Extras | `hourglass.circle.fill` | "Give me a few days" waiting period. |
+| Medical disclaimer icon | Waldo-Specific Extras | `cross.case.fill` | Health-related caution without diagnosis claims. |
+| Permission slip | Waldo-Specific Extras | `doc.text.fill` | Shareable justification as a document/note. |
+| Screenshot share / shareable card | Waldo-Specific Extras | `square.and.arrow.up.fill` | Standard share action. |
+| Pre-Activity Spot | Waldo-Specific Extras | `clock.badge.exclamationmark.fill` | Time-sensitive warning before an event. |
+| Quiet hours | Waldo-Specific Extras | `bell.slash.fill` | Notifications held. |
+| Daily notification budget | Waldo-Specific Extras | `bell.badge.fill` | Limited notification allowance. |
+| Overload intervention | Waldo-Specific Extras | `hand.raised.fill` | Waldo stepping in to stop overload. |
+| Recovery Day enforcement | Waldo-Specific Extras | `calendar.badge.lock` | Calendar protected for recovery. |
+| Sleep Optimization Nudge | Waldo-Specific Extras | `bed.double.circle.fill` | Sleep-related reminder/nudge. |
+| Optimal wake alarm | Waldo-Specific Extras | `alarm.fill` | Wake timing alarm. |
+| DND / Do Not Disturb | Waldo-Specific Extras | `moon.fill` | Standard focus/DND metaphor. |
+| Communication batching | Waldo-Specific Extras | `tray.full.fill` | Grouped incoming messages/notifications. |
+| Bar chart | Chart / Visualisation Types | `chart.bar.fill` | Standard bar chart selector. |
+| Line chart | Chart / Visualisation Types | `chart.line.uptrend.xyaxis` | Time-series trend selector. |
+| Donut / ring chart | Chart / Visualisation Types | `chart.pie.fill` | Closest built-in symbol for ring breakdown. |
+| Sparkline | Chart / Visualisation Types | `chart.line.flattrend.xyaxis` | Small inline trend line. |
+| Dumbbell plot | Chart / Visualisation Types | `arrow.left.and.right.circle.fill` | Two endpoints compared across time; closest built-in approximation. |
+| Stacked bar | Chart / Visualisation Types | `chart.bar.xaxis` | Bar-history chart selector. |
+| Heatmap | Chart / Visualisation Types | `square.grid.3x3.fill` | Grid-based pattern visualization. |
+| Force-directed graph | Chart / Visualisation Types | `point.3.connected.trianglepath.dotted` | Connected-node graph. |
+| Generic wearable device | Third-Party Connector Fallbacks | `applewatch` | Best generic wearable fallback. |
+| Generic calendar app | Third-Party Connector Fallbacks | `calendar` | Universal calendar fallback. |
+| Generic email client | Third-Party Connector Fallbacks | `envelope.fill` | Universal email fallback. |
+| Generic task manager | Third-Party Connector Fallbacks | `checklist` | Task-list fallback. |
+| Generic music/audio app | Third-Party Connector Fallbacks | `music.note` | Audio/music fallback. |
+| Generic fitness app | Third-Party Connector Fallbacks | `figure.run.circle.fill` | Fitness/activity fallback. |
+| Generic chat/messaging app | Third-Party Connector Fallbacks | `message.fill` | Chat/messaging fallback. |
+| Generic code/developer tool | Third-Party Connector Fallbacks | `chevron.left.forwardslash.chevron.right` | Code/dev tool fallback. |
+| Generic CRM/sales tool | Third-Party Connector Fallbacks | `person.2.fill` | People/accounts relationship cue. |
+| Generic design tool | Third-Party Connector Fallbacks | `paintpalette.fill` | Design/creative tool fallback. |
+| Generic analytics tool | Third-Party Connector Fallbacks | `chart.bar.xaxis` | Analytics/data fallback. |
+| Generic HR/people tool | Third-Party Connector Fallbacks | `person.3.fill` | People/team tool fallback. |
+
 ---
 
 ## 8. Inline links
