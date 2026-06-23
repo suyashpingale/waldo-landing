@@ -5,6 +5,7 @@ import Image, { type StaticImageData } from "next/image";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 
 import { useElementInView } from "@/hooks/use-element-in-view";
+import { useImagePreloader } from "@/hooks/use-image-preloader";
 import dots01Patrol from "@/public/figma-assets/health-carousel/dots-01-patrol.webp";
 import dots02Spot from "@/public/figma-assets/health-carousel/dots-02-spot.webp";
 import dots03Constellation from "@/public/figma-assets/health-carousel/dots-03-constellation.webp";
@@ -495,6 +496,16 @@ const slides: ShowcaseSlide[] = [
   },
 ];
 
+const allHealthFrameSources = slides.flatMap((slide) => slide.panels.map((panel) => panel.visual.image.src));
+
+function getHealthSlideSources(slideIndex: number) {
+  return slides[slideIndex]?.panels.map((panel) => panel.visual.image.src) ?? [];
+}
+
+function getHealthPanelSource(slideIndex: number, panelIndex: number) {
+  return slides[slideIndex]?.panels[panelIndex]?.visual.image.src;
+}
+
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
 
@@ -551,9 +562,11 @@ function PillPaddleIcon({ direction }: { direction: "previous" | "next" }) {
 function PanelPill({
   panel,
   index,
+  onIntent,
 }: {
   panel: FeaturePanel;
   index: number;
+  onIntent?: () => void;
 }) {
   const panelId = `${panel.label.replace(/[^a-z0-9]/gi, "-").toLowerCase()}-${index}`;
   const panelContentId = `${panelId}-content`;
@@ -653,6 +666,9 @@ function PanelPill({
           id={panelId}
           className="waldo-panel-trigger focusable-ring flex items-center gap-3 px-4 py-2.5 text-left text-[var(--ink)]"
           aria-controls={panelContentId}
+          onPointerEnter={onIntent}
+          onFocus={onIntent}
+          onTouchStart={onIntent}
         >
           <span className="waldo-panel-plus flex items-center justify-center rounded-full border border-[var(--border-default)] bg-transparent text-[var(--ink)]" aria-hidden>
             <span className="relative h-3 w-3">
@@ -680,12 +696,14 @@ function SlideContent({
   openPanel,
   isActive,
   onPanelChange,
+  onPanelIntent,
   onPanelInteraction,
 }: {
   slide: ShowcaseSlide;
   openPanel: number;
   isActive: boolean;
   onPanelChange: (panelIndex: number) => void;
+  onPanelIntent: (panelIndex: number) => void;
   onPanelInteraction: () => void;
 }) {
   const panel = slide.panels[openPanel] ?? slide.panels[0];
@@ -693,7 +711,9 @@ function SlideContent({
   const canGoForward = openPanel < slide.panels.length - 1;
   const goToAdjacentPanel = (direction: "previous" | "next") => {
     onPanelInteraction();
-    onPanelChange(openPanel + (direction === "next" ? 1 : -1));
+    const nextPanel = openPanel + (direction === "next" ? 1 : -1);
+    onPanelIntent(nextPanel);
+    onPanelChange(nextPanel);
   };
 
   return (
@@ -731,6 +751,7 @@ function SlideContent({
               key={item.label}
               panel={item}
               index={index}
+              onIntent={() => onPanelIntent(index)}
             />
           ))}
         </Accordion.Root>
@@ -740,6 +761,8 @@ function SlideContent({
             className="waldo-health-pill-nav waldo-health-pill-nav--previous focusable-ring"
             aria-label={`Previous ${slide.tab} detail`}
             disabled={!canGoBack}
+            onPointerEnter={() => onPanelIntent(openPanel - 1)}
+            onFocus={() => onPanelIntent(openPanel - 1)}
             onPointerDown={(event) => {
               event.stopPropagation();
               onPanelInteraction();
@@ -757,6 +780,8 @@ function SlideContent({
             className="waldo-health-pill-nav waldo-health-pill-nav--next focusable-ring"
             aria-label={`Next ${slide.tab} detail`}
             disabled={!canGoForward}
+            onPointerEnter={() => onPanelIntent(openPanel + 1)}
+            onFocus={() => onPanelIntent(openPanel + 1)}
             onPointerDown={(event) => {
               event.stopPropagation();
               onPanelInteraction();
@@ -777,6 +802,7 @@ function SlideContent({
 
 export function AlreadyDoneSection() {
   const reducedMotion = usePrefersReducedMotion();
+  const { preload, preloadMany } = useImagePreloader();
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const scrollAnimationRef = useRef<number | null>(null);
@@ -797,6 +823,7 @@ export function AlreadyDoneSection() {
   const [isDraggingTrack, setIsDraggingTrack] = useState(false);
   const [openPanels, setOpenPanels] = useState<Record<number, number>>({});
   const sectionInView = useElementInView(sectionRef);
+  const sectionNearView = useElementInView(sectionRef, "1200px");
 
   const shouldTickProgress = playing && !ended && !reducedMotion && !interactionPaused && !documentHidden && !isScrollAnimating && sectionInView;
   const activeSlide = slides[active];
@@ -812,6 +839,15 @@ export function AlreadyDoneSection() {
     activeRef.current = index;
     setActive(index);
   }, []);
+
+  const warmPanel = useCallback((slideIndex: number, panelIndex: number) => {
+    const source = getHealthPanelSource(slideIndex, panelIndex);
+    if (source) preload(source, { immediate: true });
+  }, [preload]);
+
+  const warmSlide = useCallback((slideIndex: number, immediate = false) => {
+    preloadMany(getHealthSlideSources(slideIndex), { immediate });
+  }, [preloadMany]);
 
   useEffect(() => {
     if (reducedMotion) setPlaying(false);
@@ -835,6 +871,26 @@ export function AlreadyDoneSection() {
     activeRef.current = active;
   }, [active]);
 
+  useEffect(() => {
+    preload(getHealthPanelSource(0, 0), { immediate: true });
+  }, [preload]);
+
+  useEffect(() => {
+    if (sectionNearView) preloadMany(allHealthFrameSources);
+  }, [preloadMany, sectionNearView]);
+
+  useEffect(() => {
+    const openPanel = openPanels[active] ?? 0;
+    const activeSources = [
+      getHealthPanelSource(active, openPanel),
+      getHealthPanelSource(active, openPanel - 1),
+      getHealthPanelSource(active, openPanel + 1),
+      getHealthPanelSource(active + 1, 0),
+    ];
+
+    preloadMany(activeSources, { immediate: true });
+  }, [active, openPanels, preloadMany]);
+
   const cancelScrollAnimation = useCallback(() => {
     if (scrollAnimationRef.current !== null) {
       window.cancelAnimationFrame(scrollAnimationRef.current);
@@ -854,6 +910,7 @@ export function AlreadyDoneSection() {
     const card = track?.children[nextIndex] as HTMLElement | undefined;
 
     cancelScrollAnimation();
+    warmSlide(nextIndex, true);
     lastProgressTickRef.current = null;
     setProgressValue(0);
     setEnded(false);
@@ -899,7 +956,7 @@ export function AlreadyDoneSection() {
     };
 
     scrollAnimationRef.current = window.requestAnimationFrame(step);
-  }, [cancelScrollAnimation, reducedMotion, setActiveValue, setProgressValue]);
+  }, [cancelScrollAnimation, reducedMotion, setActiveValue, setProgressValue, warmSlide]);
 
   useEffect(() => {
     if (!shouldTickProgress) {
@@ -941,6 +998,7 @@ export function AlreadyDoneSection() {
   }, [active, scrollToSlide, setProgressValue, shouldTickProgress]);
 
   const goTo = (index: number) => {
+    warmSlide(index, true);
     setPlaying(false);
     setEnded(false);
     scrollToSlide(index, false);
@@ -1153,6 +1211,7 @@ export function AlreadyDoneSection() {
                 slide={slide}
                 openPanel={openPanel}
                 isActive={isActive}
+                onPanelIntent={(panelIndex) => warmPanel(index, panelIndex)}
                 onPanelInteraction={() => {
                   cancelScrollAnimation();
                   setPlaying(false);
@@ -1163,6 +1222,7 @@ export function AlreadyDoneSection() {
                   setPlaying(false);
                   setEnded(false);
                   const nextPanel = clamp(panelIndex, 0, slide.panels.length - 1);
+                  warmPanel(index, nextPanel);
                   setOpenPanels((current) => ({ ...current, [index]: nextPanel }));
                 }}
               />
@@ -1197,6 +1257,8 @@ export function AlreadyDoneSection() {
                 type="button"
                 aria-label={`Show ${slide.tab}`}
                 className="focusable-ring flex h-11 w-6 items-center justify-center rounded-full"
+                onPointerEnter={() => warmSlide(index, true)}
+                onFocus={() => warmSlide(index, true)}
                 onClick={() => goTo(index)}
               >
                 <span

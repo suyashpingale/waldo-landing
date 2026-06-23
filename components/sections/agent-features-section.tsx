@@ -1,10 +1,12 @@
 "use client";
 
 import Image, { type StaticImageData } from "next/image";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Aside, withHighlights } from "@/components/landing-primitives";
 import { IconButton } from "@/components/rail-controls";
+import { useElementInView } from "@/hooks/use-element-in-view";
+import { useImagePreloader } from "@/hooks/use-image-preloader";
 import appsAccountsAgents from "@/public/waldo-web-assets/agent-features/apps-accounts-agents.webp";
 import contextThread from "@/public/waldo-web-assets/agent-features/context-thread.webp";
 
@@ -156,8 +158,11 @@ const slides: AgentSlide[] = [
   },
 ];
 
+const agentVisualSources = slides.flatMap((slide) => (slide.visualAsset ? [slide.visualAsset.src.src] : []));
+
 export function AgentFeaturesSection() {
   const reducedMotion = usePrefersReducedMotion();
+  const { preload, preloadMany } = useImagePreloader();
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
@@ -167,6 +172,12 @@ export function AgentFeaturesSection() {
   const scrollDebounceRef = useRef<number | null>(null);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
+  const sectionNearView = useElementInView(sectionRef, "1200px");
+
+  const warmAgentSlide = useCallback((index: number) => {
+    const source = slides[index]?.visualAsset?.src.src;
+    if (source) preload(source, { immediate: true });
+  }, [preload]);
 
   const measureOffsets = () => {
     const firstOffset = itemRefs.current[0]?.offsetLeft ?? 0;
@@ -190,6 +201,14 @@ export function AgentFeaturesSection() {
     activeRef.current = active;
   }, [active]);
 
+  useEffect(() => {
+    preload(slides[0]?.visualAsset?.src.src, { immediate: true });
+  }, [preload]);
+
+  useEffect(() => {
+    if (sectionNearView) preloadMany(agentVisualSources);
+  }, [preloadMany, sectionNearView]);
+
   const setActiveValue = (index: number) => {
     activeRef.current = index;
     setActive(index);
@@ -208,6 +227,7 @@ export function AgentFeaturesSection() {
     const viewport = viewportRef.current;
     const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
     const to = offsetsRef.current[nextIndex] ?? 0;
+    warmAgentSlide(nextIndex);
     setActiveValue(nextIndex);
 
     if (!viewport) return;
@@ -314,6 +334,8 @@ export function AgentFeaturesSection() {
                         alt={slide.visualAsset.alt}
                         sizes={slide.wide ? "(min-width: 1024px) 764px, 92vw" : "(min-width: 1024px) 372px, 82vw"}
                         className="waldo-agent-frame-image h-full w-full object-contain"
+                        fetchPriority={index === active ? "high" : "auto"}
+                        loading={index === active || index < 2 ? "eager" : "lazy"}
                       />
                     </div>
                   ) : (
@@ -346,6 +368,8 @@ export function AgentFeaturesSection() {
                   type="button"
                   aria-label={`Show ${slide.label}`}
                   className="focusable-ring flex h-11 w-6 items-center justify-center rounded-full"
+                  onPointerEnter={() => warmAgentSlide(index)}
+                  onFocus={() => warmAgentSlide(index)}
                   onClick={() => animateTo(index)}
                 >
                   <span
@@ -364,12 +388,20 @@ export function AgentFeaturesSection() {
               );
             })}
           </div>
-          <IconButton aria-label="Previous agent feature" disabled={active === 0} onClick={() => animateTo(active - 1)}>
+          <IconButton
+            aria-label="Previous agent feature"
+            disabled={active === 0}
+            onPointerEnter={() => warmAgentSlide(active - 1)}
+            onFocus={() => warmAgentSlide(active - 1)}
+            onClick={() => animateTo(active - 1)}
+          >
             <ArrowIcon direction="prev" />
           </IconButton>
           <IconButton
             aria-label="Next agent feature"
             disabled={active === slides.length - 1}
+            onPointerEnter={() => warmAgentSlide(active + 1)}
+            onFocus={() => warmAgentSlide(active + 1)}
             onClick={() => animateTo(active + 1)}
           >
             <ArrowIcon direction="next" />
