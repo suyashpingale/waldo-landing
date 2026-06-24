@@ -5,10 +5,10 @@ import tuesdayCrashConstellation from "@/public/waldo-web-assets/constellation/t
 
 export function LongGameSection() {
   return (
-    <section id="constellation" className="section-shell dark-panel overflow-hidden rounded-[24px] p-5 sm:p-6 lg:p-8">
+    <section id="constellation" className="waldo-long-game-section section-shell dark-panel scroll-mt-28 overflow-hidden rounded-[24px] p-5 sm:p-6 lg:p-8">
       <div data-animate="blur-fade">
         <SectionIntro
-          className="[&_.type-body]:max-w-[46ch] [&_.type-body]:text-left sm:[&_.type-body]:text-center"
+          className="waldo-long-game-intro [&_.type-body]:max-w-[46ch] [&_.type-body]:text-left sm:[&_.type-body]:text-center"
           title={
             <>
               The longer it runs,
@@ -24,7 +24,7 @@ export function LongGameSection() {
         </SectionIntro>
       </div>
 
-      <div className="mt-8" data-animate="fade-up">
+      <div className="waldo-long-game-media mt-8" data-animate="fade-up">
         <div className="waldo-long-game-card relative mx-auto w-full max-w-[920px] overflow-hidden rounded-[18px] p-4 sm:p-5 lg:p-6">
           <div className="relative z-10 flex items-center justify-between gap-4">
             <div>
