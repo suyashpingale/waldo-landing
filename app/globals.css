@@ -1265,6 +1265,18 @@ body {
   color: var(--panel-ink);
 }
 
+.waldo-long-game-section {
+  scroll-margin-top: 112px;
+}
+
+.waldo-long-game-intro {
+  gap: clamp(1rem, 2svh, 1.5rem);
+}
+
+.waldo-long-game-media {
+  margin-top: clamp(1rem, 2.8svh, 2rem);
+}
+
 .waldo-long-game-card {
   --panel-ink: var(--ink);
   background:
@@ -1333,11 +1345,42 @@ body {
 }
 
 .waldo-constellation-asset-stage {
-  height: clamp(420px, 66vw, 820px);
+  height: clamp(288px, 56vw, 380px);
 }
 
 .waldo-constellation-asset {
   filter: drop-shadow(0 22px 44px rgba(26, 26, 26, 0.08));
+}
+
+@media (max-width: 639px) {
+  .waldo-long-game-section {
+    padding-bottom: 16px;
+    padding-top: 16px;
+  }
+}
+
+@media (min-width: 640px) {
+  .waldo-constellation-asset-stage {
+    height: clamp(340px, 54vw, 420px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .waldo-constellation-asset-stage {
+    height: clamp(460px, min(54vw, 58svh), 720px);
+  }
+}
+
+@media (min-width: 1280px) and (min-height: 1000px) {
+  .waldo-constellation-asset-stage {
+    height: clamp(560px, 50vw, 820px);
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 860px) {
+  .waldo-constellation-asset-stage {
+    height: clamp(380px, calc(100svh - 420px), 560px);
+  }
 }
 
 @keyframes waldo-constellation-surface-drift {
