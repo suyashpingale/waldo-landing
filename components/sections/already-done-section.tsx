@@ -497,6 +497,9 @@ const slides: ShowcaseSlide[] = [
 ];
 
 const allHealthFrameSources = slides.flatMap((slide) => slide.panels.map((panel) => panel.visual.image.src));
+const initialHealthFrameSources = slides.map((slide) => slide.panels[0]?.visual.image.src).filter(Boolean);
+const initialHealthFrameSourceSet = new Set(initialHealthFrameSources);
+const deferredHealthFrameSources = allHealthFrameSources.filter((source) => !initialHealthFrameSourceSet.has(source));
 
 function getHealthSlideSources(slideIndex: number) {
   return slides[slideIndex]?.panels.map((panel) => panel.visual.image.src) ?? [];
@@ -872,11 +875,12 @@ export function AlreadyDoneSection() {
   }, [active]);
 
   useEffect(() => {
-    preload(getHealthPanelSource(0, 0), { immediate: true });
-  }, [preload]);
+    preloadMany(initialHealthFrameSources, { immediate: true });
+    preloadMany(deferredHealthFrameSources);
+  }, [preloadMany]);
 
   useEffect(() => {
-    if (sectionNearView) preloadMany(allHealthFrameSources);
+    if (sectionNearView) preloadMany(allHealthFrameSources, { immediate: true });
   }, [preloadMany, sectionNearView]);
 
   useEffect(() => {

@@ -1,5 +1,7 @@
 import { PageChrome } from "./page-chrome";
+import { HomepageCarouselPreloader } from "./homepage-carousel-preloader";
 import { HeroSection } from "./sections/hero-section";
+import { DeathOfChatbotSection } from "./sections/death-of-chatbot-section";
 import { HealthDataSection } from "./sections/health-data-section";
 import { MorningBriefSection } from "./sections/morning-brief-section";
 import { AlreadyDoneSection } from "./sections/already-done-section";
@@ -15,11 +17,13 @@ import { FaqSection } from "./sections/faq-section";
 export function PageLayout() {
   return (
     <PageChrome>
+      <HomepageCarouselPreloader />
       <div
         className="mx-auto flex max-w-[1200px] flex-col items-center px-4 pb-0 sm:px-6 lg:px-10"
         style={{ gap: "clamp(3rem, 5vw, 5rem)" }}
       >
         <HeroSection />
+        <DeathOfChatbotSection />
         <HealthDataSection />
         <MorningBriefSection />
         <AlreadyDoneSection />

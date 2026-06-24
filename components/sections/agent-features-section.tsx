@@ -202,11 +202,11 @@ export function AgentFeaturesSection() {
   }, [active]);
 
   useEffect(() => {
-    preload(slides[0]?.visualAsset?.src.src, { immediate: true });
-  }, [preload]);
+    preloadMany(agentVisualSources, { immediate: true });
+  }, [preloadMany]);
 
   useEffect(() => {
-    if (sectionNearView) preloadMany(agentVisualSources);
+    if (sectionNearView) preloadMany(agentVisualSources, { immediate: true });
   }, [preloadMany, sectionNearView]);
 
   const setActiveValue = (index: number) => {
