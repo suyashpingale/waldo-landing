@@ -59,6 +59,30 @@
   --zone-heavy: color-mix(in srgb, var(--ink) 72%, var(--accent));
 }
 
+::selection {
+  background: rgba(251, 148, 63, 0.34);
+  background: color-mix(in srgb, var(--accent) 34%, transparent);
+  color: var(--ink);
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background: rgba(251, 148, 63, 0.34);
+  color: var(--ink);
+  text-shadow: none;
+}
+
+img,
+picture,
+video,
+canvas,
+svg,
+[data-protected-asset] {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 html {
   background: var(--surface-t3);
   color: var(--ink);
