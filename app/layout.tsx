@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AssetProtection } from "@/components/asset-protection";
 import { corben, sfProRounded } from "@/lib/fonts";
 import { SunflowerCursor } from "@/components/sunflower-cursor";
 import "./globals.css";
@@ -122,6 +123,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className="bg-[var(--surface-t3)] text-[var(--ink)] antialiased"
       >
+        <AssetProtection />
         <SunflowerCursor>{children}</SunflowerCursor>
       </body>
     </html>
