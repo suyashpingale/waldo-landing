@@ -181,7 +181,7 @@ These are the exact SVG files currently in `public/illustrations`. Do not refere
 | Pillar Drag callout | `arrow.down` | Orange | `#FF9500` | A component pulling the score downward. |
 | Escalation | `exclamationmark.triangle.fill` | Red | `#FF3B30` | Highest-severity warning state. |
 | Ghost state / locked feature | `lock.fill` | Cobalt | `#3E63DD` | Locked or unavailable feature. |
-| Sync error | `arrow.triangle.2.circlepath` | Magenta | `#FF2D9A` | Sync loop with failure state implied. |
+| Sync error | `arrow.trianglehead.2.clockwise` | Magenta | `#FF2D9A` | Sync loop with failure state implied. |
 | Offline / cached data | `wifi.slash` | Blue | `#0A84FF` | No live connection. |
 | Peak state | `mountain.2.fill` | Green | `#34C759` | Peak is visually literal and memorable. |
 | Depleted state | `battery.25percent` | Coral | `#FF6F5E` | Low-capacity metaphor users know instantly. |
@@ -259,7 +259,7 @@ These are the exact SVG files currently in `public/illustrations`. Do not refere
 | Breathwork | `wind` | Teal | `#30B0C7` | Breath and airflow metaphor. |
 | Meditation | `figure.mind.and.body` | Purple | `#AF52DE` | Best built-in symbol for mind-body practice. |
 | Gratitude log | `heart.text.square.fill` | Pink | `#FF375F` | Written reflection with positive sentiment. |
-| Mood self-report | `face.smiling.fill` | Amber | `#FFB800` | User-entered feeling state. |
+| Mood self-report | `face.smiling` | Amber | `#FFB800` | User-entered feeling state. |
 | Energy self-report | `bolt.fill` | Lime | `#A3D63C` | Perceived energy level. |
 | Pain / soreness log | `bandage.fill` | Red | `#FF3B30` | Body discomfort marker. |
 | Menstrual cycle tracking | `drop.fill` | Magenta | `#FF2D9A` | Closest discreet cycle marker; use a custom glyph later if needed. |
@@ -275,10 +275,10 @@ These are the exact SVG files currently in `public/illustrations`. Do not refere
 | BMI | `ruler.fill` | Blue | `#0A84FF` | Body measurement/index approximation. |
 | Waist circumference | `lines.measurement.horizontal` | Teal | `#30B0C7` | Measurement-line icon fits circumference tracking. |
 | Blood pressure | `heart.fill` | Pink | `#FF375F` | Heart-centered cardiovascular metric. |
-| Blood test / bloodwork | `doc.badge.arrow.up.fill` | Magenta | `#FF2D9A` | Uploading lab results as a document. |
-| Biological Age | `clock.arrow.circlepath` | Purple | `#AF52DE` | Time/age metric with long-term recalculation. |
+| Blood test / bloodwork | `document.badge.arrow.up.fill` | Magenta | `#FF2D9A` | Uploading lab results as a document. |
+| Biological Age | `clock.arrow.trianglehead.counterclockwise.rotate.90` | Purple | `#AF52DE` | Time/age metric with long-term recalculation. |
 | Individual blood biomarker | `testtube.2` | Green | `#34C759` | Generic lab biomarker category. |
-| Health Records | `doc.text.fill` | Cobalt | `#3E63DD` | Stored medical/health documents. |
+| Health Records | `text.document.fill` | Cobalt | `#3E63DD` | Stored medical/health documents. |
 
 ### Workouts & Training
 
@@ -324,11 +324,11 @@ These are the exact SVG files currently in `public/illustrations`. Do not refere
 | Zone - Good | `checkmark.seal.fill` | Lime | `#A3D63C` | Good/acceptable zone. |
 | Zone - Low | `exclamationmark` | Orange | `#FF9500` | Low state without full escalation. |
 | Zone - Depleted | `battery.25percent` | Red | `#FF3B30` | Low reserve/capacity. |
-| Data freshness | `clock.arrow.circlepath` | Cyan | `#32ADE6` | Recently updated or age-of-data cue. |
-| Sync in progress | `arrow.triangle.2.circlepath` | Teal | `#30B0C7` | Active sync cycle. |
+| Data freshness | `clock.arrow.trianglehead.counterclockwise.rotate.90` | Cyan | `#32ADE6` | Recently updated or age-of-data cue. |
+| Sync in progress | `arrow.trianglehead.2.clockwise` | Teal | `#30B0C7` | Active sync cycle. |
 | Calibration period | `hourglass` | Amber | `#FFB800` | "Give me a few days" waiting period. |
 | Medical disclaimer icon | `cross.case.fill` | Coral | `#FF6F5E` | Health-related caution without diagnosis claims. |
-| Permission slip | `doc.text.fill` | Blue | `#0A84FF` | Shareable justification as a document/note. |
+| Permission slip | `text.document.fill` | Blue | `#0A84FF` | Shareable justification as a document/note. |
 | Screenshot share / shareable card | `square.and.arrow.up.fill` | Cyan | `#32ADE6` | Standard share action. |
 | Pre-Activity Spot | `clock.badge.exclamationmark.fill` | Magenta | `#FF2D9A` | Time-sensitive warning before an event. |
 | Quiet hours | `bell.slash.fill` | Indigo | `#5E5CE6` | Notifications held. |
@@ -388,7 +388,7 @@ These features intentionally do not receive an icon. They should be represented 
 ## Validation
 
 - Active icon rows assigned: 198.
-- SF Symbol rows rendered: 182.
+- SF Symbol SVG rows exported: 182.
 - Exact custom SVG rows assigned: 16.
 - No-icon rows documented: 8.
 - Brown/gray palette anchors: none.

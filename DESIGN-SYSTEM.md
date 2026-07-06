@@ -273,7 +273,7 @@ SF Symbol entries are symbol names. SVG entries are exact repo files in `public/
 | Pillar Drag callout | States & Flags | `arrow.down` | A component pulling the score downward. |
 | Escalation | States & Flags | `exclamationmark.triangle.fill` | Highest-severity warning state. |
 | Ghost state / locked feature | States & Flags | `lock.fill` | Locked or unavailable feature. |
-| Sync error | States & Flags | `arrow.triangle.2.circlepath` | Sync loop with failure state implied. |
+| Sync error | States & Flags | `arrow.trianglehead.2.clockwise` | Sync loop with failure state implied. |
 | Offline / cached data | States & Flags | `wifi.slash` | No live connection. |
 | Peak state | States & Flags | `mountain.2.fill` | Peak is visually literal and memorable. |
 | Depleted state | States & Flags | `battery.25percent` | Low-capacity metaphor users know instantly. |
@@ -321,7 +321,7 @@ SF Symbol entries are symbol names. SVG entries are exact repo files in `public/
 | Breathwork | Lifestyle Logging / Journal & Habit Tags | `wind` | Breath and airflow metaphor. |
 | Meditation | Lifestyle Logging / Journal & Habit Tags | `figure.mind.and.body` | Best built-in symbol for mind-body practice. |
 | Gratitude log | Lifestyle Logging / Journal & Habit Tags | `heart.text.square.fill` | Written reflection with positive sentiment. |
-| Mood self-report | Lifestyle Logging / Journal & Habit Tags | `face.smiling.fill` | User-entered feeling state. |
+| Mood self-report | Lifestyle Logging / Journal & Habit Tags | `face.smiling` | User-entered feeling state. |
 | Energy self-report | Lifestyle Logging / Journal & Habit Tags | `bolt.fill` | Perceived energy level. |
 | Pain / soreness log | Lifestyle Logging / Journal & Habit Tags | `bandage.fill` | Body discomfort marker. |
 | Menstrual cycle tracking | Lifestyle Logging / Journal & Habit Tags | `drop.fill` | Closest discreet cycle marker; use a custom glyph later if needed. |
@@ -332,10 +332,10 @@ SF Symbol entries are symbol names. SVG entries are exact repo files in `public/
 | BMI | Body Composition & Long-Term Biomarkers | `ruler.fill` | Body measurement/index approximation. |
 | Waist circumference | Body Composition & Long-Term Biomarkers | `lines.measurement.horizontal` | Measurement-line icon fits circumference tracking. |
 | Blood pressure | Body Composition & Long-Term Biomarkers | `heart.fill` | Heart-centered cardiovascular metric. |
-| Blood test / bloodwork | Body Composition & Long-Term Biomarkers | `doc.badge.arrow.up.fill` | Uploading lab results as a document. |
-| Biological Age | Body Composition & Long-Term Biomarkers | `clock.arrow.circlepath` | Time/age metric with long-term recalculation. |
+| Blood test / bloodwork | Body Composition & Long-Term Biomarkers | `document.badge.arrow.up.fill` | Uploading lab results as a document. |
+| Biological Age | Body Composition & Long-Term Biomarkers | `clock.arrow.trianglehead.counterclockwise.rotate.90` | Time/age metric with long-term recalculation. |
 | Individual blood biomarker | Body Composition & Long-Term Biomarkers | `testtube.2` | Generic lab biomarker category. |
-| Health Records | Body Composition & Long-Term Biomarkers | `doc.text.fill` | Stored medical/health documents. |
+| Health Records | Body Composition & Long-Term Biomarkers | `text.document.fill` | Stored medical/health documents. |
 | Workout log | Workouts & Training | `figure.run` | General workout entry point. |
 | Strength training | Workouts & Training | `dumbbell.fill` | Direct strength icon. |
 | Cardio session | Workouts & Training | `heart.fill` | Cardiovascular workout marker. |
@@ -371,11 +371,11 @@ SF Symbol entries are symbol names. SVG entries are exact repo files in `public/
 | Zone - Good | Waldo-Specific Extras | `checkmark.seal.fill` | Good/acceptable zone. |
 | Zone - Low | Waldo-Specific Extras | `exclamationmark` | Low state without full escalation. |
 | Zone - Depleted | Waldo-Specific Extras | `battery.25percent` | Low reserve/capacity. |
-| Data freshness | Waldo-Specific Extras | `clock.arrow.circlepath` | Recently updated or age-of-data cue. |
-| Sync in progress | Waldo-Specific Extras | `arrow.triangle.2.circlepath` | Active sync cycle. |
+| Data freshness | Waldo-Specific Extras | `clock.arrow.trianglehead.counterclockwise.rotate.90` | Recently updated or age-of-data cue. |
+| Sync in progress | Waldo-Specific Extras | `arrow.trianglehead.2.clockwise` | Active sync cycle. |
 | Calibration period | Waldo-Specific Extras | `hourglass` | "Give me a few days" waiting period. |
 | Medical disclaimer icon | Waldo-Specific Extras | `cross.case.fill` | Health-related caution without diagnosis claims. |
-| Permission slip | Waldo-Specific Extras | `doc.text.fill` | Shareable justification as a document/note. |
+| Permission slip | Waldo-Specific Extras | `text.document.fill` | Shareable justification as a document/note. |
 | Screenshot share / shareable card | Waldo-Specific Extras | `square.and.arrow.up.fill` | Standard share action. |
 | Pre-Activity Spot | Waldo-Specific Extras | `clock.badge.exclamationmark.fill` | Time-sensitive warning before an event. |
 | Quiet hours | Waldo-Specific Extras | `bell.slash.fill` | Notifications held. |
