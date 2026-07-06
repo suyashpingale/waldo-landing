@@ -187,63 +187,58 @@ Icons must tell the same story everywhere. The source choice depends on what the
 
 | Use case | Source | Rule |
 |---|---|---|
-| Waldo product UI: navigation, metrics, cards, agent actions, states, settings | **SF Symbols** | Use the canonical mapping below. Prefer filled symbols for primary navigation, Tier 1, Tier 2, and action cards. Use outline symbols for Tier 3 raw signals and dense supporting rows. |
+| Waldo product UI: navigation, metrics, cards, agent actions, states, settings | **SF Symbols + exact Waldo SVG assets** | Use the canonical mapping below. Some product icons now come from `public/illustrations`; use the exact file path shown. |
 | Web utility chrome: chevrons, close, search, menus, generic input adornments | **Lucide** | `1.5px` stroke, sized to text (`16-24px`). Use only when the symbol is generic interface behavior, not a Waldo product concept. |
 | Source-app / connector references | **Real brand logos** | Use official PNG/SVG assets for Apple Health, Google Calendar, Slack, Gmail, Linear, etc. Never replace source apps with a generic glyph or emoji. |
-| Mascot / brand illustration | **Waldo assets** | Mascot, paw, spot, and custom illustration moments come from brand assets, not icon libraries. |
+| Mascot / brand illustration | **Waldo assets** | Mascot illustrations come from brand assets. Functional SVG icons come from the exact files listed in the canonical map. |
 
 ### Style rules
 
-- **Filled vs outline:** filled SF Symbols = primary destinations, Tier 1/Tier 2 cards, agent actions, selected states. Outline SF Symbols = Tier 3 signals, metadata rows, and secondary references.
+- **Color:** render every functional icon as one flat color on the glyph itself. Do not use multi-shade symbol rendering.
+- **No icon wrappers:** do not add colored circular backgrounds, tint badges, or extra icon tiles around the glyph. Any card/surface behind an icon stays neutral.
 - **Size:** nav `22-24px` · Tier cards `24-28px` · compact rows `16-20px` · large empty/flag states `32-40px`.
 - **Weight:** use the regular SF Symbol weight unless the icon sits inside a large hero/product artifact, where medium is allowed.
-- **Color:** default icons inherit the local text token. Selected/on icons use Action `#2388FF`. Primary icon buttons keep the Accent squircle with a light glyph. Warning/depleted icons use the zone color only when the state itself is the message.
-- **Containers:** standalone product icons sit in `12-16px` squircles using the surface ladder. Do not put a card-shaped icon tile inside another card unless it is a real repeated item.
+- **Inactive states:** use opacity on the assigned color, not gray.
 - **Accessibility:** decorative icons are `aria-hidden`. Meaningful icon-only buttons must have an accessible label. If the icon clarifies text already present, the text is the label.
 - **No emoji:** emoji never stand in for product icons, source apps, states, or mascot moments.
 
-### Canonical SF Symbols map
+### Canonical icon / asset map
 
-Validated against the local SF Symbols API.
+SF Symbol entries are symbol names. SVG entries are exact repo files in `public/illustrations`.
 
-| Feature | Category | SF Symbol | Rationale |
+| Feature | Category | Icon Asset | Rationale |
 |---|---|---|---|
 | Overview (home) | Navigation / Tabs | `house.fill` | Clearest home-base symbol for the main surface. |
-| Health Stats | Navigation / Tabs | `heart.text.square.fill` | Biometric record plus stats without feeling clinical. |
-| The Patrol | Navigation / Tabs | `eye.fill` | Patrol is continuous watching, so the eye is immediate. |
-| The Constellation | Navigation / Tabs | `point.3.connected.trianglepath.dotted` | Connected points map directly to pattern discovery. |
-| The Spots | Navigation / Tabs | `scope` | Spotting observations is the key metaphor. |
-| Connectors | Navigation / Tabs | `cable.connector.horizontal` | Literal connector symbol. |
-| Chat / Ask Waldo | Navigation / Tabs | `bubble.left.and.bubble.right.fill` | Two bubbles clearly signal conversation. |
+| Health Stats | Navigation / Tabs | `public/illustrations/health-stats.svg` | Supplied stats glyph from `public/illustrations/health-stats.svg`; clearer than a boxed SF heart chart. |
+| The Patrol | Navigation / Tabs | `public/illustrations/patrol.svg` | Supplied patrol shield glyph; one flat color, no enclosing tile. |
+| The Constellation | Navigation / Tabs | `public/illustrations/constellations.svg` | Supplied constellation glyph maps to long-term pattern discovery. |
+| The Spots | Navigation / Tabs | `public/illustrations/spot.svg` | Uses the exact custom Spot asset already in `public/illustrations/spot.svg`. |
+| Connectors | Navigation / Tabs | `public/illustrations/connectors.svg` | Supplied connector/globe glyph for the connected-source surface. |
+| Chat / Ask Waldo | Navigation / Tabs | `public/illustrations/Checkbox.svg` | Uses the supplied `Checkbox.svg` file; the actual glyph reads as chat bubbles. |
 | Settings / Profile | Navigation / Tabs | `gearshape.fill` | Standard settings glyph, distinct from profile inside settings. |
 | Form | Tier 1 Metrics | `brain.head.profile.fill` | Best fit for present-tense cognitive capacity. |
 | Recovery | Tier 1 Metrics | `moon.zzz.fill` | Sleep and overnight replenishment in one glance. |
 | Weight | Tier 1 Metrics | `backpack.fill` | Communicates load carried through the day better than body weight. |
-| The Slope | Tier 1 Metrics | `chart.line.flattrend.xyaxis.circle.fill` | Trend line captures 4-week trajectory without implying up or down. |
-| Sleep | Tier 2 - Recovery | `bed.double.fill` | Most obvious icon for sleep duration and stages. |
-| HRV | Tier 2 - Recovery | `waveform.path.ecg.rectangle.fill` | ECG waveform in a filled tile reads as heart signal variability. |
-| Resting State | Tier 2 - Recovery | `heart.circle.fill` | Heart-centered composite for resting HR and related body state. |
-| Circadian | Tier 2 - Form | `sun.max.circle.fill` | Sun icon maps to wake timing, daylight, and rhythm. |
-| Motion | Tier 2 - Form | `figure.walk.circle.fill` | Walking figure covers everyday movement without over-indexing on workouts. |
+| The Slope | Tier 1 Metrics | `public/illustrations/slope.svg` | Supplied dumbbell/slope glyph matches the four-week comparison view. |
+| Sleep | Tier 2 - Recovery | `public/illustrations/sleep-time.svg` | Supplied moon glyph makes the overall Sleep card distinct from raw sleep-stage rows. |
+| HRV | Tier 2 - Recovery | `public/illustrations/hrv.svg` | Supplied HRV glyph keeps variability visually separate from plain heart-rate icons. |
+| Circadian | Tier 2 - Form | `sun.max.fill` | Sun icon maps to wake timing, daylight, and rhythm. |
+| Motion | Tier 2 - Form | `figure.walk` | Walking figure covers everyday movement without a circular enclosure. |
 | Stress | Tier 2 - Form | `bolt.heart.fill` | Heart plus bolt signals physiological strain. |
-| Load | Tier 2 - Weight | `flame.circle.fill` | Exertion and strain are commonly read through flame energy. |
+| Load | Tier 2 - Weight | `flame.fill` | Exertion and strain through a plain flame, without the old circle wrapper. |
 | The Stack | Tier 2 - Weight | `calendar.day.timeline.left` | Timeline calendar shows meeting density and blocked time. |
 | Signal Pressure | Tier 2 - Weight | `envelope.badge.fill` | Badged mail implies incoming volume and urgency. |
 | Task Pileup | Tier 2 - Weight | `list.bullet.clipboard.fill` | Clipboard list reads as accumulated tasks. |
-| Mind State | Tier 2 - Weight | `face.smiling` | Mood-first symbol. |
-| Deep sleep % | Tier 3 Raw Signals | `moon.zzz` | Sleep-specific and calm, suited to a raw submetric. |
-| REM sleep % | Tier 3 Raw Signals | `eye` | REM is visually tied to dreaming and eye movement. |
-| Sleep efficiency | Tier 3 Raw Signals | `checkmark.circle` | A pass/check symbol fits sleep time used well. |
+| Mind State | Tier 2 - Weight | `theatermasks.fill` | Mood-state masks are more specific than a generic smile and avoid the old face icon. |
+| Sleep efficiency | Tier 3 Raw Signals | `checkmark` | A pass/check symbol fits sleep time used well. |
 | Sleep Debt (hours owed) | Tier 3 Raw Signals | `hourglass` | Time owed is the core meaning. |
 | Bedtime consistency | Tier 3 Raw Signals | `calendar.badge.clock` | Calendar plus clock signals repeated timing. |
-| RMSSD (raw HRV reading) | Tier 3 Raw Signals | `waveform.path.ecg` | Raw heart-waveform symbol for the underlying HRV value. |
-| HRV 7-day baseline | Tier 3 Raw Signals | `chart.line.flattrend.xyaxis` | A short baseline should feel like a stable comparison line. |
-| HRV 30-day baseline | Tier 3 Raw Signals | `chart.line.uptrend.xyaxis` | Longer baseline needs a more directional trend visual. |
+| RMSSD (raw HRV reading) | Tier 3 Raw Signals | `public/illustrations/hrv.svg` | Same HRV identity as the card, used here for the raw RMSSD reading. |
 | Resting HR | Tier 3 Raw Signals | `heart` | The simplest readable heart-rate signal. |
-| Respiratory rate | Tier 3 Raw Signals | `lungs` | Direct anatomical match. |
+| Respiratory rate | Tier 3 Raw Signals | `wind` | Breath/wind separates respiratory rate from oxygen saturation. |
 | Wrist temperature deviation | Tier 3 Raw Signals | `thermometer.variable` | Variable thermometer captures deviation from baseline. |
-| SpO2 | Tier 3 Raw Signals | `drop` | Closest body-fluid shorthand for blood oxygen. |
-| Wake alignment | Tier 3 Raw Signals | `sunrise` | Wake timing is anchored to morning alignment. |
+| SpO2 | Tier 3 Raw Signals | `lungs.fill` | Replaces the drop; lungs are the clearest available SF proxy for oxygen saturation. |
+| Wake alignment | Tier 3 Raw Signals | `public/illustrations/wakeup-time.svg` | Supplied wake-time sun glyph fits circadian wake alignment. |
 | Daylight exposure | Tier 3 Raw Signals | `sun.max` | Direct sunlight metaphor. |
 | Bedtime drift | Tier 3 Raw Signals | `moon.haze` | Moon with haze suggests nighttime timing slipping. |
 | Active energy | Tier 3 Raw Signals | `flame` | Standard energy/calorie metaphor. |
@@ -252,14 +247,13 @@ Validated against the local SF Symbols API.
 | Exercise minutes | Tier 3 Raw Signals | `timer` | Time-in-activity is the measurement. |
 | Stress confidence score | Tier 3 Raw Signals | `gauge.with.needle` | Confidence is a scalar reading, so a gauge fits. |
 | Stress event history | Tier 3 Raw Signals | `clock.badge.exclamationmark` | Timestamped events plus alert state. |
-| The Brief | Agent Actions | `sunrise.fill` | Morning action message. |
-| The Fetch | Agent Actions | `bolt.heart.fill` | Stress-triggered intervention from body signal. |
-| The Window | Agent Actions | `calendar.badge.lock` | Protected calendar time. |
+| The Brief | Agent Actions | `public/illustrations/brief.svg` | Supplied brief/clipboard glyph for the morning message action. |
+| The Window | Agent Actions | `public/illustrations/window.svg` | Supplied window/timeline glyph for protected focus time. |
 | The Handoff | Agent Actions | `hand.raised.fill` | Approval/hand-off moment. |
 | The Adjustment | Agent Actions | `calendar.badge.clock` | Calendar change made because timing needed adjustment. |
 | The Close | Agent Actions | `moon.stars.fill` | Evening review and end-of-day close. |
 | The Patrol entries | Agent Actions | `list.bullet.rectangle.fill` | Individual log items in a console feed. |
-| The Spots | Agent Actions | `smallcircle.filled.circle.fill` | Single observed pattern chip. |
+| The Spots | Agent Actions | `public/illustrations/spot.svg` | Individual observations use the exact Spot asset, matching the Spots surface. |
 | The Heads-Up | Agent Actions | `exclamationmark.triangle.fill` | Proactive warning before something lands. |
 | Body / HealthKit | Connectors | `applewatch` | Wearable-first body signal source. |
 | Schedule | Connectors | `calendar` | Universal schedule connector. |
@@ -273,36 +267,29 @@ Validated against the local SF Symbols API.
 | Connect wearable step | Onboarding | `applewatch.radiowaves.left.and.right` | Wearable pairing plus live signal. |
 | Grant HealthKit permissions step | Onboarding | `checkmark.shield.fill` | Permission granted with trust framing. |
 | Link messaging channel step | Onboarding | `message.badge.fill` | Messaging setup with a connection badge. |
-| Quick profile setup step | Onboarding | `person.crop.circle.badge.plus` | Add personal profile details. |
+| Quick profile setup step | Onboarding | `person.badge.plus` | Add-person setup without the circular crop treatment. |
 | Signal strength indicator | Onboarding | `antenna.radiowaves.left.and.right` | Standard signal strength language. |
-| Sleep Debt flag | States & Flags | `hourglass.circle.fill` | Flagged time owed inside the sleep card. |
-| Pillar Drag callout | States & Flags | `arrow.down.circle.fill` | A component pulling the score downward. |
+| Sleep Debt flag | States & Flags | `hourglass` | Flagged time owed inside the sleep card. |
+| Pillar Drag callout | States & Flags | `arrow.down` | A component pulling the score downward. |
 | Escalation | States & Flags | `exclamationmark.triangle.fill` | Highest-severity warning state. |
 | Ghost state / locked feature | States & Flags | `lock.fill` | Locked or unavailable feature. |
-| Sync error | States & Flags | `arrow.triangle.2.circlepath.circle.fill` | Sync loop with failure state implied. |
+| Sync error | States & Flags | `arrow.triangle.2.circlepath` | Sync loop with failure state implied. |
 | Offline / cached data | States & Flags | `wifi.slash` | No live connection. |
 | Peak state | States & Flags | `mountain.2.fill` | Peak is visually literal and memorable. |
 | Depleted state | States & Flags | `battery.25percent` | Low-capacity metaphor users know instantly. |
 | First use / no data yet | States & Flags | `sparkles.rectangle.stack.fill` | Clean blank-slate state before history exists. |
-| Profile | Settings | `person.crop.circle.fill` | Standard profile identity symbol. |
-| Signal sources | Settings | `antenna.radiowaves.left.and.right.circle.fill` | Shows enabled inputs and signal feeds. |
+| Profile | Settings | `person.crop.square.fill` | Profile identity without the circular crop treatment. |
+| Signal sources | Settings | `antenna.radiowaves.left.and.right` | Shows enabled inputs and signal feeds. |
 | Autonomy controls | Settings | `slider.horizontal.3` | Direct control-level metaphor. |
 | Notifications | Settings | `bell.badge.fill` | Notification settings with per-type badge. |
 | Waldo's memory | Settings | `brain.head.profile.fill` | Pattern memory and feedback history. |
-| Appearance | Settings | `circle.lefthalf.filled` | Light/dark mode toggle metaphor. |
+| Appearance | Settings | `paintpalette.fill` | Appearance/theme controls read more clearly as palette than a half-filled circle. |
 | Data & privacy | Settings | `lock.shield.fill` | Privacy and protected data. |
-| About / changelog | Settings | `info.circle.fill` | Standard about/info entry. |
+| About / changelog | Settings | `info` | Standard about/info entry. |
 | Pup tier | Tiers / Subscription | `pawprint.fill` | Entry tier with the Waldo mascot language. |
 | Pro tier | Tiers / Subscription | `crown.fill` | Premium individual tier. |
 | Pack tier | Tiers / Subscription | `person.3.fill` | Group or team tier without repeating the paw icon. |
-
-### Future-phase SF Symbols map
-
-These symbols extend the same icon language into lifestyle logging, body composition, training, chart selectors, and generic connector fallbacks. Labels here are implementation names; user-facing product copy still follows the banned-words list in Section 10.
-
-| Feature | Category | SF Symbol | Rationale |
-|---|---|---|---|
-| Food log | Lifestyle Logging / Food & Nutrition | `fork.knife.circle.fill` | Universal meal logging symbol, strong enough for a primary food card. |
+| Food log | Lifestyle Logging / Food & Nutrition | `fork.knife` | Universal meal logging symbol, strong enough for a primary food card. |
 | Barcode scan | Lifestyle Logging / Food & Nutrition | `barcode.viewfinder` | Directly communicates scanning packaged food. |
 | Meal photo capture | Lifestyle Logging / Food & Nutrition | `camera.fill` | Simple camera metaphor for photo-based food logging. |
 | Recipe | Lifestyle Logging / Food & Nutrition | `book.pages.fill` | Saved recipe as a readable book/pages object. |
@@ -313,15 +300,15 @@ These symbols extend the same icon language into lifestyle logging, body composi
 | Fiber | Lifestyle Logging / Food & Nutrition | `leaf.fill` | Plant/fiber association is immediate enough. |
 | Micronutrients | Lifestyle Logging / Food & Nutrition | `sparkles` | Small essentials, vitamins, and minerals as tiny beneficial bits. |
 | Nutrition Score | Lifestyle Logging / Food & Nutrition | `chart.pie.fill` | Composite breakdown of intake quality. |
-| Net Energy | Lifestyle Logging / Food & Nutrition | `plusminus.circle.fill` | Captures calories in versus calories out. |
+| Net Energy | Lifestyle Logging / Food & Nutrition | `plusminus` | Captures calories in versus calories out. |
 | Late meal flag | Lifestyle Logging / Food & Nutrition | `clock.badge.exclamationmark.fill` | Time-based eating warning. |
 | Meal timing | Lifestyle Logging / Food & Nutrition | `clock.fill` | Focuses on when the meal happened, not what it was. |
 | Glucose / blood sugar | Lifestyle Logging / Food & Nutrition | `drop.degreesign.fill` | Blood-drop approximation for glucose. |
-| Fasting window | Lifestyle Logging / Food & Nutrition | `hourglass.circle.fill` | A timed eating window is the core concept. |
+| Fasting window | Lifestyle Logging / Food & Nutrition | `hourglass` | A timed eating window is the core concept. |
 | Supplement log | Lifestyle Logging / Supplements & Medication | `pills.fill` | Most direct supplement/medication logging icon. |
 | Individual vitamin | Lifestyle Logging / Supplements & Medication | `capsule.fill` | Single supplement item, distinct from the whole log. |
 | Medication reminder | Lifestyle Logging / Supplements & Medication | `bell.badge.fill` | Reminder or alert for taking medication. |
-| Medication adherence | Lifestyle Logging / Supplements & Medication | `checkmark.circle.fill` | Consistency and completion without gamification language. |
+| Medication adherence | Lifestyle Logging / Supplements & Medication | `checkmark` | Consistency and completion without gamification language. |
 | Water intake | Lifestyle Logging / Hydration | `waterbottle.fill` | Direct water logging metaphor. |
 | Hydration goal | Lifestyle Logging / Hydration | `target` | Goal progress target. |
 | Caffeine intake | Lifestyle Logging / Hydration | `cup.and.saucer.fill` | Coffee/tea signal for caffeine. |
@@ -337,21 +324,21 @@ These symbols extend the same icon language into lifestyle logging, body composi
 | Mood self-report | Lifestyle Logging / Journal & Habit Tags | `face.smiling.fill` | User-entered feeling state. |
 | Energy self-report | Lifestyle Logging / Journal & Habit Tags | `bolt.fill` | Perceived energy level. |
 | Pain / soreness log | Lifestyle Logging / Journal & Habit Tags | `bandage.fill` | Body discomfort marker. |
-| Menstrual cycle tracking | Lifestyle Logging / Journal & Habit Tags | `drop.circle.fill` | Closest discreet cycle marker; use a custom glyph later if needed. |
+| Menstrual cycle tracking | Lifestyle Logging / Journal & Habit Tags | `drop.fill` | Closest discreet cycle marker; use a custom glyph later if needed. |
 | Symptom log | Lifestyle Logging / Journal & Habit Tags | `stethoscope` | General symptom or health observation tag. |
 | Body weight | Body Composition & Long-Term Biomarkers | `scalemass.fill` | Direct scale reading. |
 | Body fat % | Body Composition & Long-Term Biomarkers | `percent` | Literal percentage marker, simple and readable. |
 | Muscle mass | Body Composition & Long-Term Biomarkers | `figure.strengthtraining.traditional` | Closest human-strength proxy for muscle. |
 | BMI | Body Composition & Long-Term Biomarkers | `ruler.fill` | Body measurement/index approximation. |
 | Waist circumference | Body Composition & Long-Term Biomarkers | `lines.measurement.horizontal` | Measurement-line icon fits circumference tracking. |
-| Blood pressure | Body Composition & Long-Term Biomarkers | `heart.circle.fill` | Heart-centered cardiovascular metric. |
+| Blood pressure | Body Composition & Long-Term Biomarkers | `heart.fill` | Heart-centered cardiovascular metric. |
 | Blood test / bloodwork | Body Composition & Long-Term Biomarkers | `doc.badge.arrow.up.fill` | Uploading lab results as a document. |
 | Biological Age | Body Composition & Long-Term Biomarkers | `clock.arrow.circlepath` | Time/age metric with long-term recalculation. |
 | Individual blood biomarker | Body Composition & Long-Term Biomarkers | `testtube.2` | Generic lab biomarker category. |
 | Health Records | Body Composition & Long-Term Biomarkers | `doc.text.fill` | Stored medical/health documents. |
-| Workout log | Workouts & Training | `figure.run.circle.fill` | General workout entry point. |
+| Workout log | Workouts & Training | `figure.run` | General workout entry point. |
 | Strength training | Workouts & Training | `dumbbell.fill` | Direct strength icon. |
-| Cardio session | Workouts & Training | `heart.circle.fill` | Cardiovascular workout marker. |
+| Cardio session | Workouts & Training | `heart.fill` | Cardiovascular workout marker. |
 | Running | Workouts & Training | `figure.run` | Literal running activity. |
 | Cycling | Workouts & Training | `figure.outdoor.cycle` | Literal cycling activity. |
 | Swimming | Workouts & Training | `figure.pool.swim` | Literal swimming activity. |
@@ -371,22 +358,22 @@ These symbols extend the same icon language into lifestyle logging, body composi
 | Waldo mood states | Waldo-Specific Extras | `theatermasks.fill` | Category icon for multiple emotional states. |
 | Dreaming Mode | Waldo-Specific Extras | `moon.zzz.fill` | Nightly background processing while the user sleeps. |
 | Waldo Context Score | Waldo-Specific Extras | `brain.head.profile.fill` | Context depth represented as cognition. |
-| Signal Depth / Signal Strength | Waldo-Specific Extras | `antenna.radiowaves.left.and.right.circle.fill` | Connected-source strength in one glyph. |
+| Signal Depth / Signal Strength | Waldo-Specific Extras | `antenna.radiowaves.left.and.right` | Connected-source strength in one glyph. |
 | Core Memory tag | Waldo-Specific Extras | `tag.fill` | Stored personal fact as a tagged memory. |
 | Pattern Memory | Waldo-Specific Extras | `point.3.connected.trianglepath.dotted` | Learned behavioural pattern as connected points. |
 | Feedback - thumbs up | Waldo-Specific Extras | `hand.thumbsup.fill` | Positive feedback action. |
 | Feedback - thumbs down | Waldo-Specific Extras | `hand.thumbsdown.fill` | Negative feedback action. |
 | Card flip | Waldo-Specific Extras | `rectangle.portrait.rotate` | Front/back card interaction hint. |
-| Trend - improving | Waldo-Specific Extras | `arrow.up.right.circle.fill` | Improving direction. |
-| Trend - declining | Waldo-Specific Extras | `arrow.down.right.circle.fill` | Declining direction. |
-| Trend - stable / holding | Waldo-Specific Extras | `equal.circle.fill` | No meaningful change. |
+| Trend - improving | Waldo-Specific Extras | `arrow.up.right` | Improving direction. |
+| Trend - declining | Waldo-Specific Extras | `arrow.down.right` | Declining direction. |
+| Trend - stable / holding | Waldo-Specific Extras | `equal` | No meaningful change. |
 | Zone - Peak | Waldo-Specific Extras | `mountain.2.fill` | Peak capacity/state. |
 | Zone - Good | Waldo-Specific Extras | `checkmark.seal.fill` | Good/acceptable zone. |
-| Zone - Low | Waldo-Specific Extras | `exclamationmark.circle.fill` | Low state without full escalation. |
+| Zone - Low | Waldo-Specific Extras | `exclamationmark` | Low state without full escalation. |
 | Zone - Depleted | Waldo-Specific Extras | `battery.25percent` | Low reserve/capacity. |
 | Data freshness | Waldo-Specific Extras | `clock.arrow.circlepath` | Recently updated or age-of-data cue. |
-| Sync in progress | Waldo-Specific Extras | `arrow.triangle.2.circlepath.circle.fill` | Active sync cycle. |
-| Calibration period | Waldo-Specific Extras | `hourglass.circle.fill` | "Give me a few days" waiting period. |
+| Sync in progress | Waldo-Specific Extras | `arrow.triangle.2.circlepath` | Active sync cycle. |
+| Calibration period | Waldo-Specific Extras | `hourglass` | "Give me a few days" waiting period. |
 | Medical disclaimer icon | Waldo-Specific Extras | `cross.case.fill` | Health-related caution without diagnosis claims. |
 | Permission slip | Waldo-Specific Extras | `doc.text.fill` | Shareable justification as a document/note. |
 | Screenshot share / shareable card | Waldo-Specific Extras | `square.and.arrow.up.fill` | Standard share action. |
@@ -395,15 +382,15 @@ These symbols extend the same icon language into lifestyle logging, body composi
 | Daily notification budget | Waldo-Specific Extras | `bell.badge.fill` | Limited notification allowance. |
 | Overload intervention | Waldo-Specific Extras | `hand.raised.fill` | Waldo stepping in to stop overload. |
 | Recovery Day enforcement | Waldo-Specific Extras | `calendar.badge.lock` | Calendar protected for recovery. |
-| Sleep Optimization Nudge | Waldo-Specific Extras | `bed.double.circle.fill` | Sleep-related reminder/nudge. |
-| Optimal wake alarm | Waldo-Specific Extras | `alarm.fill` | Wake timing alarm. |
+| Sleep Optimization Nudge | Waldo-Specific Extras | `bed.double.fill` | Sleep-related reminder/nudge. |
+| Optimal wake alarm | Waldo-Specific Extras | `public/illustrations/wakeup-time.svg` | Supplied wake-time glyph is clearer than a generic alarm for wake timing. |
 | DND / Do Not Disturb | Waldo-Specific Extras | `moon.fill` | Standard focus/DND metaphor. |
 | Communication batching | Waldo-Specific Extras | `tray.full.fill` | Grouped incoming messages/notifications. |
 | Bar chart | Chart / Visualisation Types | `chart.bar.fill` | Standard bar chart selector. |
 | Line chart | Chart / Visualisation Types | `chart.line.uptrend.xyaxis` | Time-series trend selector. |
 | Donut / ring chart | Chart / Visualisation Types | `chart.pie.fill` | Closest built-in symbol for ring breakdown. |
 | Sparkline | Chart / Visualisation Types | `chart.line.flattrend.xyaxis` | Small inline trend line. |
-| Dumbbell plot | Chart / Visualisation Types | `arrow.left.and.right.circle.fill` | Two endpoints compared across time; closest built-in approximation. |
+| Dumbbell plot | Chart / Visualisation Types | `public/illustrations/slope.svg` | The supplied slope glyph is the closest exact match for a dumbbell comparison. |
 | Stacked bar | Chart / Visualisation Types | `chart.bar.xaxis` | Bar-history chart selector. |
 | Heatmap | Chart / Visualisation Types | `square.grid.3x3.fill` | Grid-based pattern visualization. |
 | Force-directed graph | Chart / Visualisation Types | `point.3.connected.trianglepath.dotted` | Connected-node graph. |
@@ -412,13 +399,26 @@ These symbols extend the same icon language into lifestyle logging, body composi
 | Generic email client | Third-Party Connector Fallbacks | `envelope.fill` | Universal email fallback. |
 | Generic task manager | Third-Party Connector Fallbacks | `checklist` | Task-list fallback. |
 | Generic music/audio app | Third-Party Connector Fallbacks | `music.note` | Audio/music fallback. |
-| Generic fitness app | Third-Party Connector Fallbacks | `figure.run.circle.fill` | Fitness/activity fallback. |
+| Generic fitness app | Third-Party Connector Fallbacks | `figure.run` | Fitness/activity fallback. |
 | Generic chat/messaging app | Third-Party Connector Fallbacks | `message.fill` | Chat/messaging fallback. |
 | Generic code/developer tool | Third-Party Connector Fallbacks | `chevron.left.forwardslash.chevron.right` | Code/dev tool fallback. |
 | Generic CRM/sales tool | Third-Party Connector Fallbacks | `person.2.fill` | People/accounts relationship cue. |
 | Generic design tool | Third-Party Connector Fallbacks | `paintpalette.fill` | Design/creative tool fallback. |
 | Generic analytics tool | Third-Party Connector Fallbacks | `chart.bar.xaxis` | Analytics/data fallback. |
 | Generic HR/people tool | Third-Party Connector Fallbacks | `person.3.fill` | People/team tool fallback. |
+
+### No-icon assignments
+
+| Feature | Category | Reason |
+|---|---|---|
+| Resting State | Tier 2 - Recovery | Resting State is a composite card; its raw components carry the icons instead. |
+| Deep sleep % | Tier 3 Raw Signals | Sleep-stage rows use text/segmented visuals only, not individual icons. |
+| REM sleep % | Tier 3 Raw Signals | Sleep-stage rows use text/segmented visuals only, not individual icons. |
+| HRV 7-day baseline | Tier 3 Raw Signals | Baselines are comparison annotations beside HRV, not standalone icon concepts. |
+| HRV 30-day baseline | Tier 3 Raw Signals | Baselines are comparison annotations beside HRV, not standalone icon concepts. |
+| The Fetch | Agent Actions | Fetch appears as a stress alert/action message; no separate icon is needed. |
+| Core sleep % | Tier 3 Raw Signals | Core is a sleep-stage row and does not need a separate icon. |
+| Awake | Tier 3 Raw Signals | Awake is a sleep-stage row and does not need a separate icon. |
 
 ---
 
