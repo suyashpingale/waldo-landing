@@ -499,6 +499,48 @@ body {
   transform: translate3d(0, 0, 0) scale(1);
 }
 
+.waldo-faq-icon {
+  transition: transform 240ms var(--ease-premium);
+}
+
+.waldo-faq-trigger[data-state="open"] .waldo-faq-icon {
+  transform: rotate(45deg);
+}
+
+.waldo-faq-trigger:active .waldo-faq-icon {
+  transform: scale(0.94);
+}
+
+.waldo-faq-trigger[data-state="open"]:active .waldo-faq-icon {
+  transform: rotate(45deg) scale(0.94);
+}
+
+.waldo-faq-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    grid-template-rows 280ms var(--ease-premium),
+    opacity 220ms ease;
+}
+
+.waldo-faq-content[data-state="open"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.waldo-faq-content-inner {
+  min-height: 0;
+  overflow: hidden;
+  transform: translate3d(0, -6px, 0);
+  transition: transform 280ms var(--ease-premium);
+}
+
+.waldo-faq-content[data-state="open"] .waldo-faq-content-inner {
+  transform: translate3d(0, 0, 0);
+}
+
 .waldo-health-frame-card {
   aspect-ratio: 4208 / 2436;
   box-shadow: 0 24px 70px rgba(26, 26, 26, 0.08);
@@ -8903,6 +8945,16 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .waldo-faq-icon,
+  .waldo-faq-content,
+  .waldo-faq-content-inner {
+    transition: none !important;
+  }
+
+  .waldo-faq-content-inner {
+    transform: none !important;
+  }
+
   .waldo-health-vertical-card .waldo-health-frame-card {
     filter: none !important;
     opacity: 1 !important;

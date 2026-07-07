@@ -59,6 +59,23 @@ test("new homepage moves FAQ above the closing footer CTA", () => {
   assert.match(homePage, /<WhereWaldoSection \/>[\s\S]*<FaqSection \/>[\s\S]*<SceneCloseSection \/>/);
 });
 
+test("FAQ accordion uses restrained disclosure motion with reduced-motion fallback", () => {
+  const section = read("components/sections/faq-section.tsx");
+  const globals = read("app/globals.css");
+
+  assert.match(section, /waldo-faq-trigger/);
+  assert.match(section, /waldo-faq-icon/);
+  assert.match(section, /waldo-faq-content/);
+  assert.match(section, /waldo-faq-content-inner/);
+  assert.doesNotMatch(section, /transition-all/);
+
+  assert.match(globals, /\.waldo-faq-content\s*\{[^}]*grid-template-rows:\s*0fr/s);
+  assert.match(globals, /\.waldo-faq-content\s*\{[^}]*transition:\s*[\s\S]*grid-template-rows 280ms/s);
+  assert.match(globals, /\.waldo-faq-content\[data-state="open"\]\s*\{[^}]*grid-template-rows:\s*1fr/s);
+  assert.match(globals, /\.waldo-faq-content-inner\s*\{[^}]*transform:\s*translate3d\(0,\s*-6px,\s*0\)/s);
+  assert.match(globals, /prefers-reduced-motion:\s*reduce[\s\S]*\.waldo-faq-content[\s\S]*transition:\s*none !important/s);
+});
+
 test("Mottle replaces Corben as the headline font", () => {
   const fonts = read("lib/fonts.ts");
   const layout = read("app/layout.tsx");
