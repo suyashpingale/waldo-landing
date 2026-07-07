@@ -653,17 +653,23 @@ function ProcessedReceipt({ card }: { card: ProcessedCard }) {
   );
 }
 
-export function MorningBriefSection() {
+type MorningBriefSectionProps = {
+  showIntro?: boolean;
+};
+
+export function MorningBriefSection({ showIntro = true }: MorningBriefSectionProps) {
   return (
     <section id="brief" className="section-shell scroll-mt-28 overflow-hidden rounded-[44px] bg-[var(--surface-t2)] p-3">
       <SmartSectionActivity className="waldo-smart-panel relative overflow-hidden rounded-[32px] border border-[var(--border-default)] bg-[var(--surface-t1)] text-center">
-        <div className="waldo-smart-copy" data-animate="blur-fade">
-          <h2 className="type-h2 text-[var(--ink)]">Smart like Alfred, goofy like Pluto.</h2>
-          <p className="type-body tone-secondary mt-5">
-            It handles the serious part quietly, before you&apos;ve asked. Then it tells you about it like a dog that&apos;s a little
-            pleased with itself.
-          </p>
-        </div>
+        {showIntro ? (
+          <div className="waldo-smart-copy" data-animate="blur-fade">
+            <h2 className="type-h2 text-[var(--ink)]">Smart like Alfred, goofy like Pluto.</h2>
+            <p className="type-body tone-secondary mt-5">
+              It handles the serious part quietly, before you&apos;ve asked. Then it tells you about it like a dog that&apos;s a little
+              pleased with itself.
+            </p>
+          </div>
+        ) : null}
 
         <div className="waldo-smart-stage" data-animate="blur-fade">
           <div className="waldo-smart-source-lane" aria-hidden>

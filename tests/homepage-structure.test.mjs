@@ -11,6 +11,30 @@ test("current homepage is preserved at the features route", () => {
   assert.match(featuresPage, /PageLayout/);
 });
 
+test("features route focuses on feature sections and comments out duplicated narrative beats", () => {
+  const layout = read("components/page-layout.tsx");
+
+  assert.match(layout, /<AlreadyDoneSection \/>/);
+  assert.match(layout, /<ActionFanSection \/>/);
+  assert.match(layout, /<SecuritySection \/>/);
+  assert.match(layout, /<WhereIsWaldoSection \/>/);
+  assert.match(layout, /<SceneCloseSection \/>/);
+
+  assert.match(layout, /Duplicated on the redesigned homepage/);
+  for (const section of [
+    "HealthDataSection",
+    "DeathOfChatbotSection",
+    "MorningBriefSection",
+    "AgentFeaturesSection",
+    "UseCasesSection",
+    "ValidationSection",
+    "LongGameSection",
+    "FaqSection",
+  ]) {
+    assert.doesNotMatch(layout, new RegExp(`^\\s*<${section} \\/>`, "m"));
+  }
+});
+
 test("root route renders the redesigned homepage shell", () => {
   const homePage = read("app/page.tsx");
 
@@ -26,6 +50,13 @@ test("new homepage keeps the Figma hero copy and deployed footer scene", () => {
   assert.match(homePage, /they.ve already rescheduled it and messaged the room/);
   assert.match(homePage, /SceneCloseSection/);
   assert.doesNotMatch(homePage, /new-home-footer-art/);
+});
+
+test("new homepage moves FAQ above the closing footer CTA", () => {
+  const homePage = read("components/home/new-home-page.tsx");
+
+  assert.match(homePage, /@\/components\/sections\/faq-section/);
+  assert.match(homePage, /<WhereWaldoSection \/>[\s\S]*<FaqSection \/>[\s\S]*<SceneCloseSection \/>/);
 });
 
 test("Mottle replaces Corben as the headline font", () => {
@@ -235,6 +266,62 @@ test("smart flow section avoids paint-heavy work while smooth scrolling", () => 
   assert.doesNotMatch(desktopReceiptFlow, /filter:/);
   assert.doesNotMatch(mobileSourceFlow, /filter:/);
   assert.doesNotMatch(mobileReceiptFlow, /filter:/);
+});
+
+test("features health cards render as vertical viewport sections without carousel controls", () => {
+  const section = read("components/sections/already-done-section.tsx");
+
+  for (const title of [
+    "Mornings, sorted.",
+    "The edge, taken off.",
+    "Connecting the Dots",
+    "Gut Feeling, verified",
+    "old habits new endings",
+  ]) {
+    assert.match(section, new RegExp(`headline:\\s*"${title.replaceAll(".", "\\.")}"`));
+  }
+
+  assert.match(section, /waldo-health-vertical-stack/);
+  assert.match(section, /waldo-health-vertical-card/);
+  assert.match(section, /min-h-\[82svh\]/);
+  assert.doesNotMatch(section, /trackRef/);
+  assert.doesNotMatch(section, /waldo-carousel-controls/);
+  assert.doesNotMatch(section, /PlayPauseIcon/);
+  assert.doesNotMatch(section, /grid-flow-col/);
+  assert.doesNotMatch(section, /overflow-x-auto/);
+
+  const globals = read("app/globals.css");
+  assert.match(globals, /--slide-width:\s*min\(96vw,\s*1360px\)/);
+  assert.match(globals, /--slide-height:\s*min\(56vw,\s*790px\)/);
+  assert.match(globals, /\.waldo-health-vertical-stack\s*\{[^}]*gap:\s*clamp\(0\.75rem,\s*2vw,\s*1\.75rem\)/s);
+  assert.match(globals, /\.waldo-health-vertical-stack\s*\{[^}]*padding-bottom:\s*clamp\(6rem,\s*18svh,\s*12rem\)/s);
+  assert.match(globals, /\.waldo-health-vertical-card\s*\{[^}]*padding-block:\s*clamp\(0\.5rem,\s*2svh,\s*1\.5rem\)/s);
+});
+
+test("features health cards use centered masked heading and active-card reveal without scroll hijacking", () => {
+  const section = read("components/sections/already-done-section.tsx");
+  const globals = read("app/globals.css");
+
+  assert.match(section, /activeHealthIndex/);
+  assert.match(section, /IntersectionObserver/);
+  assert.match(section, /cardRefs/);
+  assert.match(section, /waldo-health-heading-block/);
+  assert.match(section, /waldo-health-heading-mask/);
+  assert.match(section, /data-active=\{activeHealthIndex === index\}/);
+  assert.doesNotMatch(section, /waldo-health-active-chapter/);
+  assert.doesNotMatch(section, /activeSlide\.headline/);
+  assert.doesNotMatch(section, /padStart\(2/);
+  assert.doesNotMatch(section, /preventDefault\(\)/);
+  assert.doesNotMatch(section, /wheel/);
+
+  assert.match(globals, /\.waldo-health-heading-block\s*\{[^}]*position:\s*relative/s);
+  assert.match(globals, /\.waldo-health-heading-block\s*\{[^}]*margin-inline:\s*auto/s);
+  assert.match(globals, /\.waldo-health-heading-block\s*\{[^}]*width:\s*var\(--slide-width\)/s);
+  assert.doesNotMatch(globals, /\.waldo-health-heading-block\s*\{[^}]*position:\s*sticky/s);
+  assert.match(globals, /\.waldo-health-heading-mask\s*\{[^}]*overflow:\s*hidden/s);
+  assert.doesNotMatch(globals, /waldo-health-active-chapter/);
+  assert.match(globals, /\.waldo-health-vertical-card\s+\.waldo-health-frame-card\s*\{[^}]*filter:\s*blur\(10px\)/s);
+  assert.match(globals, /\.waldo-health-vertical-card\[data-active="true"\]\s+\.waldo-health-frame-card\s*\{[^}]*filter:\s*none/s);
 });
 
 test("death of chatbox motion follows premium interaction standards", () => {
@@ -677,6 +764,8 @@ test("new homepage includes the where beat and updated closing CTA copy", () => 
   assert.match(closeSection, /Get Waldo\. Free to start\. Works with the device you own\./);
   assert.match(closeSection, /And then you'll be the one they're looking out for\./);
   assert.match(closeSection, /WaldoCTA/);
+  assert.match(closeSection, /Explore features/);
+  assert.match(closeSection, /\["Explore features",\s*"\/features"\]/);
   assert.doesNotMatch(closeSection, /Get Started/);
   assert.match(closeSection, /new-scene-close-copy-zone/);
   assert.match(closeSection, /new-scene-close-art/);

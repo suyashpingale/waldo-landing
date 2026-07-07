@@ -76,6 +76,7 @@ const fanSlots = [
 const cardTransition = `all ${DUR_SETTLE}ms ${EASE}`;
 
 const footerLinks = [
+  ["Explore features", "/features"],
   ["Brief", "#brief"],
   ["Actions", "#action-fan"],
   ["Security", "#security"],
