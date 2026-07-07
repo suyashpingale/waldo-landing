@@ -8,7 +8,7 @@ import goodSleepDarkMode from "@/components/assets/good-sleep-dark-mode.svg";
 import goodWeekDarkMode from "@/components/assets/good-week-dark-mode.svg";
 import vectorSpot from "@/components/assets/Vector-1.svg";
 import watchingDarkMode from "@/components/assets/watching-dark-mode.svg";
-import { Aside, SectionIntro, WaldoCTA } from "@/components/landing-primitives";
+import { SectionIntro, WaldoCTA } from "@/components/landing-primitives";
 import { MobileDots } from "@/components/mobile-dots";
 import { useCardStack } from "@/hooks/use-card-stack";
 import { AUTO_CARD_MS, DUR_SETTLE, EASE } from "@/lib/motion";
@@ -81,6 +81,10 @@ const footerLinks = [
   ["Security", "#security"],
   ["Pattern", "#constellation"],
 ] as const;
+
+const closeHeadlineCopy = "Your health isn’t going to fix itself.";
+const closePrimaryCopy = "Get Waldo. Free to start. Works with the device you own.";
+const closeSecondaryCopy = "And then you'll be the one they're looking out for.";
 
 function FooterScenePicture({
   className,
@@ -256,14 +260,14 @@ export function SceneCloseSection() {
   }, []);
 
   const depth = 1 - progress;
-  const sceneShift = depth * 58;
+  const sceneShift = depth * 18;
   const contentShift = depth * -8;
 
   return (
     <section
       ref={ref}
       id="scene-close"
-      className="relative min-h-[calc(100svh+152px)] w-screen self-start overflow-hidden bg-[#f4f3f0] text-[var(--ink)] [margin-left:calc(50%-50vw)] [margin-right:calc(50%-50vw)] sm:min-h-[calc(100svh+104px)]"
+      className="new-scene-close-section relative w-screen self-start overflow-hidden bg-[#f4f3f0] text-[var(--ink)] [margin-left:calc(50%-50vw)] [margin-right:calc(50%-50vw)]"
     >
       <div
         aria-hidden
@@ -274,8 +278,8 @@ export function SceneCloseSection() {
         className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[30svh] bg-gradient-to-b from-[#f4f3f0] via-[#f4f3f0]/70 to-transparent"
       />
       <FooterScenePicture
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] block h-[calc(100%+48px)] w-full select-none"
-        imageClassName="block h-full w-full object-cover object-bottom"
+        className="new-scene-close-art pointer-events-none absolute inset-0 z-[2] block h-full w-full select-none"
+        imageClassName="block h-full w-full"
         style={{
           transform: `translate3d(0, ${sceneShift}px, 0)`,
           willChange: "transform",
@@ -284,22 +288,23 @@ export function SceneCloseSection() {
       />
 
       <div
-        className="relative z-[3] mx-auto flex min-h-[100svh] max-w-[1200px] flex-col items-center justify-start px-4 pt-[13svh] text-center sm:px-6 lg:px-10 lg:pt-[11svh]"
+        className="new-scene-close-copy-zone relative z-[3] mx-auto flex max-w-[1200px] flex-col items-center justify-start px-4 text-center sm:px-6 lg:px-10"
         data-animate="blur-fade"
         style={{ transform: `translate3d(0, ${contentShift}px, 0)`, willChange: "transform" }}
       >
-        <p className="type-aside mb-5 text-[#6b6b68]">the last thing your watch should do is wait.</p>
-        <h2 className="type-h1 text-[var(--ink)]" data-animate="headline">
-          You&apos;re not the first.
+        <h2 className="new-scene-close-title text-[var(--ink)]" data-animate="headline" aria-label={closeHeadlineCopy}>
+          Your health isn’t
           <br />
-          You&apos;re also not
-          <br />
-          too late. Yet.
+          going to fix itself.
         </h2>
+        <p className="new-scene-close-copy">
+          {closePrimaryCopy}
+          <br />
+          {closeSecondaryCopy}
+        </p>
         <div className="mt-6">
           <WaldoCTA />
         </div>
-        <Aside className="mt-5">Your watch has been waiting for this.</Aside>
       </div>
 
       <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-[4] px-4 pb-5 pt-20 text-[var(--ink)] sm:px-6 sm:pb-6 lg:px-10">

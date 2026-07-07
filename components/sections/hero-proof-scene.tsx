@@ -237,7 +237,7 @@ export function HeroProofScene({ children, states }: HeroProofSceneProps) {
               <span />
               <span />
             </div>
-            <Image src="/illustrations/default.svg" alt="" width={169} height={131} priority className="waldo-phone-mascot" />
+            <Image src="/assets/home/mascots/Vector.svg" alt="" width={184} height={143} priority className="waldo-phone-mascot" />
             <p className="type-caption mt-3 text-[var(--text-tertiary)]">Waldo read</p>
             <p className="type-data waldo-phone-value">{activeState.reads[0]?.value}</p>
             <p className="type-aside tone-tertiary">{activeState.reads[0]?.read}</p>

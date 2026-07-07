@@ -8,9 +8,9 @@ export const contentType = "image/png";
 
 export default async function Image() {
   const mascotData = await readFile(
-    path.join(process.cwd(), "public/waldo-mascot.png")
+    path.join(process.cwd(), "public/assets/home/mascots/good-week-dark-mode.svg")
   );
-  const mascotSrc = `data:image/png;base64,${mascotData.toString("base64")}`;
+  const mascotSrc = `data:image/svg+xml;base64,${mascotData.toString("base64")}`;
 
   return new ImageResponse(
     (
@@ -114,8 +114,8 @@ export default async function Image() {
         {/* Right — mascot */}
         <img
           src={mascotSrc}
-          width={340}
-          height={346}
+          width={360}
+          height={267}
           style={{ objectFit: "contain" }}
           alt=""
         />

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import sectionTwoAsset from "@/components/assets/section-2.png";
+import sectionTwoAsset from "@/components/assets/section-2.webp";
 
 export function HealthDataSection() {
   return (

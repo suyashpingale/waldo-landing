@@ -1,5 +1,5 @@
-import { PageLayout } from "@/components/page-layout";
+import { NewHomePage } from "@/components/home/new-home-page";
 
 export default function Home() {
-  return <PageLayout />;
+  return <NewHomePage />;
 }

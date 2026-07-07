@@ -2,8 +2,9 @@ import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 
 import { WaldoFace } from "./waldo-face";
+import { SmartSectionActivity } from "./smart-section-activity";
 
-import phoneMockup from "@/components/assets/iphone-mockup.png";
+import phoneMockup from "@/components/assets/iphone-mockup.webp";
 
 type FlowStyle = CSSProperties & {
   "--card-width"?: string;
@@ -15,11 +16,7 @@ type FlowStyle = CSSProperties & {
   "--receipt-delay"?: string;
 };
 
-type SourceCard = {
-  src: string;
-  alt: string;
-  naturalWidth: number;
-  naturalHeight: number;
+type SourceCardBase = {
   width: string;
   y: string;
   delay: string;
@@ -27,6 +24,23 @@ type SourceCard = {
   rotate?: string;
   scale?: string;
 };
+
+type SourceAssetCard = SourceCardBase & {
+  kind?: "asset";
+  src: string;
+  alt: string;
+  naturalWidth: number;
+  naturalHeight: number;
+};
+
+type SourceConnectorCard = SourceCardBase & {
+  kind: "connector";
+  label: string;
+  icon: string;
+  tone: string;
+};
+
+type SourceCard = SourceAssetCard | SourceConnectorCard;
 
 type ProcessedCard = {
   tone: "sleep" | "inbox" | "calendar" | "nutrition" | "stress" | "recovery";
@@ -41,9 +55,9 @@ type ProcessedCard = {
   delay: string;
 };
 
-const sourceCards: SourceCard[] = [
+const sourceCards: SourceAssetCard[] = [
   {
-    src: "/figma-assets/waldo-smart-flow/slack-sales-review.png",
+    src: "/figma-assets/waldo-smart-flow/slack-sales-review.webp",
     alt: "Slack sales review message card.",
     naturalWidth: 614,
     naturalHeight: 312,
@@ -54,7 +68,7 @@ const sourceCards: SourceCard[] = [
     rotate: "-1.4deg",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/sleep-duration.png",
+    src: "/figma-assets/waldo-smart-flow/sleep-duration.webp",
     alt: "Time asleep summary card.",
     naturalWidth: 636,
     naturalHeight: 319,
@@ -66,7 +80,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.96",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/slack-q1-data.png",
+    src: "/figma-assets/waldo-smart-flow/slack-q1-data.webp",
     alt: "Slack Q1 sales data message card.",
     naturalWidth: 614,
     naturalHeight: 330,
@@ -77,7 +91,7 @@ const sourceCards: SourceCard[] = [
     rotate: "0.6deg",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/sleep-score.png",
+    src: "/figma-assets/waldo-smart-flow/sleep-score.webp",
     alt: "Sleep score card showing a 74 score.",
     naturalWidth: 637,
     naturalHeight: 461,
@@ -88,7 +102,7 @@ const sourceCards: SourceCard[] = [
     rotate: "1.3deg",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/imessage-sunday-binge.png",
+    src: "/figma-assets/waldo-smart-flow/imessage-sunday-binge.webp",
     alt: "iMessage card about watching the next episodes.",
     naturalWidth: 614,
     naturalHeight: 330,
@@ -99,7 +113,7 @@ const sourceCards: SourceCard[] = [
     rotate: "1.1deg",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/vitals-typical.png",
+    src: "/figma-assets/waldo-smart-flow/vitals-typical.webp",
     alt: "Vitals card showing typical overnight readings.",
     naturalWidth: 408,
     naturalHeight: 395,
@@ -111,7 +125,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.92",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/calendar-product-review.png",
+    src: "/figma-assets/waldo-smart-flow/calendar-product-review.webp",
     alt: "Calendar product strategy review card.",
     naturalWidth: 614,
     naturalHeight: 386,
@@ -122,7 +136,7 @@ const sourceCards: SourceCard[] = [
     rotate: "-1deg",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/sleep-stages.png",
+    src: "/figma-assets/waldo-smart-flow/sleep-stages.webp",
     alt: "Sleep stages card showing 6 hours and 12 minutes.",
     naturalWidth: 396,
     naturalHeight: 395,
@@ -134,7 +148,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.94",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/gmail-lifestyle-newsletter.png",
+    src: "/figma-assets/waldo-smart-flow/gmail-lifestyle-newsletter.webp",
     alt: "Gmail healthy lifestyle newsletter backlog card.",
     naturalWidth: 614,
     naturalHeight: 330,
@@ -145,7 +159,7 @@ const sourceCards: SourceCard[] = [
     rotate: "0.8deg",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/hours-vs-need.png",
+    src: "/figma-assets/waldo-smart-flow/hours-vs-need.webp",
     alt: "Hours versus sleep need chart.",
     naturalWidth: 636,
     naturalHeight: 492,
@@ -157,7 +171,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.94",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/gmail-work-sales-review.png",
+    src: "/figma-assets/waldo-smart-flow/gmail-work-sales-review.webp",
     alt: "Gmail work sales review meeting card.",
     naturalWidth: 614,
     naturalHeight: 312,
@@ -168,7 +182,7 @@ const sourceCards: SourceCard[] = [
     rotate: "-0.8deg",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/recovery-week.png",
+    src: "/figma-assets/waldo-smart-flow/recovery-week.webp",
     alt: "Weekly recovery bar chart card.",
     naturalWidth: 450,
     naturalHeight: 372,
@@ -180,7 +194,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.9",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/stress-monitor.png",
+    src: "/figma-assets/waldo-smart-flow/stress-monitor.webp",
     alt: "Stress monitor gauge card.",
     naturalWidth: 366,
     naturalHeight: 373,
@@ -192,7 +206,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.94",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/stress-heart-rate.png",
+    src: "/figma-assets/waldo-smart-flow/stress-heart-rate.webp",
     alt: "Stress and heart rate chart card.",
     naturalWidth: 648,
     naturalHeight: 516,
@@ -204,7 +218,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.92",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/zone-5.png",
+    src: "/figma-assets/waldo-smart-flow/zone-5.webp",
     alt: "Zone 5 activity load card.",
     naturalWidth: 648,
     naturalHeight: 256,
@@ -216,7 +230,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.92",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/zone-4.png",
+    src: "/figma-assets/waldo-smart-flow/zone-4.webp",
     alt: "Zone 4 activity load card.",
     naturalWidth: 648,
     naturalHeight: 256,
@@ -228,7 +242,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.92",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/zone-3.png",
+    src: "/figma-assets/waldo-smart-flow/zone-3.webp",
     alt: "Zone 3 activity load card.",
     naturalWidth: 648,
     naturalHeight: 256,
@@ -240,7 +254,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.92",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/zone-2.png",
+    src: "/figma-assets/waldo-smart-flow/zone-2.webp",
     alt: "Zone 2 activity load card.",
     naturalWidth: 648,
     naturalHeight: 256,
@@ -252,7 +266,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.92",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/zone-1.png",
+    src: "/figma-assets/waldo-smart-flow/zone-1.webp",
     alt: "Zone 1 activity load card.",
     naturalWidth: 648,
     naturalHeight: 256,
@@ -264,7 +278,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.92",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/net-energy.png",
+    src: "/figma-assets/waldo-smart-flow/net-energy.webp",
     alt: "Net energy card showing minus 100 kilocalories.",
     naturalWidth: 690,
     naturalHeight: 394,
@@ -276,7 +290,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.92",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/nutrition-macros.png",
+    src: "/figma-assets/waldo-smart-flow/nutrition-macros.webp",
     alt: "Nutritional details card with fat, carbs, and protein.",
     naturalWidth: 690,
     naturalHeight: 520,
@@ -288,7 +302,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.9",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/nutrition-minerals.png",
+    src: "/figma-assets/waldo-smart-flow/nutrition-minerals.webp",
     alt: "Nutrition minerals card showing magnesium, calcium, and vitamin D.",
     naturalWidth: 428,
     naturalHeight: 582,
@@ -300,7 +314,7 @@ const sourceCards: SourceCard[] = [
     scale: "0.9",
   },
   {
-    src: "/figma-assets/waldo-smart-flow/nutrition-fiber.png",
+    src: "/figma-assets/waldo-smart-flow/nutrition-fiber.webp",
     alt: "Nutrition card showing fiber, potassium, and iron.",
     naturalWidth: 432,
     naturalHeight: 582,
@@ -312,6 +326,170 @@ const sourceCards: SourceCard[] = [
     scale: "0.9",
   },
 ];
+
+const workspaceConnectorCards: SourceConnectorCard[] = [
+  {
+    kind: "connector",
+    label: "Gmail",
+    icon: "/assets/connectors/gmail.svg",
+    tone: "gmail",
+    width: "132px",
+    y: "324px",
+    delay: "-34.4s",
+    drift: "16px",
+    rotate: "1deg",
+  },
+  {
+    kind: "connector",
+    label: "Drive",
+    icon: "/assets/connectors/google-drive.svg",
+    tone: "drive",
+    width: "128px",
+    y: "488px",
+    delay: "-31.2s",
+    drift: "-10px",
+    rotate: "-1deg",
+    scale: "0.98",
+  },
+  {
+    kind: "connector",
+    label: "Outlook",
+    icon: "/assets/connectors/microsoft-outlook.svg",
+    tone: "outlook",
+    width: "136px",
+    y: "274px",
+    delay: "-29.6s",
+    drift: "10px",
+    rotate: "0.7deg",
+  },
+  {
+    kind: "connector",
+    label: "Slack",
+    icon: "/assets/connectors/slack.svg",
+    tone: "slack",
+    width: "126px",
+    y: "576px",
+    delay: "-26.4s",
+    drift: "-16px",
+    rotate: "-1.2deg",
+  },
+  {
+    kind: "connector",
+    label: "WhatsApp",
+    icon: "/assets/connectors/whatsapp.svg",
+    tone: "whatsapp",
+    width: "150px",
+    y: "394px",
+    delay: "-23.2s",
+    drift: "16px",
+    rotate: "1.2deg",
+  },
+  {
+    kind: "connector",
+    label: "Telegram",
+    icon: "/assets/connectors/telegram.svg",
+    tone: "telegram",
+    width: "148px",
+    y: "524px",
+    delay: "-20s",
+    drift: "-8px",
+    rotate: "-0.8deg",
+    scale: "0.98",
+  },
+  {
+    kind: "connector",
+    label: "Figma",
+    icon: "/assets/connectors/figma.svg",
+    tone: "figma",
+    width: "128px",
+    y: "338px",
+    delay: "-18.4s",
+    drift: "-18px",
+    rotate: "-1.1deg",
+  },
+  {
+    kind: "connector",
+    label: "Linear",
+    icon: "/assets/connectors/linear.svg",
+    tone: "linear",
+    width: "132px",
+    y: "604px",
+    delay: "-15.2s",
+    drift: "14px",
+    rotate: "1deg",
+  },
+  {
+    kind: "connector",
+    label: "GitHub",
+    icon: "/assets/connectors/github.svg",
+    tone: "github",
+    width: "134px",
+    y: "304px",
+    delay: "-12s",
+    drift: "-12px",
+    rotate: "-0.7deg",
+  },
+  {
+    kind: "connector",
+    label: "Asana",
+    icon: "/assets/connectors/asana.svg",
+    tone: "asana",
+    width: "126px",
+    y: "458px",
+    delay: "-8.8s",
+    drift: "18px",
+    rotate: "1.1deg",
+  },
+  {
+    kind: "connector",
+    label: "Zendesk",
+    icon: "/assets/connectors/zendesk.svg",
+    tone: "zendesk",
+    width: "140px",
+    y: "586px",
+    delay: "-5.6s",
+    drift: "-14px",
+    rotate: "-1deg",
+  },
+  {
+    kind: "connector",
+    label: "Salesforce",
+    icon: "/assets/connectors/salesforce.svg",
+    tone: "salesforce",
+    width: "154px",
+    y: "378px",
+    delay: "-2.4s",
+    drift: "12px",
+    rotate: "0.9deg",
+  },
+  {
+    kind: "connector",
+    label: "Notion",
+    icon: "/assets/connectors/notion.svg",
+    tone: "notion",
+    width: "128px",
+    y: "538px",
+    delay: "-0.8s",
+    drift: "-10px",
+    rotate: "-0.8deg",
+  },
+  {
+    kind: "connector",
+    label: "HubSpot",
+    icon: "/assets/composio-connectors/hubspot.svg",
+    tone: "hubspot",
+    width: "138px",
+    y: "306px",
+    delay: "1.6s",
+    drift: "18px",
+    rotate: "1.2deg",
+  },
+];
+
+const sourceFlowCards: SourceCard[] = sourceCards.flatMap((card, index) => {
+  const connector = workspaceConnectorCards[index];
+  return connector ? [card, connector] : [card];
+});
 
 const processedCards: ProcessedCard[] = [
   {
@@ -417,7 +595,7 @@ function ConnectorIcon({ connector }: { connector: ProcessedCard["connectors"][n
   );
 }
 
-function SourceCardItem({ card, index }: { card: SourceCard; index: number }) {
+function SourceCardItem({ card }: { card: SourceCard }) {
   const style: FlowStyle = {
     "--card-width": card.width,
     "--flow-delay": card.delay,
@@ -426,6 +604,17 @@ function SourceCardItem({ card, index }: { card: SourceCard; index: number }) {
     "--flow-rotate": card.rotate ?? "0deg",
     "--flow-scale": card.scale ?? "1",
   };
+
+  if (card.kind === "connector") {
+    return (
+      <div className="waldo-smart-source-card waldo-smart-logo-card" data-logo-tone={card.tone} style={style}>
+        <span className="waldo-smart-logo-icon" aria-hidden>
+          <Image src={card.icon} alt="" width={24} height={24} />
+        </span>
+        <span className="waldo-smart-logo-label">{card.label}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="waldo-smart-source-card waldo-smart-asset-card" style={style}>
@@ -436,7 +625,6 @@ function SourceCardItem({ card, index }: { card: SourceCard; index: number }) {
         height={card.naturalHeight}
         className="h-auto w-full select-none"
         sizes="(min-width: 1024px) 340px, 190px"
-        priority={index < 4}
       />
     </div>
   );
@@ -468,18 +656,22 @@ function ProcessedReceipt({ card }: { card: ProcessedCard }) {
 export function MorningBriefSection() {
   return (
     <section id="brief" className="section-shell scroll-mt-28 overflow-hidden rounded-[44px] bg-[var(--surface-t2)] p-3">
-      <div className="waldo-smart-panel relative overflow-hidden rounded-[32px] border border-[var(--border-default)] bg-[var(--surface-t1)] text-center">
+      <SmartSectionActivity className="waldo-smart-panel relative overflow-hidden rounded-[32px] border border-[var(--border-default)] bg-[var(--surface-t1)] text-center">
         <div className="waldo-smart-copy" data-animate="blur-fade">
-          <h2 className="type-h2 text-[var(--ink)]">You are smart, but Waldo&apos;s smarter</h2>
+          <h2 className="type-h2 text-[var(--ink)]">Smart like Alfred, goofy like Pluto.</h2>
           <p className="type-body tone-secondary mt-5">
-            Waldo reads all of your health insights. Then it does what no app has done before - it acts. Every other product shows you data, Waldo does something about it.
+            It handles the serious part quietly, before you&apos;ve asked. Then it tells you about it like a dog that&apos;s a little
+            pleased with itself.
           </p>
         </div>
 
         <div className="waldo-smart-stage" data-animate="blur-fade">
           <div className="waldo-smart-source-lane" aria-hidden>
-            {sourceCards.map((card, index) => (
-              <SourceCardItem key={`${card.src}-${index}`} card={card} index={index} />
+            {sourceFlowCards.map((card, index) => (
+              <SourceCardItem
+                key={card.kind === "connector" ? `${card.label}-${index}` : `${card.src}-${index}`}
+                card={card}
+              />
             ))}
           </div>
 
@@ -497,7 +689,7 @@ export function MorningBriefSection() {
               </div>
             </div>
             <WaldoFace />
-            <Image src={phoneMockup} alt="" className="waldo-smart-phone-image relative z-40 h-auto w-full select-none" sizes="420px" priority />
+            <Image src={phoneMockup} alt="" className="waldo-smart-phone-image relative z-40 h-auto w-full select-none" sizes="420px" />
           </div>
 
           <div className="waldo-smart-output-lane">
@@ -506,7 +698,7 @@ export function MorningBriefSection() {
             ))}
           </div>
         </div>
-      </div>
+      </SmartSectionActivity>
     </section>
   );
 }
