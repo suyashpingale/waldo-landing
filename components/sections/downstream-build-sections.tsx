@@ -1,6 +1,7 @@
 "use client";
 
 import Image, { type StaticImageData } from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 
 import goodDarkMode from "@/components/assets/good-dark-mode.svg";
@@ -76,6 +77,7 @@ const fanSlots = [
 const cardTransition = `all ${DUR_SETTLE}ms ${EASE}`;
 
 const footerLinks = [
+  ["Explore features", "/features"],
   ["Brief", "#brief"],
   ["Actions", "#action-fan"],
   ["Security", "#security"],
@@ -302,8 +304,11 @@ export function SceneCloseSection() {
           <br />
           {closeSecondaryCopy}
         </p>
-        <div className="mt-6">
+        <div className="new-scene-close-actions mt-6">
           <WaldoCTA />
+          <Link href="/features" className="new-scene-close-secondary-cta focusable-ring">
+            Explore features
+          </Link>
         </div>
       </div>
 

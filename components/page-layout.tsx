@@ -1,18 +1,12 @@
 import { PageChrome } from "./page-chrome";
 import { HomepageCarouselPreloader } from "./homepage-carousel-preloader";
 import { HeroSection } from "./sections/hero-section";
-import { DeathOfChatbotSection } from "./sections/death-of-chatbot-section";
-import { HealthDataSection } from "./sections/health-data-section";
-import { MorningBriefSection } from "./sections/morning-brief-section";
+// Duplicated on the redesigned homepage. Kept here so the feature page can restore the problem beat if needed.
+// import { HealthDataSection } from "./sections/health-data-section";
 import { AlreadyDoneSection } from "./sections/already-done-section";
-import { AgentFeaturesSection } from "./sections/agent-features-section";
-import { UseCasesSection } from "./sections/use-cases-section";
-import { ValidationSection } from "./sections/validation-section";
 import { SecuritySection } from "./sections/security-section";
 import { WhereIsWaldoSection } from "./sections/where-is-waldo-section";
-import { LongGameSection } from "./sections/long-game-section";
 import { ActionFanSection, SceneCloseSection } from "./sections/downstream-build-sections";
-import { FaqSection } from "./sections/faq-section";
 
 export function PageLayout() {
   return (
@@ -23,18 +17,12 @@ export function PageLayout() {
         style={{ gap: "clamp(3rem, 5vw, 5rem)" }}
       >
         <HeroSection />
-        <DeathOfChatbotSection />
-        <HealthDataSection />
-        <MorningBriefSection />
+        {/* Duplicated on the redesigned homepage. */}
+        {/* <HealthDataSection /> */}
         <AlreadyDoneSection />
-        <AgentFeaturesSection />
-        <UseCasesSection />
         <ActionFanSection />
-        <ValidationSection />
         <SecuritySection />
-        <LongGameSection />
         <WhereIsWaldoSection />
-        <FaqSection />
         <SceneCloseSection />
       </div>
     </PageChrome>

@@ -9,6 +9,7 @@ import { TooMuchDataSection } from "@/components/home/too-much-data-section";
 import { WhereWaldoSection } from "@/components/home/where-waldo-section";
 import { MorningBriefSection } from "@/components/sections/morning-brief-section";
 import { SceneCloseSection } from "@/components/sections/downstream-build-sections";
+import { FaqSection } from "@/components/sections/faq-section";
 import { ScrollAnimations } from "@/components/scroll-animations";
 import { SmoothScroll } from "@/components/smooth-scroll";
 
@@ -57,6 +58,7 @@ export function NewHomePage() {
         <ProfessionSection />
         <DataAloneSection />
         <WhereWaldoSection />
+        <FaqSection />
         <SceneCloseSection />
       </main>
     </HomeChrome>

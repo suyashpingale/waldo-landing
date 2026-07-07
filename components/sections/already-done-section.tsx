@@ -2,10 +2,7 @@
 
 import * as Accordion from "@radix-ui/react-accordion";
 import Image, { type StaticImageData } from "next/image";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
-
-import { useElementInView } from "@/hooks/use-element-in-view";
-import { useImagePreloader } from "@/hooks/use-image-preloader";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import dots01Patrol from "@/public/figma-assets/health-carousel/dots-01-patrol.webp";
 import dots02Spot from "@/public/figma-assets/health-carousel/dots-02-spot.webp";
 import dots03Constellation from "@/public/figma-assets/health-carousel/dots-03-constellation.webp";
@@ -31,46 +28,6 @@ import mornings02HrvWatch from "@/public/figma-assets/health-carousel/mornings-0
 import mornings03RestingState from "@/public/figma-assets/health-carousel/mornings-03-resting-state.webp";
 import mornings04Sleep from "@/public/figma-assets/health-carousel/mornings-04-sleep.webp";
 import mornings05SleepDebt from "@/public/figma-assets/health-carousel/mornings-05-sleep-debt.webp";
-
-const AUTO_DWELL_MS = 6150;
-const AUTO_SCROLL_MS = 1000;
-const DRAG_START_THRESHOLD_PX = 8;
-const SCROLLBAR_GUTTER_PX = 18;
-const INTERACTIVE_CAROUSEL_SELECTOR = [
-  "a",
-  "button",
-  "input",
-  "label",
-  "select",
-  "summary",
-  "textarea",
-  "[contenteditable='true']",
-  "[role='button']",
-  "[role='link']",
-].join(",");
-
-function appleGalleryEase(progress: number) {
-  const x1 = 0.2;
-  const y1 = 0;
-  const x2 = 0;
-  const y2 = 1;
-  const cx = 3 * x1;
-  const bx = 3 * (x2 - x1) - cx;
-  const ax = 1 - cx - bx;
-  const cy = 3 * y1;
-  const by = 3 * (y2 - y1) - cy;
-  const ay = 1 - cy - by;
-  let t = progress;
-
-  for (let i = 0; i < 5; i += 1) {
-    const x = ((ax * t + bx) * t + cx) * t - progress;
-    const dx = (3 * ax * t + 2 * bx) * t + cx;
-    if (Math.abs(dx) < 0.0001) break;
-    t = Math.max(0, Math.min(1, t - x / dx));
-  }
-
-  return ((ay * t + by) * t + cy) * t;
-}
 
 type VisualKind = "recovery" | "stress" | "patterns" | "body" | "longGame";
 type HealthTone = "sleep" | "heart" | "stress" | "recovery" | "motion";
@@ -99,32 +56,8 @@ type ShowcaseSlide = {
   panels: FeaturePanel[];
 };
 
-type CarouselDragState = {
-  pointerId: number;
-  startX: number;
-  startY: number;
-  startScrollLeft: number;
-  currentScrollLeft: number;
-  maxScroll: number;
-  isDragging: boolean;
-  snapType: string | null;
-  previousBodyCursor: string;
-  previousBodyUserSelect: string;
-};
-
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
-}
-
-function isInteractiveCarouselTarget(target: EventTarget | null) {
-  return target instanceof HTMLElement && Boolean(target.closest(INTERACTIVE_CAROUSEL_SELECTOR));
-}
-
-function isScrollbarGutterPointer(event: ReactPointerEvent<HTMLDivElement>) {
-  if (event.pointerType !== "mouse") return false;
-
-  const rect = event.currentTarget.getBoundingClientRect();
-  return event.clientY >= rect.bottom - SCROLLBAR_GUTTER_PX;
 }
 
 const slides: ShowcaseSlide[] = [
@@ -496,58 +429,6 @@ const slides: ShowcaseSlide[] = [
   },
 ];
 
-const allHealthFrameSources = slides.flatMap((slide) => slide.panels.map((panel) => panel.visual.image.src));
-const initialHealthFrameSources = slides.map((slide) => slide.panels[0]?.visual.image.src).filter(Boolean);
-const initialHealthFrameSourceSet = new Set(initialHealthFrameSources);
-const deferredHealthFrameSources = allHealthFrameSources.filter((source) => !initialHealthFrameSourceSet.has(source));
-
-function getHealthSlideSources(slideIndex: number) {
-  return slides[slideIndex]?.panels.map((panel) => panel.visual.image.src) ?? [];
-}
-
-function getHealthPanelSource(slideIndex: number, panelIndex: number) {
-  return slides[slideIndex]?.panels[panelIndex]?.visual.image.src;
-}
-
-function usePrefersReducedMotion() {
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduced(query.matches);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
-
-  return reduced;
-}
-
-function PlayPauseIcon({ playing, ended }: { playing: boolean; ended: boolean }) {
-  if (ended) {
-    return (
-      <svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden>
-        <path d="M15.4 8.8a5.8 5.8 0 1 1-1.8-4.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <path d="M15.5 3.4v4.1h-4.1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-
-  if (playing) {
-    return (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
-        <path d="M6.5 4.25v9.5M11.5 4.25v9.5" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
-      <path d="M6.75 4.7v8.6l6.2-4.3-6.2-4.3Z" fill="currentColor" />
-    </svg>
-  );
-}
-
 function PillPaddleIcon({ direction }: { direction: "previous" | "next" }) {
   return (
     <svg width="15" height="20" viewBox="0 0 15 20" fill="none" aria-hidden>
@@ -771,7 +652,6 @@ function SlideContent({
               onPanelInteraction();
             }}
             onClick={(event) => {
-              event.preventDefault();
               event.stopPropagation();
               goToAdjacentPanel("previous");
             }}
@@ -790,7 +670,6 @@ function SlideContent({
               onPanelInteraction();
             }}
             onClick={(event) => {
-              event.preventDefault();
               event.stopPropagation();
               goToAdjacentPanel("next");
             }}
@@ -804,371 +683,43 @@ function SlideContent({
 }
 
 export function AlreadyDoneSection() {
-  const reducedMotion = usePrefersReducedMotion();
-  const { preload, preloadMany } = useImagePreloader();
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const scrollAnimationRef = useRef<number | null>(null);
-  const progressAnimationRef = useRef<number | null>(null);
-  const progressRef = useRef(0);
-  const activeRef = useRef(0);
-  const lastProgressTickRef = useRef<number | null>(null);
-  const scrollSnapTypeRef = useRef<string | null>(null);
-  const programmaticScrollRef = useRef(false);
-  const dragStateRef = useRef<CarouselDragState | null>(null);
-  const [active, setActive] = useState(0);
-  const [playing, setPlaying] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const [ended, setEnded] = useState(false);
-  const [interactionPaused, setInteractionPaused] = useState(false);
-  const [documentHidden, setDocumentHidden] = useState(false);
-  const [isScrollAnimating, setIsScrollAnimating] = useState(false);
-  const [isDraggingTrack, setIsDraggingTrack] = useState(false);
   const [openPanels, setOpenPanels] = useState<Record<number, number>>({});
-  const sectionInView = useElementInView(sectionRef);
-  const sectionNearView = useElementInView(sectionRef, "1200px");
+  const [activeHealthIndex, setActiveHealthIndex] = useState(0);
+  const cardRefs = useRef<Array<HTMLElement | null>>([]);
 
-  const shouldTickProgress = playing && !ended && !reducedMotion && !interactionPaused && !documentHidden && !isScrollAnimating && sectionInView;
-  const activeSlide = slides[active];
-  const activeLabel = activeSlide.tab;
+  useEffect(() => {
+    const cards = cardRefs.current.filter(Boolean) as HTMLElement[];
+    if (!cards.length || typeof IntersectionObserver === "undefined") return undefined;
 
-  const setProgressValue = useCallback((value: number) => {
-    const bounded = Math.max(0, Math.min(1, value));
-    progressRef.current = bounded;
-    setProgress(bounded);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (!visibleEntry) return;
+
+        const index = Number((visibleEntry.target as HTMLElement).dataset.healthIndex ?? 0);
+        setActiveHealthIndex(clamp(index, 0, slides.length - 1));
+      },
+      {
+        rootMargin: "-34% 0px -42% 0px",
+        threshold: [0.08, 0.25, 0.45, 0.65],
+      },
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
   }, []);
-
-  const setActiveValue = useCallback((index: number) => {
-    activeRef.current = index;
-    setActive(index);
-  }, []);
-
-  const warmPanel = useCallback((slideIndex: number, panelIndex: number) => {
-    const source = getHealthPanelSource(slideIndex, panelIndex);
-    if (source) preload(source, { immediate: true });
-  }, [preload]);
-
-  const warmSlide = useCallback((slideIndex: number, immediate = false) => {
-    preloadMany(getHealthSlideSources(slideIndex), { immediate });
-  }, [preloadMany]);
-
-  useEffect(() => {
-    if (reducedMotion) setPlaying(false);
-  }, [reducedMotion]);
-
-  useEffect(() => {
-    const handleVisibility = () => setDocumentHidden(document.hidden);
-    handleVisibility();
-    document.addEventListener("visibilitychange", handleVisibility);
-    return () => document.removeEventListener("visibilitychange", handleVisibility);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (scrollAnimationRef.current !== null) window.cancelAnimationFrame(scrollAnimationRef.current);
-      if (progressAnimationRef.current !== null) window.cancelAnimationFrame(progressAnimationRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    activeRef.current = active;
-  }, [active]);
-
-  useEffect(() => {
-    preloadMany(initialHealthFrameSources, { immediate: true });
-    preloadMany(deferredHealthFrameSources);
-  }, [preloadMany]);
-
-  useEffect(() => {
-    if (sectionNearView) preloadMany(allHealthFrameSources, { immediate: true });
-  }, [preloadMany, sectionNearView]);
-
-  useEffect(() => {
-    const openPanel = openPanels[active] ?? 0;
-    const activeSources = [
-      getHealthPanelSource(active, openPanel),
-      getHealthPanelSource(active, openPanel - 1),
-      getHealthPanelSource(active, openPanel + 1),
-      getHealthPanelSource(active + 1, 0),
-    ];
-
-    preloadMany(activeSources, { immediate: true });
-  }, [active, openPanels, preloadMany]);
-
-  const cancelScrollAnimation = useCallback(() => {
-    if (scrollAnimationRef.current !== null) {
-      window.cancelAnimationFrame(scrollAnimationRef.current);
-      scrollAnimationRef.current = null;
-    }
-    if (trackRef.current && scrollSnapTypeRef.current !== null) {
-      trackRef.current.style.scrollSnapType = scrollSnapTypeRef.current;
-      scrollSnapTypeRef.current = null;
-    }
-    programmaticScrollRef.current = false;
-    setIsScrollAnimating(false);
-  }, []);
-
-  const scrollToSlide = useCallback((index: number, auto = false) => {
-    const track = trackRef.current;
-    const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
-    const card = track?.children[nextIndex] as HTMLElement | undefined;
-
-    cancelScrollAnimation();
-    warmSlide(nextIndex, true);
-    lastProgressTickRef.current = null;
-    setProgressValue(0);
-    setEnded(false);
-    setActiveValue(nextIndex);
-    if (!track || !card) return;
-
-    const paddingStart = parseFloat(window.getComputedStyle(track).paddingLeft) || 0;
-    const left = card.offsetLeft - paddingStart;
-    const startLeft = track.scrollLeft;
-    const distance = left - startLeft;
-
-    if (reducedMotion || Math.abs(distance) < 1) {
-      track.scrollLeft = left;
-      return;
-    }
-
-    const duration = auto ? AUTO_SCROLL_MS : AUTO_SCROLL_MS;
-    let startTime: number | null = null;
-
-    programmaticScrollRef.current = true;
-    scrollSnapTypeRef.current = track.style.scrollSnapType || window.getComputedStyle(track).scrollSnapType;
-    track.style.scrollSnapType = "none";
-    setIsScrollAnimating(true);
-
-    const step = (now: number) => {
-      startTime ??= now;
-      const elapsed = now - startTime;
-      const progress = Math.min(1, elapsed / duration);
-
-      track.scrollLeft = startLeft + distance * appleGalleryEase(progress);
-
-      if (progress < 1) {
-        scrollAnimationRef.current = window.requestAnimationFrame(step);
-        return;
-      }
-
-      track.scrollLeft = left;
-      track.style.scrollSnapType = scrollSnapTypeRef.current ?? "";
-      scrollSnapTypeRef.current = null;
-      scrollAnimationRef.current = null;
-      programmaticScrollRef.current = false;
-      setIsScrollAnimating(false);
-    };
-
-    scrollAnimationRef.current = window.requestAnimationFrame(step);
-  }, [cancelScrollAnimation, reducedMotion, setActiveValue, setProgressValue, warmSlide]);
-
-  useEffect(() => {
-    if (!shouldTickProgress) {
-      lastProgressTickRef.current = null;
-      return;
-    }
-
-    const tick = (now: number) => {
-      const last = lastProgressTickRef.current ?? now;
-      const delta = now - last;
-      lastProgressTickRef.current = now;
-      const next = Math.min(1, progressRef.current + delta / AUTO_DWELL_MS);
-
-      setProgressValue(next);
-
-      if (next >= 1) {
-        lastProgressTickRef.current = null;
-        if (active < slides.length - 1) {
-          setProgressValue(0);
-          scrollToSlide(active + 1, true);
-        } else {
-          setEnded(true);
-          setPlaying(false);
-        }
-        return;
-      }
-
-      progressAnimationRef.current = window.requestAnimationFrame(tick);
-    };
-
-    progressAnimationRef.current = window.requestAnimationFrame(tick);
-
-    return () => {
-      if (progressAnimationRef.current !== null) {
-        window.cancelAnimationFrame(progressAnimationRef.current);
-        progressAnimationRef.current = null;
-      }
-    };
-  }, [active, scrollToSlide, setProgressValue, shouldTickProgress]);
-
-  const goTo = (index: number) => {
-    warmSlide(index, true);
-    setPlaying(false);
-    setEnded(false);
-    scrollToSlide(index, false);
-  };
-
-  const getNearestSlideIndex = useCallback((scrollLeft: number) => {
-    const track = trackRef.current;
-    if (!track) return activeRef.current;
-
-    const trackCenter = scrollLeft + track.clientWidth / 2;
-    let nearest = activeRef.current;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-
-    Array.from(track.children).forEach((child, index) => {
-      const card = child as HTMLElement;
-      const cardCenter = card.offsetLeft + card.clientWidth / 2;
-      const distance = Math.abs(trackCenter - cardCenter);
-
-      if (distance < nearestDistance) {
-        nearest = index;
-        nearestDistance = distance;
-      }
-    });
-
-    return nearest;
-  }, []);
-
-  const restoreDragSideEffects = useCallback((track: HTMLDivElement, state: CarouselDragState) => {
-    if (state.snapType !== null) {
-      track.style.scrollSnapType = state.snapType;
-    }
-    document.body.style.cursor = state.previousBodyCursor;
-    document.body.style.userSelect = state.previousBodyUserSelect;
-    setIsDraggingTrack(false);
-  }, []);
-
-  const finishPointerDrag = useCallback((event?: ReactPointerEvent<HTMLDivElement>, snapToNearest = true) => {
-    const state = dragStateRef.current;
-    const track = trackRef.current;
-
-    if (!state) {
-      setInteractionPaused(false);
-      return;
-    }
-
-    dragStateRef.current = null;
-
-    if (event?.currentTarget.hasPointerCapture(state.pointerId)) {
-      event.currentTarget.releasePointerCapture(state.pointerId);
-    }
-
-    if (track && state.isDragging) {
-      restoreDragSideEffects(track, state);
-    }
-
-    setInteractionPaused(false);
-
-    if (!track || !state.isDragging || !snapToNearest) return;
-
-    const nearest = getNearestSlideIndex(state.currentScrollLeft);
-    scrollToSlide(nearest, false);
-  }, [getNearestSlideIndex, restoreDragSideEffects, scrollToSlide]);
-
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === "mouse" && event.button !== 0) return;
-    if (isInteractiveCarouselTarget(event.target) || isScrollbarGutterPointer(event)) return;
-
-    cancelScrollAnimation();
-    setPlaying(false);
-    setEnded(false);
-    setInteractionPaused(true);
-
-    if (event.pointerType === "touch") return;
-
-    const track = event.currentTarget;
-    const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
-    if (maxScroll < 4) return;
-
-    dragStateRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      startScrollLeft: track.scrollLeft,
-      currentScrollLeft: track.scrollLeft,
-      maxScroll,
-      isDragging: false,
-      snapType: null,
-      previousBodyCursor: document.body.style.cursor,
-      previousBodyUserSelect: document.body.style.userSelect,
-    };
-
-    track.setPointerCapture(event.pointerId);
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const state = dragStateRef.current;
-    if (!state || event.pointerId !== state.pointerId) return;
-
-    const track = event.currentTarget;
-    const deltaX = event.clientX - state.startX;
-    const deltaY = event.clientY - state.startY;
-    const absX = Math.abs(deltaX);
-    const absY = Math.abs(deltaY);
-
-    if (!state.isDragging) {
-      if (absX < DRAG_START_THRESHOLD_PX) return;
-      if (absX <= absY * 1.15) return;
-
-      state.isDragging = true;
-      state.snapType = track.style.scrollSnapType || window.getComputedStyle(track).scrollSnapType;
-      track.style.scrollSnapType = "none";
-      document.body.style.cursor = "grabbing";
-      document.body.style.userSelect = "none";
-      setIsDraggingTrack(true);
-    }
-
-    event.preventDefault();
-
-    const nextScrollLeft = clamp(state.startScrollLeft - deltaX, 0, state.maxScroll);
-    state.currentScrollLeft = nextScrollLeft;
-
-    track.scrollLeft = nextScrollLeft;
-  };
-
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const state = dragStateRef.current;
-    if (!state || state.pointerId !== event.pointerId) {
-      setInteractionPaused(false);
-      return;
-    }
-
-    finishPointerDrag(event, true);
-  };
-
-  const handlePointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const state = dragStateRef.current;
-    if (!state || state.pointerId !== event.pointerId) {
-      setInteractionPaused(false);
-      return;
-    }
-
-    finishPointerDrag(event, true);
-  };
-
-  const handleScroll = () => {
-    const track = trackRef.current;
-    if (!track) return;
-    if (programmaticScrollRef.current) return;
-
-    const nearest = getNearestSlideIndex(track.scrollLeft);
-
-    if (nearest !== activeRef.current) {
-      setActiveValue(nearest);
-      setProgressValue(0);
-      setEnded(false);
-    }
-  };
 
   return (
     <section
-      ref={sectionRef}
       id="already-handled"
-      className="waldo-highlights relative z-10 isolate min-h-[100svh] w-screen max-w-none scroll-mt-0 overflow-hidden bg-[var(--surface-t3)] pt-32 pb-8 lg:pt-36 lg:pb-12"
+      className="waldo-highlights relative z-10 isolate w-screen max-w-none scroll-mt-0 overflow-visible bg-[var(--surface-t3)] pt-24 pb-10 lg:pt-28 lg:pb-14"
     >
-      <div className="mb-8 flex w-full flex-col gap-6 px-[var(--slide-padding)] lg:mb-10" data-animate="blur-fade">
-        <div>
+      <div className="waldo-health-heading-block" data-animate="blur-fade">
+        <div className="waldo-health-heading-mask">
           <p className="type-eyebrow mb-4 text-[var(--text-tertiary)]">Health features</p>
           <h2 className="type-h1 text-[var(--ink)]" data-animate="headline">
             This is what your day
@@ -1178,129 +729,39 @@ export function AlreadyDoneSection() {
         </div>
       </div>
 
-      <div
-        ref={trackRef}
-        data-animate="stagger"
-        data-stagger="0.08"
-        className={[
-          "grid w-full auto-cols-[var(--slide-width)] grid-flow-col snap-x snap-mandatory scroll-pl-0 gap-[var(--slide-gap)] overflow-x-auto px-[var(--slide-padding)] pb-2 [scrollbar-width:none] max-[734px]:scroll-pl-[var(--slide-padding)] [&::-webkit-scrollbar]:hidden",
-          isDraggingTrack
-            ? "cursor-grabbing select-none [&_*]:cursor-grabbing"
-            : "cursor-grab [&_a]:cursor-pointer [&_button]:cursor-pointer",
-        ].join(" ")}
-        aria-live="polite"
-        aria-label={`Showing ${activeLabel}`}
-        onScroll={handleScroll}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerCancel}
-        onLostPointerCapture={handlePointerCancel}
-        onDragStart={(event) => event.preventDefault()}
-      >
+      <div className="waldo-health-vertical-stack" data-animate="stagger" data-stagger="0.08">
         {slides.map((slide, index) => {
-          const isActive = active === index;
           const openPanel = openPanels[index] ?? 0;
 
           return (
             <article
               key={slide.tab}
+              ref={(node) => {
+                cardRefs.current[index] = node;
+              }}
               id={`health-feature-card-${index}`}
               aria-label={slide.tab}
-              aria-current={isActive}
+              data-active={activeHealthIndex === index}
+              data-health-index={index}
               data-stagger-item
-              className="waldo-health-frame-card h-[var(--slide-height)] w-[var(--slide-width)] snap-center overflow-hidden rounded-[24px] bg-[var(--surface-t1)] max-[734px]:snap-start"
+              className="waldo-health-vertical-card min-h-[82svh]"
             >
-              <SlideContent
-                slide={slide}
-                openPanel={openPanel}
-                isActive={isActive}
-                onPanelIntent={(panelIndex) => warmPanel(index, panelIndex)}
-                onPanelInteraction={() => {
-                  cancelScrollAnimation();
-                  setPlaying(false);
-                  setEnded(false);
-                }}
-                onPanelChange={(panelIndex) => {
-                  cancelScrollAnimation();
-                  setPlaying(false);
-                  setEnded(false);
-                  const nextPanel = clamp(panelIndex, 0, slide.panels.length - 1);
-                  warmPanel(index, nextPanel);
-                  setOpenPanels((current) => ({ ...current, [index]: nextPanel }));
-                }}
-              />
+              <div className="waldo-health-frame-card overflow-hidden rounded-[24px] bg-[var(--surface-t1)]">
+                <SlideContent
+                  slide={slide}
+                  openPanel={openPanel}
+                  isActive={activeHealthIndex === index}
+                  onPanelIntent={() => undefined}
+                  onPanelInteraction={() => undefined}
+                  onPanelChange={(panelIndex) => {
+                    const nextPanel = clamp(panelIndex, 0, slide.panels.length - 1);
+                    setOpenPanels((current) => ({ ...current, [index]: nextPanel }));
+                  }}
+                />
+              </div>
             </article>
           );
         })}
-      </div>
-
-      <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <div
-          className="waldo-carousel-controls flex h-14 w-[200px] items-center justify-center gap-3 rounded-full bg-[var(--surface-t2)] px-4 sm:w-[216px] sm:gap-4"
-          style={{ animation: "waldo-carousel-control-in 740ms var(--ease-premium) both" }}
-          onFocusCapture={() => setInteractionPaused(true)}
-          onBlurCapture={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) setInteractionPaused(false);
-          }}
-        >
-          {slides.map((slide, index) => {
-            const isCurrent = active === index;
-            const isComplete = index < active || (ended && index <= active);
-            const fillWidth = isCurrent ? progress : isComplete ? 1 : 0;
-            const fillClass = isComplete && !isCurrent ? "bg-[var(--bar-fill-neutral)]" : "";
-            const fillBackground = isCurrent && !reducedMotion
-              ? "linear-gradient(90deg, var(--bar-fill-ink) 0%, var(--bar-fill-ink) calc(100% - 12px), color-mix(in srgb, var(--bar-fill-ink) 30%, transparent) 100%)"
-              : isCurrent
-              ? "var(--bar-fill-ink)"
-              : undefined;
-
-            return (
-              <button
-                key={slide.tab}
-                type="button"
-                aria-label={`Show ${slide.tab}`}
-                className="focusable-ring flex h-11 w-6 items-center justify-center rounded-full"
-                onPointerEnter={() => warmSlide(index, true)}
-                onFocus={() => warmSlide(index, true)}
-                onClick={() => goTo(index)}
-              >
-                <span
-                  className="relative block h-2 shrink-0 overflow-hidden rounded-[var(--bar-radius)] bg-[var(--bar-track)] transition-[width,background-color] duration-[250ms] ease-[var(--ease-premium)]"
-                  style={{
-                    width: isCurrent ? "var(--active-dot-width)" : "8px",
-                    boxShadow: "var(--bar-track-inset)",
-                  }}
-                >
-                  <span
-                    className={`absolute inset-y-0 left-0 rounded-[var(--bar-radius)] ${fillClass}`}
-                    style={{
-                      width: `${fillWidth * 100}%`,
-                      background: fillBackground,
-                    }}
-                  />
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          className="waldo-carousel-controls focusable-ring flex h-14 w-14 items-center justify-center rounded-full bg-[var(--surface-t2)] text-[var(--ink)] transition-[background-color] duration-150 ease-[var(--ease-premium)] hover:bg-[var(--surface-t1)]"
-          style={{ animation: "waldo-carousel-control-in 940ms var(--ease-premium) both" }}
-          aria-label={ended ? "Replay carousel" : playing ? "Pause carousel" : "Play carousel"}
-          onClick={() => {
-            if (ended) {
-              scrollToSlide(0, false);
-              setPlaying(true);
-              return;
-            }
-            setPlaying((current) => !current);
-          }}
-        >
-          <PlayPauseIcon playing={playing && !reducedMotion} ended={ended} />
-        </button>
       </div>
     </section>
   );
