@@ -69,11 +69,16 @@ test("FAQ accordion uses restrained disclosure motion with reduced-motion fallba
   assert.match(section, /waldo-faq-content-inner/);
   assert.doesNotMatch(section, /transition-all/);
 
-  assert.match(globals, /\.waldo-faq-content\s*\{[^}]*grid-template-rows:\s*0fr/s);
-  assert.match(globals, /\.waldo-faq-content\s*\{[^}]*transition:\s*[\s\S]*grid-template-rows 280ms/s);
-  assert.match(globals, /\.waldo-faq-content\[data-state="open"\]\s*\{[^}]*grid-template-rows:\s*1fr/s);
-  assert.match(globals, /\.waldo-faq-content-inner\s*\{[^}]*transform:\s*translate3d\(0,\s*-6px,\s*0\)/s);
-  assert.match(globals, /prefers-reduced-motion:\s*reduce[\s\S]*\.waldo-faq-content[\s\S]*transition:\s*none !important/s);
+  assert.match(globals, /\.waldo-faq-content\s*\{[^}]*height:\s*0/s);
+  assert.match(globals, /\.waldo-faq-content\[data-state="open"\]\s*\{[^}]*animation:\s*waldo-faq-open 560ms/s);
+  assert.match(globals, /\.waldo-faq-content\[data-state="closed"\]\s*\{[^}]*animation:\s*waldo-faq-close 360ms/s);
+  assert.match(globals, /@keyframes\s+waldo-faq-open[\s\S]*height:\s*var\(--radix-accordion-content-height\)/);
+  assert.match(globals, /\.waldo-faq-content-inner\s*\{[^}]*opacity:\s*0/s);
+  assert.match(globals, /\.waldo-faq-content-inner\s*\{[^}]*filter:\s*blur\(4px\)/s);
+  assert.match(globals, /\.waldo-faq-content-inner\s*\{[^}]*transform:\s*translate3d\(0,\s*-10px,\s*0\)/s);
+  assert.match(globals, /\.waldo-faq-content\[data-state="open"\]\s+\.waldo-faq-content-inner\s*\{[^}]*animation:\s*waldo-faq-answer-in 560ms/s);
+  assert.match(globals, /@keyframes\s+waldo-faq-answer-in[\s\S]*opacity:\s*0[\s\S]*opacity:\s*1/);
+  assert.match(globals, /prefers-reduced-motion:\s*reduce[\s\S]*\.waldo-faq-content[\s\S]*animation:\s*none !important/s);
 });
 
 test("Mottle replaces Corben as the headline font", () => {
