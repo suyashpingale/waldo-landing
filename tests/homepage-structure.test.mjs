@@ -786,6 +786,9 @@ test("new homepage includes the where beat and updated closing CTA copy", () => 
   assert.match(closeSection, /Get Waldo\. Free to start\. Works with the device you own\./);
   assert.match(closeSection, /And then you'll be the one they're looking out for\./);
   assert.match(closeSection, /WaldoCTA/);
+  assert.match(closeSection, /new-scene-close-actions/);
+  assert.match(closeSection, /new-scene-close-secondary-cta/);
+  assert.match(closeSection, /href="\/features"/);
   assert.match(closeSection, /Explore features/);
   assert.match(closeSection, /\["Explore features",\s*"\/features"\]/);
   assert.doesNotMatch(closeSection, /Get Started/);
@@ -798,6 +801,8 @@ test("new homepage includes the where beat and updated closing CTA copy", () => 
   assert.match(globals, /\.new-scene-close-section\s*\{[^}]*aspect-ratio:\s*1440\s*\/\s*811/s);
   assert.match(globals, /\.new-scene-close-section\s*\{[^}]*min-height:\s*clamp\(720px,\s*100svh,\s*920px\)/s);
   assert.match(globals, /\.new-scene-close-copy-zone\s*\{[^}]*min-height:\s*clamp\(330px,\s*42svh,\s*390px\)/s);
+  assert.match(globals, /\.new-scene-close-actions\s*\{[^}]*display:\s*flex/s);
+  assert.match(globals, /\.new-scene-close-secondary-cta\s*\{[^}]*border-radius:\s*999px/s);
   assert.match(globals, /\.new-scene-close-copy-zone\s*\{[^}]*padding-top:\s*clamp\(64px,\s*10svh,\s*128px\)/s);
   assert.match(globals, /\.new-scene-close-art\s*\{[^}]*height:\s*100%/s);
   assert.match(globals, /\.new-scene-close-art\s+img\s*\{[^}]*height:\s*100%/s);
