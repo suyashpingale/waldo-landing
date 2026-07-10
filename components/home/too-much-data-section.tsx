@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { PointerEvent } from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type AssetCard = {
   type: "asset";
@@ -18,49 +18,49 @@ type AssetPair = {
 
 type DataCard = AssetCard | AssetPair;
 
-const healthAsset = (name: string, width: number, height: number): AssetCard => ({
+const dataBentoAsset = (name: string, width: number, height: number): AssetCard => ({
   type: "asset",
-  src: `/assets/home/health-infographic/${name}.webp`,
+  src: `/assets/home/data-bento/${name}.png`,
   width,
   height,
 });
 
 const leftColumn: DataCard[] = [
-  healthAsset("slack-q1-prep", 307, 165),
-  healthAsset("imessage-binge", 307, 165),
-  healthAsset("nutrition-details", 345, 260),
-  healthAsset("net-energy", 345, 197),
+  dataBentoAsset("slack-q1-prep", 522, 230),
+  dataBentoAsset("imessage-binge", 522, 184),
+  dataBentoAsset("nutrition-details", 522, 342),
+  dataBentoAsset("net-energy", 522, 216),
   {
     type: "pair",
-    cards: [healthAsset("micronutrients-left", 216, 291), healthAsset("micronutrients-right", 214, 291)],
+    cards: [dataBentoAsset("micronutrients-left", 264, 404), dataBentoAsset("micronutrients-right", 250, 404)],
   },
 ];
 
 const middleColumn: DataCard[] = [
-  healthAsset("gmail-newsletter", 307, 165),
-  healthAsset("slack-sales-short", 307, 156),
-  healthAsset("time-asleep", 318, 160),
+  dataBentoAsset("gmail-q1-review", 458, 162),
+  dataBentoAsset("calendar-strategy", 458, 252),
+  dataBentoAsset("time-asleep", 458, 141),
   {
     type: "pair",
-    cards: [healthAsset("sleep-mini", 198, 198), healthAsset("vitals-mini", 204, 198)],
+    cards: [dataBentoAsset("sleep-mini", 218, 217), dataBentoAsset("vitals-mini", 230, 217)],
   },
-  healthAsset("sleep-score", 319, 231),
-  healthAsset("hours-vs-need", 318, 246),
+  dataBentoAsset("sleep-score", 459, 283),
+  dataBentoAsset("hours-vs-need", 458, 314),
 ];
 
 const rightColumn: DataCard[] = [
-  healthAsset("calendar-strategy", 307, 193),
-  healthAsset("gmail-q1-review", 307, 156),
-  healthAsset("zone-5", 324, 128),
-  healthAsset("zone-4", 324, 128),
-  healthAsset("zone-3", 324, 128),
-  healthAsset("zone-2", 324, 128),
-  healthAsset("zone-1", 324, 128),
+  dataBentoAsset("gmail-newsletter", 470, 252),
+  dataBentoAsset("slack-sales-short", 470, 160),
+  dataBentoAsset("zone-5", 470, 78),
+  dataBentoAsset("zone-4", 470, 78),
+  dataBentoAsset("zone-3", 470, 78),
+  dataBentoAsset("zone-2", 470, 78),
+  dataBentoAsset("zone-1", 470, 78),
   {
     type: "pair",
-    cards: [healthAsset("stress-monitor", 183, 187), healthAsset("recovery", 225, 186)],
+    cards: [dataBentoAsset("stress-monitor", 188, 195), dataBentoAsset("recovery", 272, 194)],
   },
-  healthAsset("stress-heart-rate", 324, 258),
+  dataBentoAsset("stress-heart-rate", 470, 338),
 ];
 
 const wearableDevices = [
@@ -93,7 +93,10 @@ function AssetCardView({ card }: { card: AssetCard }) {
 
 function AssetPairView({ pair }: { pair: AssetPair }) {
   return (
-    <div className="new-data-asset-pair">
+    <div
+      className="new-data-asset-pair"
+      style={{ gridTemplateColumns: `${pair.cards[0].width}fr ${pair.cards[1].width}fr` }}
+    >
       {pair.cards.map((card) => (
         <AssetCardView key={card.src} card={card} />
       ))}
@@ -126,6 +129,7 @@ function DataColumn({ cards, direction }: { cards: DataCard[]; direction: "up" |
 }
 
 export function TooMuchDataSection() {
+  const [isBubbleVisible, setIsBubbleVisible] = useState(false);
   const waldoRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const pointerRef = useRef({ x: 0, y: 0 });
@@ -168,6 +172,14 @@ export function TooMuchDataSection() {
     }
   }, []);
 
+  const showBubble = useCallback(() => {
+    setIsBubbleVisible(true);
+  }, []);
+
+  const hideBubble = useCallback(() => {
+    setIsBubbleVisible(false);
+  }, []);
+
   useEffect(() => resetPointer, [resetPointer]);
 
   return (
@@ -186,9 +198,26 @@ export function TooMuchDataSection() {
           <DataColumn cards={middleColumn} direction="down" />
           <DataColumn cards={rightColumn} direction="up" />
         </div>
-        <div ref={waldoRef} className="new-too-much-data-waldo">
-          <Image src="/assets/home/mascots/rough-dark-mode.svg" alt="" width={198} height={127} draggable={false} />
-          <p>oof, thats a lot of data</p>
+        <div
+          ref={waldoRef}
+          className="new-too-much-data-waldo"
+          data-bubble-visible={isBubbleVisible ? "true" : "false"}
+        >
+          <span
+            className="new-too-much-data-waldo-illustration"
+            onPointerEnter={showBubble}
+            onPointerLeave={hideBubble}
+          >
+            <Image
+              src="/assets/home/mascots/waldo-facepalm.svg"
+              alt=""
+              width={114}
+              height={97}
+              className="waldo-mascot-consistent"
+              draggable={false}
+            />
+          </span>
+          <p data-visible={isBubbleVisible ? "true" : "false"}>oof, thats a lot of data</p>
         </div>
       </div>
       <div className="new-too-much-data-story">

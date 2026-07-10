@@ -25,8 +25,8 @@ type Bloom = {
 };
 
 const BLOOM_LIFETIME_MS = 700;
-const SIZE_MIN = 56;
-const SIZE_MAX = 88;
+const SIZE_MIN = 39;
+const SIZE_MAX = 62;
 
 // Skip clicks on interactive elements
 const INTERACTIVE_SELECTOR = "a, button, input, textarea, select, label, [role='button'], [role='link'], [data-no-bloom]";

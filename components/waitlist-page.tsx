@@ -228,6 +228,7 @@ function WaldoDisplay({ period, config }: { period: TimePeriod; config: typeof T
         alt="Waldo"
         width={150}
         height={150}
+        className="waldo-mascot-consistent"
         style={{
           filter:    config.waldoFilter,
           opacity:   isNight ? 0.72 : 0.85,
@@ -317,6 +318,8 @@ function TimeScreen({ period, onDismiss }: { period: TimePeriod; onDismiss: () =
           style={{
             fontFamily: "var(--font-headline)",
             fontSize:   "clamp(2.5rem, 7vw, 5rem)",
+            fontWeight: "var(--mottle-display-weight)",
+            letterSpacing: "0px",
             animation:  "float-up 0.60s 0.65s ease-out both",
           }}
         >
@@ -417,7 +420,7 @@ export function WaitlistPage() {
 
           <h1
             className="text-[2.5rem] leading-[1.1] font-bold"
-            style={{ fontFamily: "var(--font-headline)" }}
+            style={{ fontFamily: "var(--font-headline)", fontWeight: "var(--mottle-display-weight)", letterSpacing: "0px" }}
           >
             {copy.headline}
           </h1>

@@ -15,7 +15,7 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 
 function HomeChrome({ children }: { children: React.ReactNode }) {
   return (
-    <div className="new-home min-h-screen bg-[var(--surface-t2)] text-[var(--ink)]">
+    <div className="new-home min-h-screen bg-[var(--surface-t3)] text-[var(--ink)]">
       <SmoothScroll />
       <ScrollAnimations />
       <NewHomeNav />

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { ConnectorChip } from "@/components/connectors/connector-chip";
 import { connectors, type Connector } from "@/components/connectors/connector-data";
@@ -73,23 +73,15 @@ const autonomyLevels: AutonomyLevel[] = [
   },
 ];
 
-const accountConnectors = [
-  { id: "gmail", initials: "SP", label: "sp@waldo.in" },
-  { id: "gmail", initials: "S", label: "suyash@gmail.com" },
-  { id: "github", initials: "D", label: "deployment" },
-];
-
-const mapConnectors = ["gmail", "google-calendar", "apple-health", "google-health-connect"];
-
 export function DataAloneSection() {
   const [activeLevel, setActiveLevel] = useState<AutonomyKey>("inform");
   const activeAutonomyLevel = autonomyLevels.find((level) => level.key === activeLevel) ?? autonomyLevels[0];
 
   return (
-    <section className="new-data-alone-section new-home-section new-home-wide" aria-labelledby="data-alone-title">
+    <section className="new-data-alone-section new-home-section" aria-labelledby="data-alone-title">
       <div className="new-data-alone-copy new-home-copy-stack new-home-center" data-animate="blur-fade">
         <Image
-          className="new-data-alone-waldo"
+          className="new-data-alone-waldo new-section-mascot waldo-mascot-consistent"
           src="/assets/home/mascots/good-week-dark-mode.svg"
           alt=""
           width={198}
@@ -98,121 +90,34 @@ export function DataAloneSection() {
         <h2 id="data-alone-title" className="type-h2">
           The data? Yours alone.
         </h2>
-        <p className="type-body tone-secondary">
-          <strong>Your health data stays in your hands.</strong> We do not sell data. We do not share with advertisers. The wheel is always in your hands.
+        <p
+          aria-label="Your health data stays in your hands. We do not sell data. We do not share with advertisers. The wheel is always in your hands."
+          className="type-body tone-secondary"
+        >
+          <strong>Your health data stays in your hands.</strong> We do not sell <span className="new-reference-accent">data.</span> We do
+          <br className="new-reference-break" />{" "}
+          not share with advertisers. The wheel is always in your hands.
         </p>
       </div>
 
       <div className="new-data-alone-stage" data-animate="blur-fade">
-        <svg className="new-data-alone-line-svg" viewBox="0 0 1080 548" fill="none" aria-hidden="true">
-          <defs>
-            <clipPath id="new-data-alone-map-clip">
-              <circle cx="244" cy="244" r="242" />
-            </clipPath>
-          </defs>
+        <svg className="new-data-alone-line-svg" viewBox="0 0 952 548" fill="none" aria-hidden="true">
           <path
             className="new-data-alone-line new-data-alone-line-handoff"
             data-flow-line
-            d="M486 266 H558 C582 266 594 282 594 306 V356 C594 382 610 398 636 398 H666"
+            d="M487 238 H527"
           />
-          <g clipPath="url(#new-data-alone-map-clip)">
-            <path
-              className="new-data-alone-line new-data-alone-line-map"
-              data-flow-line
-              d="M204 128 H398 C445 128 468 152 468 198 V270 C468 316 444 340 398 340 H306 C278 340 262 356 262 386 V420"
-            />
-            <path
-              className="new-data-alone-line new-data-alone-line-map"
-              data-flow-line
-              d="M146 190 C174 218 206 220 252 220 H386 C426 220 446 240 446 280 V304 C446 332 426 348 388 348 H286"
-            />
-            <path
-              className="new-data-alone-line new-data-alone-line-map"
-              data-flow-line
-              d="M172 282 V322 C172 360 194 382 236 382 H334 C374 382 396 402 396 438"
-            />
-            <path
-              className="new-data-alone-line new-data-alone-line-map"
-              data-flow-line
-              d="M356 282 V322 C356 360 378 382 424 382 H466"
-            />
-            <circle className="new-data-alone-line-node" cx="204" cy="128" r="4.5" />
-            <circle className="new-data-alone-line-node" cx="146" cy="190" r="4.5" />
-            <circle className="new-data-alone-line-node" cx="262" cy="420" r="4.5" />
-            <circle className="new-data-alone-line-node" cx="396" cy="438" r="4.5" />
-          </g>
         </svg>
 
         <div className="new-data-alone-map" aria-label="The part only Waldo needs to worry about">
-          <div className="new-data-alone-map-inner">
-            <div className="new-data-alone-account-row" aria-hidden="true">
-              {accountConnectors.map((account, index) => (
-                <span className="new-data-alone-account-chip" key={`${account.label}-${index}`}>
-                  <span className="new-data-alone-avatar">{account.initials}</span>
-                  <span>{account.label}</span>
-                  <ConnectorChip connector={getConnector(account.id)} label={false} />
-                </span>
-              ))}
-            </div>
-
-            <div className="new-data-alone-chart-row">
-              <Image
-                className="new-data-alone-chart"
-                src="/assets/home/data-alone/readiness-chart.svg"
-                alt=""
-                width={260}
-                height={86}
-              />
-              <Image
-                className="new-data-alone-chart"
-                src="/assets/home/data-alone/load-chart.svg"
-                alt=""
-                width={260}
-                height={86}
-              />
-            </div>
-
-            <div className="new-data-alone-signal-row">
-              <span className="new-data-alone-signal-chip">
-                <span>HRV</span>
-                <em>-18ms</em>
-              </span>
-              <span className="new-data-alone-signal-chip">
-                <ConnectorChip connector={getConnector("gmail")} label={false} />
-                <span>GMail</span>
-                <em>+52 Mails</em>
-              </span>
-              <span className="new-data-alone-signal-chip">
-                <ConnectorChip connector={getConnector("google-calendar")} label={false} />
-                <span>Calendar</span>
-                <em>+6 Meets</em>
-              </span>
-            </div>
-
-            <div className="new-data-alone-score-row">
-              <span className="new-data-alone-score-chip">
-                <span>Form</span>
-                <em>up</em>
-              </span>
-              <span className="new-data-alone-score-chip">
-                <span>Weight</span>
-                <em>up</em>
-              </span>
-            </div>
-
-            <p>The part only Waldo needs to worry about.</p>
-          </div>
-
-          <div className="new-data-alone-map-connectors" aria-hidden="true">
-            {mapConnectors.map((id, index) => (
-              <ConnectorChip
-                className="new-data-alone-map-chip"
-                connector={getConnector(id)}
-                key={id}
-                label={false}
-                style={{ "--map-chip-index": index } as CSSProperties}
-              />
-            ))}
+          <div className="new-data-alone-map-inner" aria-hidden="true">
+            <Image
+              alt=""
+              className="new-data-alone-map-image"
+              height={461}
+              src="/assets/home/data-alone/data-alone-left-cluster.svg"
+              width={461}
+            />
           </div>
         </div>
 

@@ -127,7 +127,13 @@ function FanStackCard({ card, size }: { card: FanCard; size: "small" | "medium" 
       }}
     >
       <div>
-        <Image src={card.icon} alt="" width={card.iconW} height={card.iconH} className="h-auto max-h-20 w-auto" />
+        <Image
+          src={card.icon}
+          alt=""
+          width={card.iconW}
+          height={card.iconH}
+          className="waldo-mascot-consistent h-auto max-h-20 w-auto"
+        />
         <h3 className={front ? "mt-10 text-[36px] leading-[1.2] text-[var(--ink)]" : medium ? "mt-9 text-[32px] leading-[1.2] text-[var(--ink)]" : "mt-8 text-[29px] leading-[1.2] text-[var(--ink)]"}>
           {card.title}
         </h3>

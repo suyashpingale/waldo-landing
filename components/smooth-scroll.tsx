@@ -24,6 +24,16 @@ export function SmoothScroll() {
     let lenis: import("lenis").default | null = null;
     let tick: ((time: number) => void) | null = null;
     let cancelled = false;
+    const syncScrollPosition = () => {
+      if (!lenis) return;
+
+      const currentScroll = window.scrollY;
+      lenis.resize();
+      lenis.scrollTo(currentScroll, { immediate: true, force: true });
+      ScrollTrigger.update();
+    };
+
+    window.addEventListener("waldo:sync-scroll", syncScrollPosition);
 
     // Lenis is loaded lazily so reduced-motion sessions never download it.
     import("lenis").then(({ default: Lenis }) => {
@@ -49,6 +59,7 @@ export function SmoothScroll() {
 
     return () => {
       cancelled = true;
+      window.removeEventListener("waldo:sync-scroll", syncScrollPosition);
       if (tick) gsap.ticker.remove(tick);
       gsap.ticker.lagSmoothing(500, 33);
       lenis?.destroy();

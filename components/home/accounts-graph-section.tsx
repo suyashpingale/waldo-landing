@@ -218,11 +218,7 @@ function ServiceBadge({ pill }: { pill: AccountPill }) {
 function AccountAvatar({ pill }: { pill: AccountPill }) {
   return (
     <span className="new-accounts-avatar" style={{ "--avatar-color": pill.avatarColor } as CSSProperties}>
-      {pill.id === "contact-waldo" ? (
-        <Image src="/assets/home/mascots/Vector.svg" alt="" width={34} height={26} />
-      ) : (
-        pill.avatar
-      )}
+      {pill.id === "contact-waldo" ? "W" : pill.avatar}
     </span>
   );
 }

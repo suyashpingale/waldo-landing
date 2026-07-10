@@ -64,7 +64,7 @@ export function FooterSection() {
             alt="Waldo resting"
             width={199}
             height={145}
-            className="waldo-breathe mb-8 h-auto w-[180px] sm:w-[220px]"
+            className="waldo-mascot-consistent waldo-breathe mb-8 h-auto w-[180px] sm:w-[220px]"
           />
 
           <div

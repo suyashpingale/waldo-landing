@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import {
+  useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -14,127 +16,69 @@ import {
 type HandledCardTone = "blue" | "green" | "purple" | "yellow" | "red";
 
 type DeckPosition = {
-  x: string;
-  y: string;
-  rotate: string;
-  z: number;
+  offsetX: number;
+  offsetY: number;
+  rotation: number;
 };
+
+type DeckTransitionDirection = "desktop-to-mobile" | "mobile-to-desktop";
 
 type HandledCard = {
   title: string;
   body: string;
   tone: HandledCardTone;
-  graphic: "day" | "write" | "clinical" | "shift" | "progress";
   fan: DeckPosition;
   dock: DeckPosition;
 };
 
 const handledCards: HandledCard[] = [
   {
-    title: "Plans your day. In detail.",
-    body: "Overnight, Waldo reads how you actually slept and builds the day around it. The hard meeting slides off your worst hour. The workout lands when your body can take it. Not a tip on your lock screen - a day that's already arranged by the time you're up.",
+    title: "Plans your\nday. In detail.",
+    body: "Reads your night, then rebuilds\nthe day around it. Hard meeting\nmoves. Done before you're up.",
     tone: "blue",
-    graphic: "day",
-    fan: { x: "clamp(-420px, -31vw, -178px)", y: "clamp(20px, 4vw, 56px)", rotate: "-8deg", z: 1 },
-    dock: { x: "clamp(-220px, -15vw, -96px)", y: "clamp(132px, 17vw, 198px)", rotate: "-4deg", z: 1 },
+    fan: { offsetX: -306, offsetY: -10, rotation: -8 },
+    dock: { offsetX: 49, offsetY: 48, rotation: -4 },
   },
   {
-    title: "Writes what you’d rather not.",
-    body: "The reschedule note. The follow-up you've put off. The reply that's been sitting there since Tuesday. Waldo writes it in your voice and either sends it or waits for your nod. Either way, you're not the one drafting the same polite message for the 10th time.",
+    title: "Writes what\nyou’d rather not.",
+    body: "The follow-up you've dodged since Tuesday, written in your voice. Sent, or waiting for your nod.",
     tone: "green",
-    graphic: "write",
-    fan: { x: "clamp(-238px, -18vw, -82px)", y: "clamp(54px, 7vw, 92px)", rotate: "4deg", z: 2 },
-    dock: { x: "clamp(-112px, -7.5vw, -46px)", y: "clamp(140px, 17.8vw, 206px)", rotate: "-2deg", z: 2 },
+    fan: { offsetX: -151, offsetY: 20, rotation: 4 },
+    dock: { offsetX: 31, offsetY: 49, rotation: -2 },
   },
   {
-    title: "Reads you like a clinician.",
-    body: "You don't have an hour every night to sit with your own numbers. Waldo does. It goes through your health the way a careful clinician would, and pulls out the thing buried three weeks back that you were never going to catch on your own.",
+    title: "Reads you\nlike a clinician.",
+    body: "Goes through your numbers the way a careful clinician would - and finds what you'd never catch alone.",
     tone: "purple",
-    graphic: "clinical",
-    fan: { x: "clamp(-48px, -3.5vw, -10px)", y: "clamp(-28px, -3vw, -8px)", rotate: "-2deg", z: 3 },
-    dock: { x: "0px", y: "clamp(145px, 18vw, 212px)", rotate: "0deg", z: 3 },
+    fan: { offsetX: 0, offsetY: -41, rotation: -2 },
+    dock: { offsetX: 0, offsetY: 51, rotation: 0 },
   },
   {
-    title: "Catches what’s shifting.",
-    body: "One rough day is just a rough day. Waldo watches the wider window - the weeks where things quietly drift - and flags what's moving before you feel it as a problem. The trend caught early, while it's still easy to change.",
+    title: "Catches\nwhat’s shifting.",
+    body: "Watches the weeks where things\nquietly drift, then flags it\nwhile it's still easy to fix.",
     tone: "yellow",
-    graphic: "shift",
-    fan: { x: "clamp(138px, 12vw, 205px)", y: "clamp(52px, 6vw, 84px)", rotate: "-7deg", z: 4 },
-    dock: { x: "clamp(104px, 7.5vw, 112px)", y: "clamp(140px, 17.8vw, 206px)", rotate: "2deg", z: 4 },
+    fan: { offsetX: 147, offsetY: 16, rotation: 1 },
+    dock: { offsetX: -10, offsetY: 53, rotation: 2 },
   },
   {
-    title: "Shows how far you’ve come.",
-    body: "Day, month, year. Your body and your work, side by side. Waldo keeps the honest record of what you actually did, so progress stops being a thing you second-guess and becomes something you can see.",
+    title: "Shows how\nfar you’ve come.",
+    body: "Keeps the honest record ; days,\nmonths, years, so progress\nstops being a guess.",
     tone: "red",
-    graphic: "progress",
-    fan: { x: "clamp(260px, 25vw, 392px)", y: "clamp(20px, 4vw, 58px)", rotate: "1deg", z: 5 },
-    dock: { x: "clamp(204px, 15vw, 220px)", y: "clamp(132px, 17vw, 198px)", rotate: "3deg", z: 5 },
+    fan: { offsetX: 310, offsetY: -19, rotation: 5 },
+    dock: { offsetX: -33, offsetY: 57, rotation: 3 },
   },
 ];
 
 const MOBILE_SHUFFLE_SETTLE_MS = 220;
-
-function renderHandledGraphic(graphic: HandledCard["graphic"]) {
-  if (graphic === "day") {
-    return (
-      <svg viewBox="0 0 240 148" aria-hidden="true">
-        <path d="M38 101c21-36 36-54 56-54 26 0 31 26 57 26 20 0 32-15 51-39" />
-        <path d="M45 42h44M45 64h26M158 108h41" />
-        <rect x="26" y="22" width="70" height="86" rx="18" />
-        <rect x="146" y="26" width="68" height="88" rx="18" />
-        <circle cx="108" cy="73" r="9" />
-        <circle cx="134" cy="73" r="9" />
-      </svg>
-    );
-  }
-
-  if (graphic === "write") {
-    return (
-      <svg viewBox="0 0 240 148" aria-hidden="true">
-        <path d="M38 40h116M38 64h82M38 88h102" />
-        <path d="M151 103l39-39c7-7 18-7 25 0s7 18 0 25l-39 39-32 7 7-32Z" />
-        <path d="M181 73l25 25" />
-        <rect x="24" y="20" width="132" height="104" rx="20" />
-      </svg>
-    );
-  }
-
-  if (graphic === "clinical") {
-    return (
-      <svg viewBox="0 0 240 148" aria-hidden="true">
-        <path d="M28 92h38l18-42 32 75 22-52 17 19h57" />
-        <circle cx="184" cy="48" r="26" />
-        <path d="M184 34v28M170 48h28" />
-        <path d="M42 36c18-15 43-18 65-9M36 119c21 12 49 13 73 2" />
-      </svg>
-    );
-  }
-
-  if (graphic === "shift") {
-    return (
-      <svg viewBox="0 0 240 148" aria-hidden="true">
-        <path d="M33 104c28-24 46-29 70-21 34 12 48-6 75-43" />
-        <circle cx="34" cy="104" r="9" />
-        <circle cx="91" cy="82" r="9" />
-        <circle cx="142" cy="85" r="9" />
-        <circle cx="180" cy="39" r="9" />
-        <path d="M188 38h26v26" />
-        <path d="M33 124h174" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 240 148" aria-hidden="true">
-      <circle cx="70" cy="76" r="42" />
-      <path d="M70 34a42 42 0 0 1 42 42" />
-      <circle cx="166" cy="76" r="34" />
-      <path d="M166 42a34 34 0 0 1 31 48" />
-      <path d="M44 124h155M44 124V35" />
-      <path d="M64 111V91M95 111V70M126 111V84M157 111V54M188 111V42" />
-    </svg>
-  );
-}
+const RESIZE_SETTLE_MS = 160;
+const DECK_BREAKPOINT_EXIT_MS = 320;
+const DECK_BREAKPOINT_ENTER_MS = 760;
+const DESKTOP_CARD_WIDTH = 228;
+const DESKTOP_CARD_HEIGHT = 288;
+const DESKTOP_SELECTED_WIDTH = 312;
+const DESKTOP_SELECTED_HEIGHT = 384;
+const DESKTOP_DOCK_CENTER_Y = 184;
+const DESKTOP_DOCK_SPACING = 70;
 
 function getCardState(selectedIndex: number | null, index: number) {
   if (selectedIndex === null) {
@@ -178,18 +122,79 @@ function getSwipeExitDistance(cardWidth: number, direction: number) {
   return direction * Math.max(260, Math.round(cardWidth * 1.08));
 }
 
-function cardStyle(card: HandledCard, stackSlot: number, dragX: number): CSSProperties {
-  const frontDragX = stackSlot === 0 ? dragX : 0;
+function getOffsetMultiplier(viewportWidth: number) {
+  const progress = (Math.max(400, Math.min(1080, viewportWidth)) - 400) / 680;
+
+  return 0.4 + 0.6 * progress;
+}
+
+function getClusterScale(viewportWidth: number) {
+  const progress = (Math.max(400, Math.min(1080, viewportWidth)) - 400) / 680;
+
+  return 0.8 + 0.2 * progress;
+}
+
+function getDesktopCardPosition(
+  card: HandledCard,
+  index: number,
+  selectedIndex: number | null,
+  viewportWidth: number,
+) {
+  if (selectedIndex === index) {
+    return {
+      x: 0,
+      y: -40,
+      rotation: 0,
+      scale: 1,
+      z: index + 1,
+    };
+  }
+
+  if (selectedIndex === null) {
+    const offsetMultiplier = getOffsetMultiplier(viewportWidth);
+
+    return {
+      x: card.fan.offsetX * offsetMultiplier,
+      y: card.fan.offsetY,
+      rotation: card.fan.rotation,
+      scale: 1,
+      z: index + 1,
+    };
+  }
+
+  const dockWidth = (handledCards.length - 1) * DESKTOP_DOCK_SPACING;
 
   return {
-    "--fan-x": card.fan.x,
-    "--fan-y": card.fan.y,
-    "--fan-rotate": card.fan.rotate,
-    "--fan-z": card.fan.z,
-    "--dock-x": card.dock.x,
-    "--dock-y": card.dock.y,
-    "--dock-rotate": card.dock.rotate,
-    "--dock-z": card.dock.z,
+    x: index * DESKTOP_DOCK_SPACING - dockWidth / 2 + card.dock.offsetX,
+    y: DESKTOP_DOCK_CENTER_Y + card.dock.offsetY,
+    rotation: card.dock.rotation,
+    scale: 0.7,
+    z: index + 1,
+  };
+}
+
+function cardStyle(
+  card: HandledCard,
+  index: number,
+  selectedIndex: number | null,
+  stackSlot: number,
+  dragX: number,
+  viewportWidth: number,
+): CSSProperties {
+  const frontDragX = stackSlot === 0 ? dragX : 0;
+  const desktopPosition = getDesktopCardPosition(card, index, selectedIndex, viewportWidth);
+  const isSelected = selectedIndex === index;
+  const targetWidth = isSelected ? DESKTOP_SELECTED_WIDTH : DESKTOP_CARD_WIDTH;
+  const targetHeight = isSelected ? DESKTOP_SELECTED_HEIGHT : DESKTOP_CARD_HEIGHT;
+
+  return {
+    "--handled-card-x": `${desktopPosition.x}px`,
+    "--handled-card-y": `${desktopPosition.y}px`,
+    "--handled-card-left": `${desktopPosition.x - targetWidth / 2}px`,
+    "--handled-card-top": `${desktopPosition.y - targetHeight / 2}px`,
+    "--handled-card-rotate": `${desktopPosition.rotation}deg`,
+    "--handled-card-scale": desktopPosition.scale,
+    "--handled-card-z": desktopPosition.z,
     "--stack-drag-x": `${frontDragX}px`,
     "--stack-drag-rotate": `${frontDragX * 0.045}deg`,
   } as CSSProperties;
@@ -198,10 +203,26 @@ function cardStyle(card: HandledCard, stackSlot: number, dragX: number): CSSProp
 export function HandledCardsSection() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [deckOrder, setDeckOrder] = useState<number[]>(() => handledCards.map((_, index) => index));
+  const [viewportWidth, setViewportWidth] = useState(1080);
+  const [isMobileDeck, setIsMobileDeck] = useState(false);
+  const [renderedMobileDeck, setRenderedMobileDeck] = useState(false);
+  const [deckTransitionPhase, setDeckTransitionPhase] = useState<"entered" | "leaving">("entered");
+  const [deckTransitionDirection, setDeckTransitionDirection] = useState<DeckTransitionDirection | null>(null);
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
+  const stageRef = useRef<HTMLDivElement | null>(null);
   const shuffleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deckTransitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deckTransitionEnterTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollStabilizeFrameRef = useRef<number | null>(null);
+  const viewportWatchFrameRef = useRef<number | null>(null);
+  const resizePreserveReleaseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isPreservingResizeFocusRef = useRef(false);
+  const lastStageCenterRef = useRef<number | null>(null);
+  const viewportSnapshotRef = useRef({ width: 0, isMobile: false });
+  const renderedMobileDeckRef = useRef(false);
   const dragRef = useRef({
     active: false,
     pointerId: null as number | null,
@@ -210,13 +231,230 @@ export function HandledCardsSection() {
     moved: false,
   });
 
-  useEffect(() => {
+  const getStageViewportCenter = useCallback((options: { visibleOnly?: boolean } = {}) => {
+    if (typeof window === "undefined" || !stageRef.current) {
+      return null;
+    }
+
+    const rect = stageRef.current.getBoundingClientRect();
+
+    if (options.visibleOnly && (rect.bottom <= 0 || rect.top >= window.innerHeight)) {
+      return null;
+    }
+
+    return rect.top + rect.height / 2;
+  }, []);
+
+  const rememberStageViewportCenter = useCallback(() => {
+    if (isPreservingResizeFocusRef.current) {
+      return;
+    }
+
+    const stageCenter = getStageViewportCenter({ visibleOnly: true });
+
+    if (stageCenter !== null) {
+      lastStageCenterRef.current = stageCenter;
+    }
+  }, [getStageViewportCenter]);
+
+  const stabilizeStageViewportCenter = useCallback((targetCenter = lastStageCenterRef.current) => {
+    if (typeof window === "undefined" || targetCenter === null) {
+      return;
+    }
+
+    if (scrollStabilizeFrameRef.current) {
+      cancelAnimationFrame(scrollStabilizeFrameRef.current);
+    }
+
+    scrollStabilizeFrameRef.current = requestAnimationFrame(() => {
+      const currentCenter = getStageViewportCenter();
+
+      if (currentCenter !== null) {
+        const deltaY = currentCenter - targetCenter;
+
+        if (Math.abs(deltaY) > 1) {
+          window.scrollBy({ top: deltaY, left: 0 });
+        }
+
+        lastStageCenterRef.current = targetCenter;
+      }
+
+      scrollStabilizeFrameRef.current = null;
+    });
+  }, [getStageViewportCenter]);
+
+  useLayoutEffect(() => {
+    const breakpointQuery = window.matchMedia("(max-width: 734px)");
+    let layoutResizeObserver: ResizeObserver | null = null;
+
+    const readViewportSnapshot = () => ({
+      width: window.innerWidth,
+      isMobile: breakpointQuery.matches,
+    });
+
+    const updateViewportState = (options: { forceGeometry?: boolean } = {}) => {
+      const nextViewport = readViewportSnapshot();
+      const isCrossingRenderedMode = nextViewport.isMobile !== renderedMobileDeckRef.current;
+
+      viewportSnapshotRef.current = nextViewport;
+      setIsMobileDeck(nextViewport.isMobile);
+
+      if (options.forceGeometry || !isCrossingRenderedMode) {
+        setViewportWidth(nextViewport.width);
+      }
+    };
+
+    const handleResize = () => {
+      const targetCenter = lastStageCenterRef.current ?? getStageViewportCenter({ visibleOnly: true });
+
+      isPreservingResizeFocusRef.current = true;
+
+      if (resizeTimerRef.current) {
+        clearTimeout(resizeTimerRef.current);
+      }
+
+      if (resizePreserveReleaseTimerRef.current) {
+        clearTimeout(resizePreserveReleaseTimerRef.current);
+      }
+
+      stabilizeStageViewportCenter(targetCenter);
+      updateViewportState();
+
+      resizeTimerRef.current = setTimeout(() => {
+        updateViewportState();
+        stabilizeStageViewportCenter(targetCenter);
+        resizePreserveReleaseTimerRef.current = setTimeout(() => {
+          isPreservingResizeFocusRef.current = false;
+          rememberStageViewportCenter();
+          resizePreserveReleaseTimerRef.current = null;
+        }, DECK_BREAKPOINT_EXIT_MS + DECK_BREAKPOINT_ENTER_MS);
+        resizeTimerRef.current = null;
+      }, RESIZE_SETTLE_MS);
+    };
+
+    const watchViewport = () => {
+      const nextViewport = readViewportSnapshot();
+      const previousViewport = viewportSnapshotRef.current;
+
+      if (nextViewport.width !== previousViewport.width || nextViewport.isMobile !== previousViewport.isMobile) {
+        handleResize();
+      }
+
+      viewportWatchFrameRef.current = requestAnimationFrame(watchViewport);
+    };
+
+    const initialViewport = readViewportSnapshot();
+
+    viewportSnapshotRef.current = initialViewport;
+    renderedMobileDeckRef.current = initialViewport.isMobile;
+    setViewportWidth(initialViewport.width);
+    setIsMobileDeck(initialViewport.isMobile);
+    setRenderedMobileDeck(initialViewport.isMobile);
+    rememberStageViewportCenter();
+    viewportWatchFrameRef.current = requestAnimationFrame(watchViewport);
+    window.addEventListener("scroll", rememberStageViewportCenter, { passive: true });
+    window.addEventListener("resize", handleResize);
+    window.visualViewport?.addEventListener("resize", handleResize);
+    breakpointQuery.addEventListener("change", handleResize);
+    if (typeof ResizeObserver !== "undefined") {
+      layoutResizeObserver = new ResizeObserver(handleResize);
+      layoutResizeObserver.observe(document.documentElement);
+      if (stageRef.current) {
+        layoutResizeObserver.observe(stageRef.current);
+      }
+    }
+
     return () => {
+      window.removeEventListener("scroll", rememberStageViewportCenter);
+      window.removeEventListener("resize", handleResize);
+      window.visualViewport?.removeEventListener("resize", handleResize);
+      breakpointQuery.removeEventListener("change", handleResize);
+      layoutResizeObserver?.disconnect();
+      if (resizeTimerRef.current) {
+        clearTimeout(resizeTimerRef.current);
+      }
       if (shuffleTimerRef.current) {
         clearTimeout(shuffleTimerRef.current);
       }
+      if (deckTransitionTimerRef.current) {
+        clearTimeout(deckTransitionTimerRef.current);
+      }
+      if (deckTransitionEnterTimerRef.current) {
+        clearTimeout(deckTransitionEnterTimerRef.current);
+      }
+      if (resizePreserveReleaseTimerRef.current) {
+        clearTimeout(resizePreserveReleaseTimerRef.current);
+      }
+      if (scrollStabilizeFrameRef.current) {
+        cancelAnimationFrame(scrollStabilizeFrameRef.current);
+      }
+      if (viewportWatchFrameRef.current) {
+        cancelAnimationFrame(viewportWatchFrameRef.current);
+      }
     };
-  }, []);
+  }, [getStageViewportCenter, rememberStageViewportCenter, stabilizeStageViewportCenter]);
+
+  useLayoutEffect(() => {
+    if (isMobileDeck === renderedMobileDeck) {
+      return;
+    }
+
+    if (deckTransitionTimerRef.current) {
+      clearTimeout(deckTransitionTimerRef.current);
+    }
+
+    if (deckTransitionEnterTimerRef.current) {
+      clearTimeout(deckTransitionEnterTimerRef.current);
+    }
+
+    const targetCenter = lastStageCenterRef.current ?? getStageViewportCenter();
+    const nextDirection: DeckTransitionDirection = isMobileDeck ? "desktop-to-mobile" : "mobile-to-desktop";
+
+    setDeckTransitionDirection(nextDirection);
+    setDeckTransitionPhase("leaving");
+    setSelectedIndex(null);
+
+    deckTransitionTimerRef.current = setTimeout(() => {
+      renderedMobileDeckRef.current = isMobileDeck;
+      setRenderedMobileDeck(isMobileDeck);
+      setViewportWidth(window.innerWidth);
+      setSelectedIndex(null);
+      setDragX(0);
+      setIsDragging(false);
+      setIsShuffling(false);
+      dragRef.current.active = false;
+      dragRef.current.pointerId = null;
+      setDeckTransitionPhase("entered");
+      stabilizeStageViewportCenter(targetCenter);
+      deckTransitionEnterTimerRef.current = setTimeout(() => {
+        setDeckTransitionDirection(null);
+        deckTransitionEnterTimerRef.current = null;
+      }, DECK_BREAKPOINT_ENTER_MS);
+      deckTransitionTimerRef.current = null;
+    }, DECK_BREAKPOINT_EXIT_MS);
+  }, [getStageViewportCenter, isMobileDeck, renderedMobileDeck, stabilizeStageViewportCenter]);
+
+  useEffect(() => {
+    if (selectedIndex === null || isMobileStack()) {
+      return;
+    }
+
+    const handleDocumentPointerDown = (event: globalThis.PointerEvent) => {
+      const target = event.target;
+
+      if (target instanceof Element && target.closest(".new-handled-card-button")) {
+        return;
+      }
+
+      setSelectedIndex(null);
+    };
+
+    document.addEventListener("pointerdown", handleDocumentPointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handleDocumentPointerDown);
+    };
+  }, [selectedIndex]);
 
   const handleStageClick = () => {
     setSelectedIndex(null);
@@ -240,7 +478,13 @@ export function HandledCardsSection() {
       return;
     }
 
-    setSelectedIndex(index);
+    setSelectedIndex((currentIndex) => (currentIndex === index ? null : index));
+  };
+
+  const handleCardMouseDown = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!isMobileStack()) {
+      event.preventDefault();
+    }
   };
 
   const handlePointerDown = (event: PointerEvent<HTMLButtonElement>, stackSlot: number) => {
@@ -351,58 +595,70 @@ export function HandledCardsSection() {
   };
 
   return (
-    <section className="new-handled-section" aria-labelledby="handled-title">
+    <section className="new-handled-section" aria-labelledby="handled-title" data-no-bloom="true">
       <h2 id="handled-title" className="sr-only">
         What Waldo handles
       </h2>
-      <div
-        className="new-handled-deck-stage"
-        data-animate="blur-fade"
-        data-deck-state={selectedIndex === null ? "fan" : "selected"}
-        data-drag-active={isDragging || isShuffling ? "true" : "false"}
-        onClick={handleStageClick}
-        onKeyDown={handleKeyDown}
-      >
-        {handledCards.map((card, index) => {
-          const cardState = getCardState(selectedIndex, index);
-          const stackSlot = getStackSlot(index, deckOrder);
+      <div className="new-handled-content" data-animate="blur-fade">
+        <div
+          ref={stageRef}
+          className="new-handled-deck-stage"
+          data-deck-state={selectedIndex === null ? "fan" : "selected"}
+          data-deck-mode={renderedMobileDeck ? "mobile" : "desktop"}
+          data-deck-phase={deckTransitionPhase}
+          data-deck-direction={deckTransitionDirection ?? "none"}
+          data-drag-active={isDragging || isShuffling ? "true" : "false"}
+          onClick={handleStageClick}
+          onKeyDown={handleKeyDown}
+          style={{ "--handled-cluster-scale": getClusterScale(viewportWidth) } as CSSProperties}
+        >
+          <div key={renderedMobileDeck ? "mobile-deck" : "desktop-deck"} className="new-handled-deck-cluster">
+            {handledCards.map((card, index) => {
+              const cardState = getCardState(selectedIndex, index);
+              const stackSlot = getStackSlot(index, deckOrder);
 
-          return (
-            <button
-              key={card.title}
-              type="button"
-              className="new-handled-card-button"
-              data-card-state={cardState}
-              data-dragging={stackSlot === 0 && isDragging ? "true" : "false"}
-              data-shuffling={stackSlot === 0 && isShuffling ? "true" : "false"}
-              data-stack-slot={stackSlot}
-              data-tone={card.tone}
-              aria-pressed={selectedIndex === index}
-              aria-label={cardState === "selected" ? `${card.title} selected` : `Show ${card.title}`}
-              onClick={(event) => handleCardClick(event, index)}
-              onPointerDown={(event) => handlePointerDown(event, stackSlot)}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerCancel}
-              style={cardStyle(card, stackSlot, dragX)}
-            >
-              <article className="new-handled-card-shell">
-                <div className="new-handled-card-graphic">{renderHandledGraphic(card.graphic)}</div>
-                <div className="new-handled-card-copy">
-                  <h3 className="new-handled-card-title">{card.title}</h3>
-                  <p className="new-handled-card-body">{card.body}</p>
-                </div>
-              </article>
-            </button>
-          );
-        })}
-      </div>
-      <div className="new-handled-cta-panel" data-animate="blur-fade">
-        <h2>This is what “handled” looks like.</h2>
-        <p>Waldo plans like Napoleon, thinks like Einstein and moves like a cheetah; all in the body of a friendly dalmatian.</p>
-        <Link className="new-handled-feature-link" href="/features">
-          Learn More →
-        </Link>
+              return (
+                <button
+                  key={card.title}
+                  type="button"
+                  className="new-handled-card-button"
+                  data-card-state={cardState}
+                  data-dragging={stackSlot === 0 && isDragging ? "true" : "false"}
+                  data-shuffling={stackSlot === 0 && isShuffling ? "true" : "false"}
+                  data-stack-slot={stackSlot}
+                  data-tone={card.tone}
+                  aria-pressed={selectedIndex === index}
+                  aria-label={cardState === "selected" ? `${card.title.replace(/\n/g, " ")} selected` : `Show ${card.title.replace(/\n/g, " ")}`}
+                  onClick={(event) => handleCardClick(event, index)}
+                  onMouseDown={handleCardMouseDown}
+                  onPointerDown={(event) => handlePointerDown(event, stackSlot)}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={handlePointerUp}
+                  onPointerCancel={handlePointerCancel}
+                  style={cardStyle(card, index, selectedIndex, stackSlot, dragX, viewportWidth)}
+                >
+                  <article className="new-handled-card-shell">
+                    <div className="new-handled-card-copy">
+                      <h3 className="new-handled-card-title">{card.title}</h3>
+                      <p className="new-handled-card-body">{card.body}</p>
+                    </div>
+                  </article>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="new-handled-cta-panel">
+          <h2>This is what “handled” looks like.</h2>
+          <p>
+            Waldo plans like Napoleon, thinks like Einstein and moves like a
+            <br className="new-reference-break" />{" "}
+            cheetah; all in the body of a <span className="new-reference-accent">friendly dalmatian.</span>
+          </p>
+          <Link className="new-handled-feature-link" href="/features">
+            Learn More →
+          </Link>
+        </div>
       </div>
     </section>
   );

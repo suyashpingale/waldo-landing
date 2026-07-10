@@ -5,7 +5,7 @@ export function WhereWaldoSection() {
     <section className="new-where-waldo-section new-home-section new-home-wide" aria-labelledby="where-waldo-title">
       <div className="new-where-waldo-copy" data-animate="blur-fade">
         <Image
-          className="new-where-waldo-waldo"
+          className="new-where-waldo-waldo new-section-mascot waldo-mascot-consistent"
           src="/assets/home/mascots/watching-dark-mode.svg"
           alt=""
           width={181}

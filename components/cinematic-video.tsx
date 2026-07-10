@@ -187,7 +187,7 @@ export function CinematicVideo({ src, containerStyle, containerClassName }: Cine
 
               {/* Speed toggle */}
               <Btn onClick={cycleSpeed}>
-                <span style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, color: speed !== 1 ? "var(--action)" : "var(--surface-t2)", letterSpacing: "-0.02em" }}>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 500, color: speed !== 1 ? "var(--action)" : "var(--surface-t2)", letterSpacing: "0.02em" }}>
                   {speed}×
                 </span>
               </Btn>

@@ -21,7 +21,7 @@ export function Illustration({
       height={400}
       sizes="120px"
       priority
-      className={className}
+      className={`waldo-mascot-consistent ${className}`}
     />
   );
 }

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { PointerEvent } from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 function SendGlyph() {
   return (
@@ -42,7 +42,11 @@ function ChatboxCopy() {
           <strong>They never type a prompt in a chat box,</strong>{" "}
           <span>that tech is now old and dead.</span>
         </p>
-        <p>Developers have moved to CLI Agents for this, but those involve hours of setup and very complex interfaces. Tedious.</p>
+        <p aria-label="Developers have moved to CLI Agents for this, but those involve hours of setup and very complex interfaces. Tedious.">
+          Developers have moved to <span className="new-reference-accent">CLI Agents</span> for this, but those involve hours
+          <br className="new-reference-break" />{" "}
+          of setup and very complex interfaces. Tedious.
+        </p>
       </div>
 
       <div className="new-chatbox-missing-copy">
@@ -65,6 +69,7 @@ export function DeathOfChatboxSection() {
   const eulogyRef = useRef<HTMLParagraphElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const pointerRef = useRef({ x: 0, y: 0 });
+  const [isEulogyVisible, setIsEulogyVisible] = useState(false);
 
   const applyPointer = useCallback(() => {
     frameRef.current = null;
@@ -101,12 +106,24 @@ export function DeathOfChatboxSection() {
       y: ((event.clientY - rect.top) / rect.height - 0.5) * 2,
     };
 
+    if (waldoRef.current) {
+      const waldoRect = waldoRef.current.getBoundingClientRect();
+      setIsEulogyVisible(
+        event.clientX >= waldoRect.left &&
+          event.clientX <= waldoRect.right &&
+          event.clientY >= waldoRect.top &&
+          event.clientY <= waldoRect.bottom,
+      );
+    }
+
     if (frameRef.current === null) {
       frameRef.current = requestAnimationFrame(applyPointer);
     }
   }, [applyPointer]);
 
   const resetPointer = useCallback(() => {
+    setIsEulogyVisible(false);
+
     if (frameRef.current !== null) {
       cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
@@ -119,6 +136,16 @@ export function DeathOfChatboxSection() {
         layer.style.transform = "";
       }
     }
+  }, []);
+
+  const showEulogy = useCallback(() => {
+    if (canUseFinePointer()) {
+      setIsEulogyVisible(true);
+    }
+  }, []);
+
+  const hideEulogy = useCallback(() => {
+    setIsEulogyVisible(false);
   }, []);
 
   useEffect(() => resetPointer, [resetPointer]);
@@ -158,17 +185,23 @@ export function DeathOfChatboxSection() {
             </span>
           </div>
 
-          <span ref={waldoRef} className="new-chatbox-waldo-wrap" aria-hidden="true">
+          <span
+            ref={waldoRef}
+            className="new-chatbox-waldo-wrap"
+            aria-hidden="true"
+            onPointerEnter={showEulogy}
+            onPointerLeave={hideEulogy}
+          >
             <Image
-              src="/assets/home/mascots/Vector.svg"
+              src="/assets/home/mascots/waldo-sad-with-flower.svg"
               alt=""
-              width={184}
-              height={143}
-              className="new-chatbox-waldo"
+              width={139}
+              height={83}
+              className="new-chatbox-waldo waldo-mascot-consistent"
               draggable={false}
             />
           </span>
-          <p ref={eulogyRef} className="new-chatbox-eulogy">
+          <p ref={eulogyRef} className="new-chatbox-eulogy" data-visible={isEulogyVisible ? "true" : "false"}>
             RIP purple gradient friend
           </p>
         </div>

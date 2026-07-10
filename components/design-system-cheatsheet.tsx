@@ -114,7 +114,7 @@ const typeTokens = [
 
 const actionCards = [
   ["The Brief", "/figma-assets/icon-daily-brief.webp", "Morning read, plain language, actions already made.", "Recovery"],
-  ["The Fetch", "/assets/home/mascots/Vector.svg", "Stress intervention that protects the next useful block.", "Form"],
+  ["The Fetch", "/figma-assets/logo-small.webp", "Stress intervention that protects the next useful block.", "Form"],
   ["The Adjustment", "/figma-assets/icon-adjustment.webp", "End-of-week load management across future time.", "Weight"],
   ["The Patrol", "/figma-assets/icon-patrol.webp", "Background monitoring log for what Waldo noticed.", "Always on"],
   ["The Spot", "/figma-assets/icon-spot.webp", "A single pattern observation, kept short and useful.", "Pattern"],
@@ -122,7 +122,7 @@ const actionCards = [
   ["The Window", "/figma-assets/logo-small.webp", "Best focus hours protected from calendar pressure.", "Focus"],
   ["The Heads-Up", "/figma-assets/icon-arrow-right.webp", "Early warning before a likely crash lands.", "Prediction"],
   ["The Close", "/figma-assets/footer-illustration.webp", "End-of-day account of what changed and what is next.", "Daily close"],
-  ["The Handoff", "/assets/home/mascots/Vector.svg", "Logged transfer into another connected tool.", "Connector"],
+  ["The Handoff", "/figma-assets/logo-small.webp", "Logged transfer into another connected tool.", "Connector"],
 ];
 
 const motionLines = [
@@ -314,7 +314,7 @@ function SectionTitle({
       </p>
       <h2
         className={`text-[32px] leading-[1.1] sm:text-[40px] lg:text-[48px] ${dark ? "text-[#FAFAF8]" : "text-[#1A1A1A]"}`}
-        style={{ fontFamily: "var(--font-headline)", letterSpacing: 0 }}
+        style={{ fontFamily: "var(--font-headline)", fontWeight: "var(--mottle-display-weight)", letterSpacing: "0px" }}
       >
         {lines.map((line) => (
           <span key={line} className="block">
@@ -493,7 +493,7 @@ export function DesignSystemCheatsheet() {
           <p className="mb-4 text-[13px] italic text-[#9A9A96]">built from the frozen doc, shaped for the build.</p>
           <h1
             className="text-[42px] leading-[1.06] sm:text-[56px] lg:text-[62px]"
-            style={{ fontFamily: "var(--font-headline)", letterSpacing: 0 }}
+            style={{ fontFamily: "var(--font-headline)", fontWeight: "var(--mottle-display-weight)", letterSpacing: "0px" }}
           >
             <span className="block">Every Waldo surface</span>
             <span className="block">component state</span>
@@ -650,7 +650,11 @@ export function DesignSystemCheatsheet() {
               <div key={token} className="rounded-[20px] border border-[rgba(26,26,26,.08)] bg-[#FFFFFF] p-4">
                 <p
                   className={token === "Display" || token === "H1" || token === "H2" ? "text-[28px] leading-none" : "text-[18px] font-medium"}
-                  style={{ fontFamily: font === "Corben" ? "var(--font-headline)" : "var(--font-body)", letterSpacing: 0 }}
+                  style={{
+                    fontFamily: font === "Corben" ? "var(--font-headline)" : "var(--font-body)",
+                    fontWeight: font === "Corben" ? "var(--mottle-display-weight)" : undefined,
+                    letterSpacing: font === "Corben" ? "0px" : "0.02em",
+                  }}
                 >
                   Aa
                 </p>

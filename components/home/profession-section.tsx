@@ -2,54 +2,35 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
+import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 
 import { ConnectorChip } from "@/components/connectors/connector-chip";
 import { connectors, type Connector } from "@/components/connectors/connector-data";
 
-type ProfessionCardStyle = CSSProperties & {
-  "--profession-tilt"?: string;
-};
-
 type ProfessionCard = {
   title: string;
+  body: string;
   asset: string;
+  ink: string;
   connectorIds: string[];
-  tilt: string;
+};
+
+type ProfessionCardStyle = CSSProperties & {
+  "--profession-card-ink": string;
 };
 
 const connectorById = new Map(connectors.map((connector) => [connector.id, connector]));
 
 const getConnector = (id: string) => connectorById.get(id) as Connector;
 
-const professionWaveConnectors = [
-  "microsoft-outlook",
-  "google-calendar",
-  "gmail",
-  "linear",
-  "slack",
-  "notion",
-  "figma",
-  "github",
-  "hubspot",
-  "salesforce",
-  "apple-health",
-  "strava",
-  "garmin",
-  "whoop",
-  "oura",
-  "google-fit",
-];
-
-const iconWaveLoopCount = 4;
-const professionWaveConnectorsWithLoop = Array.from({ length: iconWaveLoopCount }, () => professionWaveConnectors).flat();
 const cardConnectorLimit = 5;
 
 const professionCards: ProfessionCard[] = [
   {
     title: "For Consultants",
+    body: "Waldo reads load across every account and won't let a call start over last call's residue; the meets you'd normally suffer through now get 10 mins of runway first.",
     asset: "/assets/home/profiles/profession-consultants.svg",
+    ink: "#4E301F",
     connectorIds: [
       "zoom",
       "microsoft-outlook",
@@ -64,11 +45,12 @@ const professionCards: ProfessionCard[] = [
       "shopify",
       "hubspot",
     ],
-    tilt: "-1.2deg",
   },
   {
     title: "For Athletes",
+    body: "Waldo reads past your training calendar; the heavy sessions that would have landed on a depleted day, are moved to where they actually compound.",
     asset: "/assets/home/profiles/profession-athletes.svg",
+    ink: "#531421",
     connectorIds: [
       "strava",
       "garmin",
@@ -81,11 +63,12 @@ const professionCards: ProfessionCard[] = [
       "whatsapp",
       "google-calendar",
     ],
-    tilt: "1.4deg",
   },
   {
     title: "For Founders",
+    body: "Waldo reads your state before you check your phone; the snappy reply to your co-founder after three back-to-back calls is now gone for good.",
     asset: "/assets/home/profiles/profession-founders.svg",
+    ink: "#3F345D",
     connectorIds: [
       "gmail",
       "google-calendar",
@@ -100,11 +83,12 @@ const professionCards: ProfessionCard[] = [
       "intercom",
       "airtable",
     ],
-    tilt: "-0.6deg",
   },
   {
     title: "For Engineers",
+    body: "Waldo reads when your HRV says you're sharpest and hands that hour to the hard problem; the standup that used to eat it is now booked somewhere else.",
     asset: "/assets/home/profiles/profession-engineers.svg",
+    ink: "#F6A6D2",
     connectorIds: [
       "github",
       "linear",
@@ -117,11 +101,12 @@ const professionCards: ProfessionCard[] = [
       "google-calendar",
       "discord",
     ],
-    tilt: "1deg",
   },
   {
     title: "For Investors",
+    body: "Waldo spaces your pitches to a rhythm your recovery can actually sustain; the founder you'd have half-heard at pitch five now gets your pitch-one attention.",
     asset: "/assets/home/profiles/profession-investors.svg",
+    ink: "#B1E080",
     connectorIds: [
       "linkedin",
       "salesforce",
@@ -135,11 +120,10 @@ const professionCards: ProfessionCard[] = [
       "zoom",
       "calendly",
     ],
-    tilt: "-1deg",
   },
 ];
 
-const marqueeCardLoopCount = 3;
+const marqueeCardLoopCount = 5;
 const marqueeCardsWithLoop = Array.from({ length: marqueeCardLoopCount }, () => professionCards).flat();
 
 function ProfessionLogoStack({ connectorIds }: { connectorIds: string[] }) {
@@ -152,31 +136,12 @@ function ProfessionLogoStack({ connectorIds }: { connectorIds: string[] }) {
   );
 }
 
-function ProfessionIconWave() {
-  return (
-    <div className="new-profession-icon-wave" aria-hidden="true">
-      <div className="new-profession-icon-wave-track">
-        {professionWaveConnectorsWithLoop.map((id, index) => (
-          <span key={`${id}-${index}`} className="new-profession-icon-wave-item">
-            <ConnectorChip className="new-profession-icon-wave-logo" connector={getConnector(id)} label={false} />
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function ProfessionSection() {
+  const marqueeRef = useRef<HTMLDivElement>(null);
   const marqueeTrackRef = useRef<HTMLDivElement>(null);
-  const marqueeFrameRef = useRef<number | null>(null);
-  const marqueePreviousFrameRef = useRef<number | null>(null);
-  const marqueeOffsetRef = useRef(0);
   const marqueeLoopWidthRef = useRef(1);
-  const marqueeDragStartXRef = useRef(0);
-  const marqueeDragStartOffsetRef = useRef(0);
-  const marqueeDraggingRef = useRef(false);
-  const prefersReducedMotionRef = useRef(false);
-  const [isUserDragging, setIsUserDragging] = useState(false);
+  const marqueeIsWrappingRef = useRef(false);
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
 
   const syncMarqueeLoopWidth = useCallback(() => {
     const track = marqueeTrackRef.current;
@@ -185,115 +150,62 @@ export function ProfessionSection() {
       return;
     }
 
-    marqueeLoopWidthRef.current = Math.max(1, track.scrollWidth / marqueeCardLoopCount);
+    const firstCard = track.children[0] as HTMLElement | undefined;
+    const nextLoopFirstCard = track.children[professionCards.length] as HTMLElement | undefined;
+    const measuredLoopWidth = firstCard && nextLoopFirstCard ? nextLoopFirstCard.offsetLeft - firstCard.offsetLeft : track.scrollWidth / marqueeCardLoopCount;
+
+    marqueeLoopWidthRef.current = Math.max(1, measuredLoopWidth);
   }, []);
 
-  const writeMarqueeOffset = useCallback((offset: number) => {
-    const track = marqueeTrackRef.current;
-    const loopWidth = marqueeLoopWidthRef.current || 1;
-    const wrappedOffset = ((offset % loopWidth) + loopWidth) % loopWidth;
+  const centerMarqueeLoop = useCallback(() => {
+    const marquee = marqueeRef.current;
 
-    marqueeOffsetRef.current = wrappedOffset;
-    track?.style.setProperty("--marquee-loop-x", `${-wrappedOffset}px`);
-    track?.style.setProperty("--marquee-drag-x", "0px");
-  }, []);
-
-  const finishMarqueeDrag = useCallback(() => {
-    if (!marqueeDraggingRef.current) {
+    if (!marquee) {
       return;
     }
 
-    marqueeDraggingRef.current = false;
-    setIsUserDragging(false);
+    syncMarqueeLoopWidth();
+    marquee.scrollLeft = marqueeLoopWidthRef.current * Math.floor(marqueeCardLoopCount / 2);
+  }, [syncMarqueeLoopWidth]);
+
+  const handleMarqueeScroll = useCallback(() => {
+    const marquee = marqueeRef.current;
+
+    if (!marquee || marqueeIsWrappingRef.current) {
+      return;
+    }
+
+    const loopWidth = marqueeLoopWidthRef.current || 1;
+    const wrapDistance = loopWidth * Math.floor(marqueeCardLoopCount / 2);
+    const minScroll = loopWidth * 0.5;
+    const maxScroll = loopWidth * (marqueeCardLoopCount - 1.5);
+
+    if (marquee.scrollLeft < minScroll || marquee.scrollLeft > maxScroll) {
+      marqueeIsWrappingRef.current = true;
+      marquee.scrollLeft += marquee.scrollLeft < minScroll ? wrapDistance : -wrapDistance;
+      window.setTimeout(() => {
+        marqueeIsWrappingRef.current = false;
+      }, 0);
+    }
   }, []);
 
   useEffect(() => {
-    const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateReducedMotion = () => {
-      prefersReducedMotionRef.current = reduceMotionQuery.matches;
-    };
     const handleResize = () => {
       syncMarqueeLoopWidth();
-      writeMarqueeOffset(marqueeOffsetRef.current);
-    };
-    const tick = (time: number) => {
-      if (marqueePreviousFrameRef.current === null) {
-        marqueePreviousFrameRef.current = time;
-      }
-
-      const elapsed = time - marqueePreviousFrameRef.current;
-      marqueePreviousFrameRef.current = time;
-
-      if (!marqueeDraggingRef.current && !prefersReducedMotionRef.current) {
-        const speed = window.innerWidth < 735 ? 26 : 34;
-        writeMarqueeOffset(marqueeOffsetRef.current + (elapsed / 1000) * speed);
-      }
-
-      marqueeFrameRef.current = requestAnimationFrame(tick);
-    };
-    const handleWindowPointerEnd = () => {
-      finishMarqueeDrag();
     };
 
-    syncMarqueeLoopWidth();
-    updateReducedMotion();
+    centerMarqueeLoop();
+
     window.addEventListener("resize", handleResize);
-    window.addEventListener("pointerup", handleWindowPointerEnd);
-    window.addEventListener("pointercancel", handleWindowPointerEnd);
-    reduceMotionQuery.addEventListener("change", updateReducedMotion);
-    marqueePreviousFrameRef.current = null;
-    marqueeFrameRef.current = requestAnimationFrame(tick);
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("pointerup", handleWindowPointerEnd);
-      window.removeEventListener("pointercancel", handleWindowPointerEnd);
-      reduceMotionQuery.removeEventListener("change", updateReducedMotion);
-
-      if (marqueeFrameRef.current !== null) {
-        cancelAnimationFrame(marqueeFrameRef.current);
-      }
     };
-  }, [finishMarqueeDrag, syncMarqueeLoopWidth, writeMarqueeOffset]);
-
-  const handleMarqueePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === "mouse" && event.button !== 0) {
-      return;
-    }
-
-    syncMarqueeLoopWidth();
-    marqueeDraggingRef.current = true;
-    marqueeDragStartXRef.current = event.clientX;
-    marqueeDragStartOffsetRef.current = marqueeOffsetRef.current;
-    setIsUserDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
-
-  const handleMarqueePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!marqueeDraggingRef.current) {
-      return;
-    }
-
-    event.preventDefault();
-    writeMarqueeOffset(marqueeDragStartOffsetRef.current - (event.clientX - marqueeDragStartXRef.current));
-  };
-
-  const handleMarqueePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!marqueeDraggingRef.current) {
-      return;
-    }
-
-    finishMarqueeDrag();
-
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
+  }, [centerMarqueeLoop, syncMarqueeLoopWidth]);
 
   return (
     <section className="new-profession-section new-home-section new-home-wide" aria-labelledby="professions-title">
       <div className="new-profession-copy-stage" data-animate="blur-fade">
-        <ProfessionIconWave />
         <div className="new-profession-copy new-home-copy-stack">
           <h2 id="professions-title" className="type-h2">
             Same Waldo. Different hats.
@@ -310,27 +222,39 @@ export function ProfessionSection() {
       <div
         className="new-profession-marquee"
         data-animate="blur-fade"
-        data-dragging={isUserDragging ? "true" : "false"}
-        data-user-dragging={isUserDragging ? "true" : "false"}
         role="region"
-        aria-label="Profession cards. Drag horizontally to explore."
-        onPointerDown={handleMarqueePointerDown}
-        onPointerMove={handleMarqueePointerMove}
-        onPointerUp={handleMarqueePointerUp}
-        onPointerCancel={handleMarqueePointerUp}
-        onLostPointerCapture={handleMarqueePointerUp}
+        aria-label="Profession cards in an infinite loop."
+        ref={marqueeRef}
+        onScroll={handleMarqueeScroll}
       >
         <div className="new-profession-marquee-track" ref={marqueeTrackRef}>
           {marqueeCardsWithLoop.map((card, index) => {
-            const style: ProfessionCardStyle = {
-              "--profession-tilt": card.tilt,
+            const cardId = `${card.title}-${index}`;
+            const isBodyVisible = activeCardId === cardId;
+            const cardStyle: ProfessionCardStyle = {
+              "--profession-card-ink": card.ink,
             };
 
             return (
-              <article key={`${card.title}-${index}`} className="new-profession-card-shell" style={style} aria-label={card.title}>
+              <button
+                key={cardId}
+                aria-controls={`profession-card-body-${index}`}
+                aria-expanded={isBodyVisible}
+                aria-label={isBodyVisible ? `${card.title}: hide details` : `${card.title}: show details`}
+                className="new-profession-card-shell"
+                data-body-visible={isBodyVisible}
+                onClick={() => {
+                  setActiveCardId((currentCardId) => (currentCardId === cardId ? null : cardId));
+                }}
+                style={cardStyle}
+                type="button"
+              >
                 <Image className="new-profession-exported-card" src={card.asset} alt="" width={425} height={474} draggable={false} />
+                <p id={`profession-card-body-${index}`} className="new-profession-card-body" aria-hidden={!isBodyVisible}>
+                  {card.body}
+                </p>
                 <ProfessionLogoStack connectorIds={card.connectorIds} />
-              </article>
+              </button>
             );
           })}
         </div>
