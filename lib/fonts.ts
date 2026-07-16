@@ -1,15 +1,18 @@
 import localFont from "next/font/local";
 
-export const corben = localFont({
-  src: "../public/fonts/Corben-Regular.ttf",
+export const mottle = localFont({
+  src: [
+    { path: "../public/fonts/Mottle[wght].ttf", weight: "400 900", style: "normal" },
+    { path: "../public/fonts/Mottle-Italic[wght].ttf", weight: "400 900", style: "italic" },
+  ],
   variable: "--font-headline",
   display: "swap",
 });
 
-export const dmSans = localFont({
+export const sfProRounded = localFont({
   src: [
-    { path: "../public/fonts/DMSans-VariableFont_opsz,wght.ttf", style: "normal" },
-    { path: "../public/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf", style: "italic" },
+    { path: "../public/fonts/SF-Pro-Rounded-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/SF-Pro-Rounded-Medium.woff2", weight: "500", style: "normal" },
   ],
   variable: "--font-body",
   display: "swap",

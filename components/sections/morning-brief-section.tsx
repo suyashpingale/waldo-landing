@@ -1,134 +1,753 @@
-// Morning Brief — 3-card shuffleable stack.
-// Click card area to advance. Auto 8s. Hover pauses.
-
-"use client";
-
 import Image from "next/image";
-import goodSleepDarkMode from "@/components/assets/good-sleep-dark-mode.svg";
-import vectorSpot        from "@/components/assets/Vector-1.svg";
-import vectorBrief       from "@/components/assets/Vector.svg";
-import { useCardStack }  from "@/hooks/use-card-stack";
-import { MobileDots }   from "@/components/mobile-dots";
-import { EASE, DUR_SETTLE, AUTO_CARD_MS } from "@/lib/motion";
+import type { CSSProperties, ReactNode } from "react";
 
-function ArrowRightIcon() {
+import { WaldoFace } from "./waldo-face";
+import { SmartSectionActivity } from "./smart-section-activity";
+
+import phoneMockup from "@/components/assets/iphone-mockup.webp";
+
+type FlowStyle = CSSProperties & {
+  "--asset-crop"?: string;
+  "--card-width"?: string;
+  "--flow-delay"?: string;
+  "--flow-y"?: string;
+  "--flow-drift"?: string;
+  "--flow-rotate"?: string;
+  "--flow-scale"?: string;
+  "--flow-mid-scale"?: string;
+  "--flow-tuck-scale"?: string;
+  "--flow-mobile-peak-scale"?: string;
+  "--flow-mobile-mid-scale"?: string;
+  "--flow-mobile-tuck-scale"?: string;
+  "--receipt-delay"?: string;
+};
+
+type SourceCardBase = {
+  width: string;
+  y: string;
+  delay: string;
+  drift?: string;
+  rotate?: string;
+  scale?: string;
+};
+
+type SourceAssetCard = SourceCardBase & {
+  kind?: "asset";
+  src: string;
+  alt: string;
+  naturalWidth: number;
+  naturalHeight: number;
+};
+
+type SourceConnectorCard = SourceCardBase & {
+  kind: "connector";
+  label: string;
+  icon: string;
+  tone: string;
+};
+
+type SourceCard = SourceAssetCard | SourceConnectorCard;
+
+const SOURCE_ASSET_CARD_SCALE = 0.9;
+const SOURCE_ASSET_WIDTH_MULTIPLIER = 1.08;
+const SOURCE_MEDIUM_ASSET_WIDTH_MULTIPLIER = 1.14;
+const SOURCE_NARROW_ASSET_WIDTH_MULTIPLIER = 1.22;
+const SOURCE_CONNECTOR_CARD_SCALE = 0.82;
+
+function getReadableAssetWidth(width: string) {
+  const value = Number.parseFloat(width);
+  if (!Number.isFinite(value) || !width.endsWith("px")) {
+    return width;
+  }
+
+  const multiplier =
+    value < 150
+      ? SOURCE_NARROW_ASSET_WIDTH_MULTIPLIER
+      : value < 180
+        ? SOURCE_MEDIUM_ASSET_WIDTH_MULTIPLIER
+        : SOURCE_ASSET_WIDTH_MULTIPLIER;
+
+  return `${Math.round(value * multiplier)}px`;
+}
+
+function getCompactFlowScale(scale: string | undefined, compactScale: number) {
+  const value = Number.parseFloat(scale ?? "1");
+  if (!Number.isFinite(value)) {
+    return scale ?? `${compactScale}`;
+  }
+
+  return `${Math.round(value * compactScale * 1000) / 1000}`;
+}
+
+function getSourceAssetCrop(src: string) {
+  if (src.includes("/assets/home/data-bento/")) {
+    return "inset(0 round 14px)";
+  }
+
+  if (src.includes("nutrition-minerals") || src.includes("nutrition-fiber")) {
+    return "inset(5% 31% 24% 11% round 18px)";
+  }
+
+  if (src.includes("nutrition-macros")) {
+    return "inset(8% 22% 22% 7% round 18px)";
+  }
+
+  if (src.includes("zone-")) {
+    return "inset(16% 10% 45% 8% round 12px)";
+  }
+
+  if (src.includes("sleep-stages") || src.includes("vitals-typical") || src.includes("stress-monitor")) {
+    return "inset(10% 24% 22% 12% round 16px)";
+  }
+
+  if (src.includes("sleep-score")) {
+    return "inset(10% 20% 28% 7% round 16px)";
+  }
+
+  if (src.includes("stress-heart-rate") || src.includes("hours-vs-need")) {
+    return "inset(9% 18% 27% 7% round 16px)";
+  }
+
+  return "inset(12% 20% 30% 8% round 16px)";
+}
+
+type ProcessedCard = {
+  tone: "sleep" | "inbox" | "calendar" | "nutrition" | "stress" | "recovery";
+  eyebrow: string;
+  label: string;
+  body: ReactNode;
+  aside: string;
+  connectors: Array<{
+    label: string;
+    src?: string;
+  }>;
+  delay: string;
+};
+
+const sourceCards: SourceAssetCard[] = [
+  {
+    src: "/assets/home/data-bento/slack-q1-prep.png",
+    alt: "Slack Q1 preparation card.",
+    naturalWidth: 522,
+    naturalHeight: 230,
+    width: "238px",
+    y: "318px",
+    delay: "-35.1s",
+    drift: "-18px",
+    rotate: "-1.4deg",
+  },
+  {
+    src: "/assets/home/data-bento/time-asleep.png",
+    alt: "Time asleep card.",
+    naturalWidth: 458,
+    naturalHeight: 141,
+    width: "224px",
+    y: "392px",
+    delay: "-33.3s",
+    drift: "16px",
+    rotate: "1deg",
+    scale: "0.96",
+  },
+  {
+    src: "/assets/home/data-bento/gmail-q1-review.png",
+    alt: "Gmail Q1 review card.",
+    naturalWidth: 458,
+    naturalHeight: 162,
+    width: "224px",
+    y: "478px",
+    delay: "-31.5s",
+    drift: "-20px",
+    rotate: "0.6deg",
+  },
+  {
+    src: "/assets/home/data-bento/sleep-score.png",
+    alt: "Sleep score card showing a 74 score.",
+    naturalWidth: 459,
+    naturalHeight: 283,
+    width: "214px",
+    y: "564px",
+    delay: "-29.7s",
+    drift: "18px",
+    rotate: "1.3deg",
+  },
+  {
+    src: "/assets/home/data-bento/imessage-binge.png",
+    alt: "iMessage card about watching the next episodes.",
+    naturalWidth: 522,
+    naturalHeight: 184,
+    width: "236px",
+    y: "336px",
+    delay: "-27.9s",
+    drift: "8px",
+    rotate: "1.1deg",
+  },
+  {
+    src: "/assets/home/data-bento/vitals-mini.png",
+    alt: "Vitals card showing typical overnight readings.",
+    naturalWidth: 230,
+    naturalHeight: 217,
+    width: "132px",
+    y: "622px",
+    delay: "-26.1s",
+    drift: "-18px",
+    rotate: "-0.8deg",
+    scale: "0.92",
+  },
+  {
+    src: "/assets/home/data-bento/calendar-strategy.png",
+    alt: "Calendar product strategy review card.",
+    naturalWidth: 458,
+    naturalHeight: 252,
+    width: "222px",
+    y: "430px",
+    delay: "-24.3s",
+    drift: "-10px",
+    rotate: "-1deg",
+  },
+  {
+    src: "/assets/home/data-bento/sleep-mini.png",
+    alt: "Sleep mini card.",
+    naturalWidth: 218,
+    naturalHeight: 217,
+    width: "128px",
+    y: "514px",
+    delay: "-22.5s",
+    drift: "20px",
+    rotate: "0.8deg",
+    scale: "0.94",
+  },
+  {
+    src: "/assets/home/data-bento/gmail-newsletter.png",
+    alt: "Gmail newsletter card.",
+    naturalWidth: 470,
+    naturalHeight: 252,
+    width: "226px",
+    y: "608px",
+    delay: "-20.7s",
+    drift: "10px",
+    rotate: "0.8deg",
+  },
+  {
+    src: "/assets/home/data-bento/hours-vs-need.png",
+    alt: "Hours versus sleep need chart.",
+    naturalWidth: 458,
+    naturalHeight: 314,
+    width: "218px",
+    y: "370px",
+    delay: "-18.9s",
+    drift: "-22px",
+    rotate: "-0.6deg",
+    scale: "0.94",
+  },
+  {
+    src: "/assets/home/data-bento/stress-monitor.png",
+    alt: "Stress monitor gauge card.",
+    naturalWidth: 188,
+    naturalHeight: 195,
+    width: "118px",
+    y: "484px",
+    delay: "-17.1s",
+    drift: "-8px",
+    rotate: "-1.2deg",
+    scale: "0.94",
+  },
+  {
+    src: "/assets/home/data-bento/recovery.png",
+    alt: "Recovery bar chart card.",
+    naturalWidth: 272,
+    naturalHeight: 194,
+    width: "166px",
+    y: "580px",
+    delay: "-15.3s",
+    drift: "14px",
+    rotate: "1.6deg",
+    scale: "0.9",
+  },
+  {
+    src: "/assets/home/data-bento/stress-heart-rate.png",
+    alt: "Stress and heart rate chart card.",
+    naturalWidth: 470,
+    naturalHeight: 338,
+    width: "232px",
+    y: "332px",
+    delay: "-13.5s",
+    drift: "20px",
+    rotate: "0.8deg",
+    scale: "0.92",
+  },
+  {
+    src: "/assets/home/data-bento/zone-5.png",
+    alt: "Zone 5 activity load card.",
+    naturalWidth: 470,
+    naturalHeight: 78,
+    width: "230px",
+    y: "442px",
+    delay: "-11.7s",
+    drift: "-18px",
+    rotate: "-0.9deg",
+    scale: "0.92",
+  },
+  {
+    src: "/assets/home/data-bento/zone-4.png",
+    alt: "Zone 4 activity load card.",
+    naturalWidth: 470,
+    naturalHeight: 78,
+    width: "230px",
+    y: "548px",
+    delay: "-9.9s",
+    drift: "16px",
+    rotate: "0.8deg",
+    scale: "0.92",
+  },
+  {
+    src: "/assets/home/data-bento/zone-3.png",
+    alt: "Zone 3 activity load card.",
+    naturalWidth: 470,
+    naturalHeight: 78,
+    width: "230px",
+    y: "574px",
+    delay: "-8.1s",
+    drift: "-12px",
+    rotate: "1.1deg",
+    scale: "0.92",
+  },
+  {
+    src: "/assets/home/data-bento/net-energy.png",
+    alt: "Net energy card showing minus 100 kilocalories.",
+    naturalWidth: 522,
+    naturalHeight: 216,
+    width: "238px",
+    y: "398px",
+    delay: "-6.3s",
+    drift: "14px",
+    rotate: "0.7deg",
+    scale: "0.92",
+  },
+  {
+    src: "/assets/home/data-bento/nutrition-details.png",
+    alt: "Nutritional details card with fat, carbs, and protein.",
+    naturalWidth: 522,
+    naturalHeight: 342,
+    width: "246px",
+    y: "506px",
+    delay: "-4.5s",
+    drift: "-20px",
+    rotate: "-0.8deg",
+    scale: "0.9",
+  },
+  {
+    src: "/assets/home/data-bento/micronutrients-left.png",
+    alt: "Micronutrients card showing fiber, potassium, and iron.",
+    naturalWidth: 264,
+    naturalHeight: 404,
+    width: "126px",
+    y: "650px",
+    delay: "-2.7s",
+    drift: "18px",
+    rotate: "1deg",
+    scale: "0.9",
+  },
+  {
+    src: "/assets/home/data-bento/micronutrients-right.png",
+    alt: "Micronutrients card showing magnesium, calcium, and vitamin D.",
+    naturalWidth: 250,
+    naturalHeight: 404,
+    width: "124px",
+    y: "458px",
+    delay: "-0.9s",
+    drift: "-14px",
+    rotate: "-1deg",
+    scale: "0.9",
+  },
+];
+
+const workspaceConnectorCards: SourceConnectorCard[] = [
+  {
+    kind: "connector",
+    label: "Gmail",
+    icon: "/assets/connectors/gmail.svg",
+    tone: "gmail",
+    width: "132px",
+    y: "366px",
+    delay: "-34.4s",
+    drift: "16px",
+    rotate: "1deg",
+  },
+  {
+    kind: "connector",
+    label: "Drive",
+    icon: "/assets/connectors/google-drive.svg",
+    tone: "drive",
+    width: "128px",
+    y: "558px",
+    delay: "-31.2s",
+    drift: "-10px",
+    rotate: "-1deg",
+    scale: "0.98",
+  },
+  {
+    kind: "connector",
+    label: "Outlook",
+    icon: "/assets/connectors/microsoft-outlook.svg",
+    tone: "outlook",
+    width: "136px",
+    y: "314px",
+    delay: "-29.6s",
+    drift: "10px",
+    rotate: "0.7deg",
+  },
+  {
+    kind: "connector",
+    label: "Slack",
+    icon: "/assets/connectors/slack.svg",
+    tone: "slack",
+    width: "126px",
+    y: "638px",
+    delay: "-26.4s",
+    drift: "-16px",
+    rotate: "-1.2deg",
+  },
+  {
+    kind: "connector",
+    label: "WhatsApp",
+    icon: "/assets/connectors/whatsapp.svg",
+    tone: "whatsapp",
+    width: "150px",
+    y: "468px",
+    delay: "-23.2s",
+    drift: "16px",
+    rotate: "1.2deg",
+  },
+  {
+    kind: "connector",
+    label: "Telegram",
+    icon: "/assets/connectors/telegram.svg",
+    tone: "telegram",
+    width: "148px",
+    y: "574px",
+    delay: "-20s",
+    drift: "-8px",
+    rotate: "-0.8deg",
+    scale: "0.98",
+  },
+  {
+    kind: "connector",
+    label: "Figma",
+    icon: "/assets/connectors/figma.svg",
+    tone: "figma",
+    width: "128px",
+    y: "378px",
+    delay: "-18.4s",
+    drift: "-18px",
+    rotate: "-1.1deg",
+  },
+  {
+    kind: "connector",
+    label: "Linear",
+    icon: "/assets/connectors/linear.svg",
+    tone: "linear",
+    width: "132px",
+    y: "648px",
+    delay: "-15.2s",
+    drift: "14px",
+    rotate: "1deg",
+  },
+  {
+    kind: "connector",
+    label: "GitHub",
+    icon: "/assets/connectors/github.svg",
+    tone: "github",
+    width: "134px",
+    y: "326px",
+    delay: "-12s",
+    drift: "-12px",
+    rotate: "-0.7deg",
+  },
+  {
+    kind: "connector",
+    label: "Asana",
+    icon: "/assets/connectors/asana.svg",
+    tone: "asana",
+    width: "126px",
+    y: "506px",
+    delay: "-8.8s",
+    drift: "18px",
+    rotate: "1.1deg",
+  },
+  {
+    kind: "connector",
+    label: "Zendesk",
+    icon: "/assets/connectors/zendesk.svg",
+    tone: "zendesk",
+    width: "140px",
+    y: "542px",
+    delay: "-5.6s",
+    drift: "-14px",
+    rotate: "-1deg",
+  },
+  {
+    kind: "connector",
+    label: "Salesforce",
+    icon: "/assets/connectors/salesforce.svg",
+    tone: "salesforce",
+    width: "154px",
+    y: "442px",
+    delay: "-2.4s",
+    drift: "12px",
+    rotate: "0.9deg",
+  },
+  {
+    kind: "connector",
+    label: "Notion",
+    icon: "/assets/connectors/notion.svg",
+    tone: "notion",
+    width: "128px",
+    y: "548px",
+    delay: "-0.8s",
+    drift: "-10px",
+    rotate: "-0.8deg",
+  },
+  {
+    kind: "connector",
+    label: "HubSpot",
+    icon: "/assets/composio-connectors/hubspot.svg",
+    tone: "hubspot",
+    width: "138px",
+    y: "352px",
+    delay: "1.6s",
+    drift: "18px",
+    rotate: "1.2deg",
+  },
+];
+
+const sourceFlowCards: SourceCard[] = sourceCards.flatMap((card, index) => {
+  const connector = workspaceConnectorCards[index];
+  return connector ? [card, connector] : [card];
+});
+
+const processedCards: ProcessedCard[] = [
+  {
+    tone: "sleep",
+    eyebrow: "Sleep",
+    label: "Brief",
+    body: (
+      <>
+        6h 12m asleep and a 74 score. Waldo moved the <strong>9am Q1 review</strong> to the first safer window.
+      </>
+    ),
+    aside: "you need the extra hour more than they need punctuality.",
+    connectors: [
+      { label: "Google Calendar", src: "/assets/composio-connectors/googlecalendar.svg" },
+      { label: "Gmail", src: "/assets/composio-connectors/gmail.svg" },
+      { label: "More" },
+    ],
+    delay: "-8.6s",
+  },
+  {
+    tone: "inbox",
+    eyebrow: "Inbox",
+    label: "Pressure",
+    body: (
+      <>
+        104 emails, 49 Slack pings, and two late asks. Waldo kept <strong>the real work</strong> and muted the rest.
+      </>
+    ),
+    aside: "noise moved out of the way.",
+    connectors: [
+      { label: "Slack", src: "/assets/composio-connectors/slack.svg" },
+      { label: "Gmail", src: "/assets/composio-connectors/gmail.svg" },
+      { label: "More" },
+    ],
+    delay: "0.4s",
+  },
+  {
+    tone: "recovery",
+    eyebrow: "Recovery",
+    label: "Load",
+    body: (
+      <>
+        Recovery dipped, sleep need rose, and zone load stacked up. Waldo protected <strong>deep work after lunch.</strong>
+      </>
+    ),
+    aside: "your body got veto power before the calendar did.",
+    connectors: [
+      { label: "Google Calendar", src: "/assets/composio-connectors/googlecalendar.svg" },
+      { label: "Linear", src: "/assets/composio-connectors/linear.svg" },
+      { label: "More" },
+    ],
+    delay: "9.4s",
+  },
+  {
+    tone: "stress",
+    eyebrow: "Stress",
+    label: "Cooldown",
+    body: (
+      <>
+        Stress climbed while heart rate stayed noisy. Waldo delayed low-priority messages until <strong>the signal cooled.</strong>
+      </>
+    ),
+    aside: "not another alert. a quieter afternoon.",
+    connectors: [
+      { label: "Slack", src: "/assets/composio-connectors/slack.svg" },
+      { label: "Gmail", src: "/assets/composio-connectors/gmail.svg" },
+      { label: "More" },
+    ],
+    delay: "18.4s",
+  },
+  {
+    tone: "nutrition",
+    eyebrow: "Nutrition",
+    label: "Fuel",
+    body: (
+      <>
+        Magnesium, fiber, and net energy were off. Waldo suggested a <strong>lighter lunch window</strong> before meetings resumed.
+      </>
+    ),
+    aside: "small inputs, better afternoon.",
+    connectors: [
+      { label: "Google Calendar", src: "/assets/composio-connectors/googlecalendar.svg" },
+      { label: "Gmail", src: "/assets/composio-connectors/gmail.svg" },
+      { label: "More" },
+    ],
+    delay: "27.4s",
+  },
+];
+
+function ConnectorIcon({ connector }: { connector: ProcessedCard["connectors"][number] }) {
+  if (!connector.src) {
+    return (
+      <span className="waldo-smart-connector" aria-label={connector.label}>
+        +
+      </span>
+    );
+  }
+
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
+    <span className="waldo-smart-connector">
+      <Image src={connector.src} alt={connector.label} width={18} height={18} />
+    </span>
   );
 }
 
-const CARDS = [
-  { icon: vectorSpot,        iconW: 90,  iconH: 69, title: "The Spot",          body: "Not a trend. Not a report. One thing, clearly said. That's a Spot. Waldo found it in six weeks of Tuesdays and Thursdays that looked ordinary.\n\nYou wouldn't have found it. Spots show up when there's something worth saying. Not before.",  footnote: "something Waldo noticed." },
-  { icon: goodSleepDarkMode, iconW: 89,  iconH: 66, title: "The Constellation", body: "One Spot is a data point. Twelve Spots across four months is a Constellation. The fact that your worst sleep always follows your heaviest meeting days. Waldo connected these dots for the long term goals.",                                       footnote: "on it while you sleep." },
-  { icon: vectorBrief,       iconW: 112, iconH: 87, title: "Morning Wag",        body: "Morning. Bit of a rough night — your sleep was short by about 90 minutes. \n\nNudged your 9am to 10:30 & 10am to noon.\n\nNothing drastic, the rest of your day looks good. ",                                                                    footnote: "*cues World Hold On by Bob Sinclair*" },
-] as const;
+function SourceCardItem({ card }: { card: SourceCard }) {
+  const isConnector = card.kind === "connector";
+  const compactScale = isConnector ? SOURCE_CONNECTOR_CARD_SCALE : SOURCE_ASSET_CARD_SCALE;
 
-const BACK: { rotate: string; left: string; top: string }[] = [
-  { rotate: "-14.26deg", left: "43.97px", top: "7.96px" },
-  { rotate:  "12.80deg", left: "446px",   top: "15px"   },
-];
+  const style: FlowStyle = {
+    "--card-width": isConnector ? card.width : getReadableAssetWidth(card.width),
+    "--flow-delay": card.delay,
+    "--flow-y": card.y,
+    "--flow-drift": card.drift ?? "0px",
+    "--flow-rotate": card.rotate ?? "0deg",
+    "--flow-scale": getCompactFlowScale(card.scale, compactScale),
+    "--flow-mid-scale": isConnector ? "0.62" : "0.68",
+    "--flow-tuck-scale": isConnector ? "0.48" : "0.52",
+    "--flow-mobile-peak-scale": isConnector ? "0.62" : "0.67",
+    "--flow-mobile-mid-scale": isConnector ? "0.44" : "0.48",
+    "--flow-mobile-tuck-scale": isConnector ? "0.36" : "0.39",
+  };
 
-const T = `all ${DUR_SETTLE}ms ${EASE}`;
+  if (isConnector) {
+    return (
+      <div className="waldo-smart-source-card waldo-smart-logo-card" data-logo-tone={card.tone} style={style}>
+        <span className="waldo-smart-logo-icon" aria-hidden>
+          <Image src={card.icon} alt="" width={24} height={24} />
+        </span>
+        <span className="waldo-smart-logo-label">{card.label}</span>
+      </div>
+    );
+  }
 
-export function MorningBriefSection() {
-  const { slotOf, offset, frontIndex, onClick, onMouseEnter, onMouseLeave, onTouchStart, onTouchEnd } = useCardStack(CARDS.length, AUTO_CARD_MS);
-  const FRONT = CARDS.length - 1;
-  const frontCardIdx = frontIndex;
-  const frontCard = CARDS[frontCardIdx];
+  const assetStyle: FlowStyle = {
+    ...style,
+    "--asset-crop": getSourceAssetCrop(card.src),
+  };
 
   return (
-    <section className="flex flex-col gap-[70px] items-center py-[90px] w-full" style={{ borderRadius: "30px" }}>
-      {/* Mobile: stacked card depth — 2 behind strips peek from top, front in flow */}
-      <div className="lg:hidden w-full px-4" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onClick={onClick}>
-        <div className="relative w-full max-w-[400px] mx-auto" style={{ paddingTop: "18px" }}>
-          {/* Behind card strips — absolute, fill container, peek above front card */}
-          <div className="absolute border-solid border-[rgba(26,26,26,0.14)] bg-[#fafaf8]"
-               style={{ top: 0, left: "14px", right: "14px", bottom: 0, borderRadius: "20px", borderWidth: "1.5px", opacity: 0.5, zIndex: 1 }} />
-          <div className="absolute border-solid border-[rgba(26,26,26,0.14)] bg-[#fafaf8]"
-               style={{ top: "9px", left: "7px", right: "7px", bottom: 0, borderRadius: "20px", borderWidth: "1.5px", opacity: 0.72, zIndex: 2 }} />
-          {/* Front card — relative, defines height */}
-          <div
-            className="relative bg-[#fafaf8] border-solid border-[rgba(26,26,26,0.16)] flex flex-col items-start overflow-clip"
-            style={{ padding: "28px", borderRadius: "20px", borderWidth: "1.5px", zIndex: 3, boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}
-          >
-            <Image src={frontCard.icon} alt="" width={frontCard.iconW} height={frontCard.iconH} unoptimized />
-            <div key={frontCardIdx}>
-              <p className="text-[#1a1a1a]"
-                 style={{ fontFamily: "var(--font-headline)", fontSize: "22px", lineHeight: 1.1, whiteSpace: "pre-wrap", marginTop: "24px", animation: "content-enter 0.3s 0.18s both" }}>
-                {frontCard.body}
-              </p>
-              <p className="font-medium italic text-[#6b6b68]"
-                 style={{ fontFamily: "var(--font-body)", fontVariationSettings: "'opsz' 14", fontStyle: "italic", fontSize: "14px", lineHeight: 1.3, marginTop: "16px", animation: "content-enter 0.3s 0.28s both" }}>
-                {frontCard.footnote}
-              </p>
-            </div>
-          </div>
-        </div>
-        <MobileDots count={CARDS.length} current={frontCardIdx} />
+    <div className="waldo-smart-source-card waldo-smart-asset-card" style={assetStyle}>
+      <Image
+        src={card.src}
+        alt={card.alt}
+        width={card.naturalWidth}
+        height={card.naturalHeight}
+        className="h-auto w-full select-none"
+        sizes="(min-width: 1024px) 340px, 190px"
+      />
+    </div>
+  );
+}
+
+function ProcessedReceipt({ card }: { card: ProcessedCard }) {
+  const style: FlowStyle = {
+    "--receipt-delay": card.delay,
+  };
+
+  return (
+    <article className="waldo-smart-receipt" data-tone={card.tone} style={style}>
+      <div className="waldo-smart-receipt-tags">
+        <span className="waldo-smart-receipt-dot" />
+        <span>{card.eyebrow}</span>
+        <span>{card.label}</span>
       </div>
-
-      {/* Desktop: fan stack */}
-      <div
-        className="hidden lg:block relative shrink-0 cursor-pointer"
-        style={{ height: "562px", width: "1004px" }}
-        onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
-        role="button" aria-label="Card stack — click to advance" tabIndex={0}
-        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(e as unknown as React.MouseEvent); } }}
-      >
-        {CARDS.map((card, i) => {
-          const si    = slotOf(i);
-          const front = si === FRONT;
-          const b     = BACK[si];
-          return (
-            <div key={i} className="absolute flex items-center justify-center"
-              style={{ ...(front ? { left: "50%", top: "50%", transform: "translate(-50%,-50%)" } : { left: b.left, top: b.top, width: "507.436px", height: "538.752px" }), zIndex: si + 1, transition: T }}
-            >
-              <div style={{ transform: front ? "none" : `rotate(${b.rotate})`, opacity: front ? 1 : 0.6, filter: front ? "none" : "blur(5px)", transition: T }}>
-                {front ? (
-                  <div className="bg-[#fafaf8] border-[1.701px] border-[rgba(26,26,26,0.16)] border-solid flex flex-col gap-[45.387px] items-start overflow-clip" style={{ padding: "55.793px", borderRadius: "22.687px" }}>
-                    <Image src={card.icon} alt="" width={card.iconW} height={card.iconH} unoptimized />
-                    <p className="text-[#1a1a1a]" style={{ fontFamily: "var(--font-headline)", fontSize: "26.435px", lineHeight: 1.1, width: "336.414px", whiteSpace: "pre-wrap" }}>{card.body}</p>
-                    <p className="font-medium italic text-[#6b6b68] whitespace-nowrap" style={{ fontFamily: "var(--font-body)", fontVariationSettings: "'opsz' 14", fontStyle: "italic", fontSize: "16.738px", lineHeight: 1.3 }}>{card.footnote}</p>
-                  </div>
-                ) : (
-                  <div className="bg-[#fafaf8] border-[1.215px] border-[rgba(26,26,26,0.16)] border-solid flex flex-col items-start justify-between overflow-clip" style={{ height: "460.08px", width: "406px", padding: "40.5px", borderRadius: "16.2px" }}>
-                    <div className="flex flex-col gap-[32.4px] items-start">
-                      <Image src={card.icon} alt="" width={card.iconW} height={card.iconH} unoptimized />
-                      <p className="text-[#1a1a1a] whitespace-nowrap" style={{ fontFamily: "var(--font-headline)", fontSize: "29.16px", lineHeight: 1.2 }}>{card.title}</p>
-                      <p className="text-[#1a1a1a]" style={{ fontFamily: "var(--font-headline)", fontSize: "18.876px", lineHeight: 1.1, width: "325.62px", whiteSpace: "pre-wrap" }}>{card.body}</p>
-                    </div>
-                    <p className="font-normal italic text-[#717171] whitespace-nowrap" style={{ fontFamily: "var(--font-body)", fontVariationSettings: "'opsz' 14", fontSize: "11.34px", lineHeight: 1.3 }}>{card.footnote}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>  {/* end desktop fan */}
-
-      {/* Desktop nav dots */}
-      <div className="hidden lg:flex gap-[8px] items-center justify-center">
-        {CARDS.map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Card ${i + 1}`}
-            onClick={e => { e.stopPropagation(); const steps = ((i - frontCardIdx) % CARDS.length + CARDS.length) % CARDS.length; for (let s = 0; s < steps; s++) onClick(e as unknown as React.MouseEvent); }}
-            style={{ width: i === frontCardIdx ? "20px" : "6px", height: "6px", borderRadius: "3px", background: i === frontCardIdx ? "#1a1a1a" : "rgba(26,26,26,0.2)", transition: "all 0.4s ease", border: "none", padding: 0, cursor: "pointer" }}
-          />
+      <p className="waldo-smart-receipt-body">{card.body}</p>
+      <p className="waldo-smart-receipt-aside">{card.aside}</p>
+      <div className="waldo-smart-connectors" aria-label="Connectors involved">
+        {card.connectors.map((connector) => (
+          <ConnectorIcon key={connector.label} connector={connector} />
         ))}
       </div>
+    </article>
+  );
+}
 
-      <div className="flex flex-col gap-[40px] items-center w-full">
-        <h2 data-animate="headline" className="text-[#1a1a1a] text-[32px] lg:text-[48px] text-center px-4 lg:px-0" style={{ fontFamily: "var(--font-headline)", lineHeight: 1.1 }}>With Waldo, this is what{" "}<br />you wake up to instead.</h2>
-        <p data-animate="fade-up" className="font-normal text-[#6b6b68] text-[14px] text-center px-6 lg:px-0" style={{ fontFamily: "var(--font-body)", fontVariationSettings: "'opsz' 14", lineHeight: 1.3, maxWidth: "455px" }}>
-          It reschedules meetings, reprioritises tasks, and intervenes based on HRV, sleep, and circadian patterns - without being asked. You never open a dashboard to manage health. Waldo handles it.
-        </p>
-        <a href="/waitlist" className="flex items-center gap-[4px] justify-center bg-[#1a1a1a] border border-[rgba(26,26,26,0.08)] border-solid text-[#fafaf8] text-[18px] text-center px-[36px] py-[22px] hover:bg-[#333] hover:scale-[1.02] transition-all" style={{ fontFamily: "var(--font-headline)", lineHeight: 1.3, borderRadius: "40px" }}>
-          Get Started <ArrowRightIcon />
-        </a>
-      </div>
+type MorningBriefSectionProps = {
+  showIntro?: boolean;
+};
+
+export function MorningBriefSection({ showIntro = true }: MorningBriefSectionProps) {
+  return (
+    <section id="brief" className="waldo-smart-section scroll-mt-28 overflow-hidden">
+      <SmartSectionActivity className="waldo-smart-panel relative overflow-hidden border-y border-[var(--border-default)] bg-[var(--surface-t2)] text-center">
+        {showIntro ? (
+          <div className="waldo-smart-copy" data-animate="blur-fade">
+            <h2 className="type-h2 text-[var(--ink)]">Smart like Alfred, goofy like Pluto.</h2>
+            <p className="type-body tone-secondary mt-5">
+              It handles the serious part quietly, before you&apos;ve asked. Then it tells
+              <br className="new-reference-break" />{" "}
+              you about it like a dog that&apos;s a little pleased with itself.
+            </p>
+          </div>
+        ) : null}
+
+        <div className="waldo-smart-stage" data-animate="blur-fade">
+          <div className="waldo-smart-source-lane" aria-hidden>
+            {sourceFlowCards.map((card, index) => (
+              <SourceCardItem
+                key={card.kind === "connector" ? `${card.label}-${index}` : `${card.src}-${index}`}
+                card={card}
+              />
+            ))}
+          </div>
+
+          <div className="waldo-smart-phone-wrap" aria-hidden>
+            <div className="waldo-smart-phone-screen">
+              <div className="waldo-smart-phone-output-lane">
+                {processedCards.map((card) => (
+                  <ProcessedReceipt key={`phone-${card.eyebrow}-${card.label}`} card={card} />
+                ))}
+              </div>
+            </div>
+            <WaldoFace />
+            <Image src={phoneMockup} alt="" className="waldo-smart-phone-image relative z-40 h-auto w-full select-none" sizes="420px" />
+          </div>
+
+          <div className="waldo-smart-output-lane">
+            {processedCards.map((card) => (
+              <ProcessedReceipt key={`${card.eyebrow}-${card.label}`} card={card} />
+            ))}
+          </div>
+        </div>
+      </SmartSectionActivity>
     </section>
   );
 }

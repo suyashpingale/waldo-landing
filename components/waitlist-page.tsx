@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Illustration } from "./illustration";
 import { EmailForm } from "./email-form";
 
@@ -135,7 +136,6 @@ const TIME_CONFIG = {
         height:       "58px",
         borderRadius: "50%",
         background:   "radial-gradient(circle at 36% 34%, #fffbeb, #fde68a)",
-        boxShadow:    "0 0 40px rgba(253,230,138,0.25), 0 0 90px rgba(253,230,138,0.10)",
         animation:    "moon-rise 0.6s 0.45s ease-out both, moon-glow 4.5s 1.1s ease-in-out infinite",
       },
     },
@@ -224,10 +224,11 @@ function WaldoDisplay({ period, config }: { period: TimePeriod; config: typeof T
       )}
 
       <Image
-        src={isNight || period === "evening" ? "/illustrations/success.svg" : "/illustrations/default.svg"}
+        src={isNight || period === "evening" ? "/assets/home/mascots/good-sleep-dark-mode.svg" : "/assets/home/mascots/good-week-dark-mode.svg"}
         alt="Waldo"
         width={150}
         height={150}
+        className="waldo-mascot-consistent"
         style={{
           filter:    config.waldoFilter,
           opacity:   isNight ? 0.72 : 0.85,
@@ -317,6 +318,8 @@ function TimeScreen({ period, onDismiss }: { period: TimePeriod; onDismiss: () =
           style={{
             fontFamily: "var(--font-headline)",
             fontSize:   "clamp(2.5rem, 7vw, 5rem)",
+            fontWeight: "var(--mottle-display-weight)",
+            letterSpacing: "0px",
             animation:  "float-up 0.60s 0.65s ease-out both",
           }}
         >
@@ -410,14 +413,14 @@ export function WaitlistPage() {
 
       <main className="flex min-h-[calc(100vh-72px)] items-center justify-center px-4 py-8">
         <div
-          className="w-full max-w-[440px] rounded-3xl bg-white px-8 py-10 flex flex-col items-center gap-5 text-center shadow-[0_2px_20px_rgba(0,0,0,0.07)]"
+          className="w-full max-w-[440px] rounded-3xl bg-white px-8 py-10 flex flex-col items-center gap-5 text-center border border-[var(--border-default)]"
           style={cardStyle}
         >
           <Illustration state={displayState} className="w-24 h-24" />
 
           <h1
             className="text-[2.5rem] leading-[1.1] font-bold"
-            style={{ fontFamily: "var(--font-headline)" }}
+            style={{ fontFamily: "var(--font-headline)", fontWeight: "var(--mottle-display-weight)", letterSpacing: "0px" }}
           >
             {copy.headline}
           </h1>
@@ -458,13 +461,13 @@ export function WaitlistPage() {
           )}
 
           {displayState === "success" && (
-            <a
+            <Link
               href="/"
               className="flex items-center gap-1 text-[11px] text-[#1A1A1A]/40 hover:text-[#1A1A1A]/70 transition-colors mt-2"
               style={{ fontFamily: "var(--font-body)" }}
             >
               ← Back to home
-            </a>
+            </Link>
           )}
         </div>
       </main>

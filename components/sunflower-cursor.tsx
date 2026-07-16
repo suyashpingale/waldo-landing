@@ -25,8 +25,8 @@ type Bloom = {
 };
 
 const BLOOM_LIFETIME_MS = 700;
-const SIZE_MIN = 56;
-const SIZE_MAX = 88;
+const SIZE_MIN = 39;
+const SIZE_MAX = 62;
 
 // Skip clicks on interactive elements
 const INTERACTIVE_SELECTOR = "a, button, input, textarea, select, label, [role='button'], [role='link'], [data-no-bloom]";
@@ -75,8 +75,8 @@ function WaldoLogoBurst({ size }: { size: number }) {
         {PETALS.map((p, i) => {
           const tx = LOGO_VIEWBOX.cx - p.cx; // translate to logo center for burst start
           const ty = LOGO_VIEWBOX.cy - p.cy;
-          const startRot = (Math.random() - 0.5) * 80; // jitter -40°…+40°
-          const endRot   = (Math.random() - 0.5) * 30;
+          const startRot = ((i * 37) % 80) - 40; // deterministic jitter -40°…+40°
+          const endRot   = ((i * 19) % 30) - 15;
           return (
             <path
               key={i}
