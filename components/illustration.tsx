@@ -1,9 +1,9 @@
 import Image from "next/image";
 
 const illustrations: Record<string, string> = {
-  default: "/illustrations/default.svg",
-  error: "/illustrations/error.svg",
-  success: "/illustrations/success.svg",
+  default: "/assets/home/mascots/good-week-dark-mode.svg",
+  error: "/assets/home/mascots/flagging-dark-mode.svg",
+  success: "/assets/home/mascots/good-dark-mode.svg",
 };
 
 export function Illustration({
@@ -21,7 +21,7 @@ export function Illustration({
       height={400}
       sizes="120px"
       priority
-      className={className}
+      className={`waldo-mascot-consistent ${className}`}
     />
   );
 }

@@ -2,12 +2,16 @@
 
 import { promises as dns } from "dns";
 import disposableDomains from "disposable-email-domains";
-import { supabase } from "@/lib/supabase";
 import { isValidEmail } from "@/lib/validate-email";
 
 type Result =
   | { success: true }
-  | { success: false; error: "invalid_email" | "server_error" };
+  | { success: false; error: "invalid_email" | "disposable_email" | "server_error" };
+
+type LoopsJson = Array<unknown> | { success?: boolean; id?: string; message?: string };
+
+const LOOPS_API_BASE = "https://app.loops.so/api/v1";
+const LOOPS_REQUEST_TIMEOUT_MS = 8_000;
 
 async function domainHasMx(domain: string): Promise<boolean> {
   try {
@@ -18,23 +22,77 @@ async function domainHasMx(domain: string): Promise<boolean> {
   }
 }
 
-// Direct fetch instead of SDK — avoids module-level init issues with env vars
-async function sendLoopsEvent(email: string): Promise<void> {
-  const apiKey = process.env.LOOPS_API_KEY;
-  if (!apiKey) return;
+function getLoopsApiKey() {
+  const apiKey = process.env.LOOPS_API_KEY?.trim();
+  if (!apiKey) throw new Error("loops_api_key_missing");
+  return apiKey;
+}
 
-  await fetch("https://app.loops.so/api/v1/events/send", {
-    method:  "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type":  "application/json",
-    },
-    body: JSON.stringify({
+async function loopsRequest(path: string, init: { method: "GET" | "POST" | "PUT"; body?: Record<string, unknown> }): Promise<LoopsJson> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), LOOPS_REQUEST_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(`${LOOPS_API_BASE}${path}`, {
+      method: init.method,
+      headers: {
+        "Accept":        "application/json",
+        "Authorization": `Bearer ${getLoopsApiKey()}`,
+        "Content-Type":  "application/json",
+      },
+      body: init.body ? JSON.stringify(init.body) : undefined,
+      cache: "no-store",
+      signal: controller.signal,
+    });
+
+    const payload = await response.json().catch(() => null) as LoopsJson | null;
+    if (!response.ok || (payload && !Array.isArray(payload) && payload.success === false)) {
+      throw new Error(`loops_request_failed_${response.status}`);
+    }
+
+    return payload ?? { success: true };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function loopsContactExists(email: string) {
+  const contactList = await loopsRequest(`/contacts/find?email=${encodeURIComponent(email)}`, { method: "GET" });
+  return Array.isArray(contactList) && contactList.length > 0;
+}
+
+async function upsertLoopsContact(email: string, utm: Record<string, string>): Promise<void> {
+  await loopsRequest("/contacts/update", {
+    method: "PUT",
+    body: {
       email,
-      eventName:        "waitlist_signup",
-      eventProperties:  { source: "heywaldo.in" },
-    }),
+      source:    utm.utm_source ?? "heywaldo.in",
+      userGroup: "waitlist",
+      ...utm,
+    },
   });
+}
+
+async function sendLoopsWaitlistEvent(email: string, utm: Record<string, string>): Promise<void> {
+  await loopsRequest("/events/send", {
+    method: "POST",
+    body: {
+      email,
+      eventName:       "waitlist_signup",
+      eventProperties: { source: "heywaldo.in", ...utm },
+    },
+  });
+}
+
+const UTM_FIELDS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"] as const;
+
+function readUtmFields(formData: FormData): Record<string, string> {
+  const utm: Record<string, string> = {};
+  for (const field of UTM_FIELDS) {
+    const value = formData.get(field);
+    if (typeof value === "string" && value.trim()) utm[field] = value.trim().slice(0, 128);
+  }
+  return utm;
 }
 
 export async function submitEmail(formData: FormData): Promise<Result> {
@@ -50,7 +108,7 @@ export async function submitEmail(formData: FormData): Promise<Result> {
 
   // 2. Disposable email check (~4,000 known throwaway domains)
   if (disposableDomains.includes(domain)) {
-    return { success: false, error: "invalid_email" };
+    return { success: false, error: "disposable_email" };
   }
 
   // 3. DNS MX check — domain must be able to receive mail
@@ -59,25 +117,18 @@ export async function submitEmail(formData: FormData): Promise<Result> {
     return { success: false, error: "invalid_email" };
   }
 
-  // 4. Persist to Supabase (unique constraint handles duplicates silently)
-  const { error } = await supabase
-    .from("waitlist")
-    .insert({ email, source: "website" });
+  const utm = readUtmFields(formData);
 
-  if (error) {
-    if (error.code !== "23505") {
-      return { success: false, error: "server_error" };
-    }
-    // Duplicate — already on waitlist, silent success
-    return { success: true };
+  try {
+    // Duplicate — already on waitlist, silent success.
+    if (await loopsContactExists(email)) return { success: true };
+
+    await upsertLoopsContact(email, utm);
+    await sendLoopsWaitlistEvent(email, utm);
+  } catch (error) {
+    console.error("[waitlist] loops submission failed", error instanceof Error ? error.message : "unknown_error");
+    return { success: false, error: "server_error" };
   }
-
-  // 5. Fire Loops event — triggers confirmation email in Loop Builder
-  //    Awaited so Vercel doesn't kill the fetch before it completes.
-  //    Email failure is caught and logged but never blocks the success state.
-  await sendLoopsEvent(email).catch(() => {
-    console.error("[loops] failed to send waitlist_signup event for", email);
-  });
 
   return { success: true };
 }
